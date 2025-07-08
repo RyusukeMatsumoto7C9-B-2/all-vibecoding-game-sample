@@ -5,6 +5,11 @@
       "commit_command": "git add . && git commit -m \"$(cat <<'EOF'\n作業完了: {task_summary}\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\"",
       "message_language": "ja"
     },
+    "on_milestone": {
+      "auto_commit": true,
+      "commit_command": "git add . && git commit -m \"$(cat <<'EOF'\n進捗保存: {milestone_description}\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\"",
+      "message_language": "ja"
+    },
     "pre_commit": {
       "check_project_structure": true,
       "update_claude_md": true,
@@ -23,12 +28,21 @@
     "test_on_completion": true,
     "notification_language": "ja",
     "structure_monitoring": true,
-    "claude_md_auto_update": true
+    "claude_md_auto_update": true,
+    "commit_on_milestone": true,
+    "milestone_triggers": [
+      "feature_complete",
+      "refactor_complete",
+      "test_complete",
+      "bug_fix_complete"
+    ]
   },
   "git_settings": {
     "commit_format": "作業完了: {description}",
+    "milestone_commit_format": "進捗保存: {description}",
     "auto_stage": true,
-    "force_commands_disabled": true
+    "force_commands_disabled": true,
+    "commit_frequency": "milestone_based"
   },
   "test_settings": {
     "framework": "Unity Test Runner",

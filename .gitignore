@@ -99,3 +99,4 @@ InitTestScene*.unity*
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
 Packages/.idea
 .idea/.idea.all-vibecoding-game-sample
+.claude/settings.local.json

@@ -1,0 +1,45 @@
+{
+  "hooks": {
+    "post_task": {
+      "auto_commit": true,
+      "commit_command": "git add . && git commit -m \"$(cat <<'EOF'\n作業完了: {task_summary}\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\"",
+      "message_language": "ja"
+    },
+    "pre_commit": {
+      "check_project_structure": true,
+      "update_claude_md": true,
+      "structure_check_command": "find Assets/MyGame -type d | sort",
+      "claude_md_section": "### Unityプロジェクト構造",
+      "structure_template": "```\nAssets/MyGame/\n{directories}\n```"
+    },
+    "post_all_tasks": {
+      "run_tests": true,
+      "test_command": "\"{unity_editor_path}\" -projectPath \"{project_path}\" -runTests -testPlatform EditMode -testResults \"TestResults/TestResults.xml\" -batchmode -quit",
+      "test_type": "EditMode"
+    }
+  },
+  "workflow": {
+    "auto_git_operations": true,
+    "test_on_completion": true,
+    "notification_language": "ja",
+    "structure_monitoring": true,
+    "claude_md_auto_update": true
+  },
+  "git_settings": {
+    "commit_format": "作業完了: {description}",
+    "auto_stage": true,
+    "force_commands_disabled": true
+  },
+  "test_settings": {
+    "framework": "Unity Test Runner",
+    "mode": "EditMode",
+    "output_directory": "TestResults/",
+    "run_after_all_tasks": true
+  },
+  "documentation": {
+    "claude_md_path": "CLAUDE.md",
+    "structure_section_marker": "### Unityプロジェクト構造",
+    "auto_update_on_structure_change": true,
+    "backup_before_update": true
+  }
+}

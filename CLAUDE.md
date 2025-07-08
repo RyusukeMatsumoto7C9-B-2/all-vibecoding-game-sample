@@ -9,98 +9,39 @@
 ## 主要なアーキテクチャコンポーネント
 
 ### Unityプロジェクト構造
-- **Assets/MyGame/**: メインゲームソースコードディレクトリ（現在空 - すべてのゲームスクリプトをここに配置する必要があります）
-- **Assets/Scenes/**: メインゲームシーンを含む（SampleScene.unity）
-- **Assets/Settings/**: UnityプロジェクトsetとURP設定
-- **Assets/Packages/**: NuGetForUnityで管理されるNuGetパッケージ
-- **ProjectSettings/**: Unityプロジェクト設定ファイル
+```
+Assets/MyGame/
+├── Scripts/           # コアゲームロジック
+├── Prefabs/          # ゲームオブジェクト
+├── Scenes/           # ゲームシーン (Title, Game)
+├── Data/             # ScriptableObject設定
+```
 
-### MCP統合
-プロジェクトにはUnity Natural MCP Server (UnityNaturalMCP)統合が含まれています：
-- サーバーはポート56780で設定（ProjectSettings/UnityNaturalMCPSetting.assetで設定可能）
-- MCPサーバーログ表示が有効
-- デフォルトMCPツールが有効
+# 開発ルール
 
-### パッケージ依存関係
-主要パッケージとその目的：
-- **Microsoft.Extensions.AI.Abstractions**: AIサービス抽象化
-- **Microsoft.Extensions.DependencyInjection**: 依存性注入コンテナ
-- **ModelContextProtocol**: MCPクライアント/サーバー機能
-- **System.Text.Json**: MCP通信用JSON シリアライゼーション
-- **UniTask**: Unity向けAsync/await サポート
-- **Unity Input System**: 最新の入力処理
+- 日本語で受け答えをする
+- 絵文字は使用禁止
+- ユーザからの指示や仕様に疑問があれば作業を中断し、質問すること
+- 強制追加など -f コマンドは禁止
+- 適切なタイミングでコミットを実行すること
+- コミットのコメントは日本語で行うこと
 
-## 開発コマンド
+## コーディングルール
+- 重要なロジックはPureC#のクラスで作成する
+- PureC#で構築されたクラスは必ずUnity TestRunner でテストが行える形にする
 
-### Unity エディタ
-- Unity HubでUnity エディタでプロジェクトを開く
-- ビルド: File → Build Settings → Build（またはCtrl+Shift+B）
-- プレイモード: プレイボタンをクリックまたはCtrl+Pを押す
+### テストルール テストコードの作成は以下の方針 ( t-wada流 ) で実施する
+#### 基本方針
+- Red: 失敗するテストを書く
+- Green: テストを通す最小限の実装
+- Refactor: リファクタリング
+- 小さなステップで進める
+- 仮実装（ベタ書き）から始める
+- 三角測量で一般化する
+- 明白な実装が分かる場合は直接実装してもOK
+- テストリストを常に更新する
+- 不安なところからテストを書く
 
-### IDE統合
-- **Visual Studio**: all-vibecoding-game-sample.slnを使用
-- **JetBrains Rider**: フルサポートが設定済み
-- **Visual Studio Code**: Unity拡張機能でサポート
-
-### NuGetパッケージ管理
-- NuGetパッケージはNuGetForUnityで管理
-- 設定: Assets/NuGet.config
-- パッケージリスト: Assets/packages.config
-- パッケージ管理にはUnity エディタのNuGet For Unityウィンドウを使用
-
-## 技術設定
-
-### Unity設定
-- **Unity バージョン**: 6000.0.51f1
-- **ターゲットフレームワーク**: .NET Framework 4.7.1
-- **言語バージョン**: C# 9.0
-- **レンダーパイプライン**: Universal Render Pipeline (URP)
-- **2D機能**: Unity 2D機能パッケージで有効
-
-### Input System
-- 入力アクションはAssets/InputSystem_Actions.inputactionsで定義
-- プレイヤーアクションには以下を含む: Move、Look、Attack、Interact、Crouch
-- 移動とlookにはVector2、離散アクションにはButtonを使用
-
-### MCPサーバー設定
-- デフォルトIP: '*'（すべてのインターフェース）
-- デフォルトポート: 56780
-- デバッグ用ログ表示が有効
-- デフォルトツールが有効
-
-## コード整理ガイドライン
-
-### スクリプト配置
-- すべてのゲームスクリプトはAssets/MyGame/に配置する必要があります
-- Unity名前空間の慣例に従う
-- 大きなプロジェクトではアセンブリ定義ファイルを使用
-
-### 依存関係
-- サービス登録にはMicrosoft.Extensions.DependencyInjectionを使用
-- Unity CoroutinesではなくUniTaskを非同期操作に活用
-- JSON操作にはSystem.Text.Jsonを使用
-
-### MCP統合パターン
-- MCPツールはサービスとして実装する必要があります
-- MCPサービス登録には依存性注入を使用
-- ツール定義にはMCPプロトコル仕様に従う
-
-## 開発ノート
-
-### 空のプロジェクト状態
-プロジェクトは現在、以下の初期状態にあります：
-- ソースコード用の空のMyGameディレクトリ
-- 基本的なUnityシーンセットアップ
-- MCPサーバー統合準備完了
-- すべてのパッケージ依存関係がインストール済み
-
-### 開発の次のステップ
-1. Assets/MyGame/にメインゲームスクリプトを作成
-2. MCPツールとサービスを実装
-3. シーンでゲームオブジェクトとコンポーネントを設定
-4. ゲームプレイ用の入力システムアクションを設定
-
-### テスト
-- 単体テストにはUnity Test Frameworkを使用
-- MCPサーバー機能はMCPクライアント接続でテスト可能
-- 必要に応じてターゲットプラットフォーム全体でビルドとテストを実行
+### リファクタリングルール
+- リファクタリングはMartin Fowlerの提唱する手法で実施する
+- リファクタリング後は必ずテストコードを検証する

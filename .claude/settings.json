@@ -2,12 +2,12 @@
   "hooks": {
     "post_task": {
       "auto_commit": true,
-      "commit_command": "git add . && git commit -m \"$(cat <<'EOF'\n作業完了: {task_summary}\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\"",
+      "commit_command": "git -c user.name=\"Claude Code\" -c user.email=\"claude@anthropic.com\" add . && git -c user.name=\"Claude Code\" -c user.email=\"claude@anthropic.com\" commit -m \"$(cat <<'EOF'\n作業完了: {task_summary}\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\"",
       "message_language": "ja"
     },
     "on_milestone": {
       "auto_commit": true,
-      "commit_command": "git add . && git commit -m \"$(cat <<'EOF'\n進捗保存: {milestone_description}\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\"",
+      "commit_command": "git -c user.name=\"Claude Code\" -c user.email=\"claude@anthropic.com\" add . && git -c user.name=\"Claude Code\" -c user.email=\"claude@anthropic.com\" commit -m \"$(cat <<'EOF'\n進捗保存: {milestone_description}\n\n🤖 Generated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\"",
       "message_language": "ja"
     },
     "pre_commit": {

@@ -12,9 +12,7 @@
 ```
 Assets/MyGame/
 ├── Scripts/           # コアゲームロジック
-├── Prefabs/          # ゲームオブジェクト
-├── Scenes/           # ゲームシーン (Title, Game)
-├── Data/             # ScriptableObject設定
+├── Scenes/           # ゲームシーン (Sample)
 ```
 
 # 開発ルール

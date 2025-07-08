@@ -330,6 +330,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 1234567890}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0000000000000000000000000000000000, type: 3}
+  m_Script: {fileID: 11500000, guid: 332ee7f8a4e09c04183b307763e02c0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier:

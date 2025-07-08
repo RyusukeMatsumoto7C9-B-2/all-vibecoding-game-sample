@@ -1,106 +1,106 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+このファイルは、このリポジトリでコードを扱う際のClaude Code (claude.ai/code)向けのガイダンスを提供します。
 
-## Project Overview
+## プロジェクト概要
 
-This is a Unity 2D game project built with Unity 6000.0.51f1 that integrates with Model Context Protocol (MCP) server functionality. The project uses the Universal Render Pipeline (URP) and includes modern Unity packages like the Input System, UniTask for async operations, and NuGet package management.
+これはUnity 6000.0.51f1で構築されたUnity 2Dゲームプロジェクトで、Model Context Protocol (MCP)サーバー機能を統合しています。このプロジェクトはUniversal Render Pipeline (URP)を使用し、Input System、非同期操作用のUniTask、NuGetパッケージ管理などの最新のUnityパッケージを含んでいます。
 
-## Key Architecture Components
+## 主要なアーキテクチャコンポーネント
 
-### Unity Project Structure
-- **Assets/MyGame/**: Main game source code directory (currently empty - all game scripts should be placed here)
-- **Assets/Scenes/**: Contains the main game scene (SampleScene.unity)
-- **Assets/Settings/**: Unity project settings and URP configuration
-- **Assets/Packages/**: NuGet packages managed by NuGetForUnity
-- **ProjectSettings/**: Unity project configuration files
+### Unityプロジェクト構造
+- **Assets/MyGame/**: メインゲームソースコードディレクトリ（現在空 - すべてのゲームスクリプトをここに配置する必要があります）
+- **Assets/Scenes/**: メインゲームシーンを含む（SampleScene.unity）
+- **Assets/Settings/**: UnityプロジェクトsetとURP設定
+- **Assets/Packages/**: NuGetForUnityで管理されるNuGetパッケージ
+- **ProjectSettings/**: Unityプロジェクト設定ファイル
 
-### MCP Integration
-The project includes Unity Natural MCP Server (UnityNaturalMCP) integration:
-- Server configured on port 56780 (configurable in ProjectSettings/UnityNaturalMCPSetting.asset)
-- MCP server log display enabled
-- Default MCP tools enabled
+### MCP統合
+プロジェクトにはUnity Natural MCP Server (UnityNaturalMCP)統合が含まれています：
+- サーバーはポート56780で設定（ProjectSettings/UnityNaturalMCPSetting.assetで設定可能）
+- MCPサーバーログ表示が有効
+- デフォルトMCPツールが有効
 
-### Package Dependencies
-Key packages and their purposes:
-- **Microsoft.Extensions.AI.Abstractions**: AI service abstractions
-- **Microsoft.Extensions.DependencyInjection**: Dependency injection container
-- **ModelContextProtocol**: MCP client/server functionality
-- **System.Text.Json**: JSON serialization for MCP communication
-- **UniTask**: Async/await support for Unity
-- **Unity Input System**: Modern input handling
+### パッケージ依存関係
+主要パッケージとその目的：
+- **Microsoft.Extensions.AI.Abstractions**: AIサービス抽象化
+- **Microsoft.Extensions.DependencyInjection**: 依存性注入コンテナ
+- **ModelContextProtocol**: MCPクライアント/サーバー機能
+- **System.Text.Json**: MCP通信用JSON シリアライゼーション
+- **UniTask**: Unity向けAsync/await サポート
+- **Unity Input System**: 最新の入力処理
 
-## Development Commands
+## 開発コマンド
 
-### Unity Editor
-- Open project in Unity Editor using Unity Hub
-- Build: File → Build Settings → Build (or Ctrl+Shift+B)
-- Play mode: Click Play button or press Ctrl+P
+### Unity エディタ
+- Unity HubでUnity エディタでプロジェクトを開く
+- ビルド: File → Build Settings → Build（またはCtrl+Shift+B）
+- プレイモード: プレイボタンをクリックまたはCtrl+Pを押す
 
-### IDE Integration
-- **Visual Studio**: Use all-vibecoding-game-sample.sln
-- **JetBrains Rider**: Full support configured
-- **Visual Studio Code**: Supported through Unity extensions
+### IDE統合
+- **Visual Studio**: all-vibecoding-game-sample.slnを使用
+- **JetBrains Rider**: フルサポートが設定済み
+- **Visual Studio Code**: Unity拡張機能でサポート
 
-### NuGet Package Management
-- NuGet packages are managed through NuGetForUnity
-- Configuration: Assets/NuGet.config
-- Package list: Assets/packages.config
-- Use NuGet For Unity window in Unity Editor to manage packages
+### NuGetパッケージ管理
+- NuGetパッケージはNuGetForUnityで管理
+- 設定: Assets/NuGet.config
+- パッケージリスト: Assets/packages.config
+- パッケージ管理にはUnity エディタのNuGet For Unityウィンドウを使用
 
-## Technical Configuration
+## 技術設定
 
-### Unity Settings
-- **Unity Version**: 6000.0.51f1
-- **Target Framework**: .NET Framework 4.7.1
-- **Language Version**: C# 9.0
-- **Render Pipeline**: Universal Render Pipeline (URP)
-- **2D Features**: Enabled through Unity 2D feature package
+### Unity設定
+- **Unity バージョン**: 6000.0.51f1
+- **ターゲットフレームワーク**: .NET Framework 4.7.1
+- **言語バージョン**: C# 9.0
+- **レンダーパイプライン**: Universal Render Pipeline (URP)
+- **2D機能**: Unity 2D機能パッケージで有効
 
 ### Input System
-- Input actions defined in Assets/InputSystem_Actions.inputactions
-- Player actions include: Move, Look, Attack, Interact, Crouch
-- Uses Vector2 for movement and look, Button for discrete actions
+- 入力アクションはAssets/InputSystem_Actions.inputactionsで定義
+- プレイヤーアクションには以下を含む: Move、Look、Attack、Interact、Crouch
+- 移動とlookにはVector2、離散アクションにはButtonを使用
 
-### MCP Server Configuration
-- Default IP: '*' (all interfaces)
-- Default Port: 56780
-- Log display enabled for debugging
-- Default tools enabled
+### MCPサーバー設定
+- デフォルトIP: '*'（すべてのインターフェース）
+- デフォルトポート: 56780
+- デバッグ用ログ表示が有効
+- デフォルトツールが有効
 
-## Code Organization Guidelines
+## コード整理ガイドライン
 
-### Script Placement
-- All game scripts should be placed in Assets/MyGame/
-- Follow Unity namespace conventions
-- Use assembly definition files for large projects
+### スクリプト配置
+- すべてのゲームスクリプトはAssets/MyGame/に配置する必要があります
+- Unity名前空間の慣例に従う
+- 大きなプロジェクトではアセンブリ定義ファイルを使用
 
-### Dependencies
-- Use Microsoft.Extensions.DependencyInjection for service registration
-- Leverage UniTask for async operations instead of Unity Coroutines
-- Use System.Text.Json for JSON operations
+### 依存関係
+- サービス登録にはMicrosoft.Extensions.DependencyInjectionを使用
+- Unity CoroutinesではなくUniTaskを非同期操作に活用
+- JSON操作にはSystem.Text.Jsonを使用
 
-### MCP Integration Patterns
-- MCP tools should be implemented as services
-- Use dependency injection for MCP service registration
-- Follow MCP protocol specifications for tool definitions
+### MCP統合パターン
+- MCPツールはサービスとして実装する必要があります
+- MCPサービス登録には依存性注入を使用
+- ツール定義にはMCPプロトコル仕様に従う
 
-## Development Notes
+## 開発ノート
 
-### Empty Project State
-The project is currently in an initial state with:
-- Empty MyGame directory for source code
-- Basic Unity scene setup
-- MCP server integration ready
-- All package dependencies installed
+### 空のプロジェクト状態
+プロジェクトは現在、以下の初期状態にあります：
+- ソースコード用の空のMyGameディレクトリ
+- 基本的なUnityシーンセットアップ
+- MCPサーバー統合準備完了
+- すべてのパッケージ依存関係がインストール済み
 
-### Next Steps for Development
-1. Create main game scripts in Assets/MyGame/
-2. Implement MCP tools and services
-3. Set up game objects and components in the scene
-4. Configure input system actions for gameplay
+### 開発の次のステップ
+1. Assets/MyGame/にメインゲームスクリプトを作成
+2. MCPツールとサービスを実装
+3. シーンでゲームオブジェクトとコンポーネントを設定
+4. ゲームプレイ用の入力システムアクションを設定
 
-### Testing
-- Use Unity Test Framework for unit tests
-- MCP server functionality can be tested through MCP client connections
-- Build and test across target platforms as needed
+### テスト
+- 単体テストにはUnity Test Frameworkを使用
+- MCPサーバー機能はMCPクライアント接続でテスト可能
+- 必要に応じてターゲットプラットフォーム全体でビルドとテストを実行

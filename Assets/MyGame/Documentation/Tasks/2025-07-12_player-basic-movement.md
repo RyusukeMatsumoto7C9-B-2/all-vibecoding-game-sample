@@ -101,8 +101,16 @@ Assets/MyGame/Scripts/Player/
 - ブランチ名: `feature/player-basic-movement`
 - 作業完了後にプルリクエストを作成予定
 
+## プレハブ作成完了
+- **Player.prefab** を Assets/MyGame/Prefabs/ に作成完了
+- シーン内のプレイヤーオブジェクトをプレハブインスタンスに変更
+- プレハブには以下のコンポーネントが含まれる:
+  - Transform（初期位置: 0, 4, 0）
+  - SpriteRenderer（Unity built-in UISprite使用）
+  - PlayerInputHandler（WASD入力処理）
+  - PlayerController（移動制御、速度: 5）
+
 ## 残タスク
-- Unity Editor でのプレハブ作成（手動実施が必要）
 - PlayMode での動作確認（手動実施が必要）
 - プルリクエストの作成
 

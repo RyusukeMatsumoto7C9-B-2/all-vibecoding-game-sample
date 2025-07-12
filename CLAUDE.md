@@ -93,3 +93,15 @@ Assets/MyGame/Documentation/
 - 仕様書: `{機能名}_spec.md`
 - タスク記録: `{YYYY-MM-DD}_{タスク名}.md`
 - テンプレート: `{種類}_template.md`
+
+## GitHub操作ルール
+
+### GitHub CLI使用規則
+- GitHub CLIのパスは `.claude/settings.local.json` の `github_cli.path` で設定されている
+- プッシュやプルリクエスト作成時は設定されたパスを使用する
+- GitHub CLI コマンド実行例: `"/mnt/c/Program Files/GitHub CLI/gh.exe" pr create`
+
+### Git操作ルール
+- ブランチ作成後は必ずリモートにプッシュする
+- プルリクエスト作成は GitHub CLI を優先使用する
+- 認証エラー時は `.claude/settings.local.json` の設定を確認する

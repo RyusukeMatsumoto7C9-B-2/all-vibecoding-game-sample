@@ -13,10 +13,11 @@
 Assets/MyGame/
 ├── Scripts/           # コアゲームロジック
 ├── Scenes/           # ゲームシーン (Sample)
+├── Documentation/     # プロジェクトドキュメント
 ```
 
 # 開発ルール
-- Documents フォルダ以下のタスク用文書を参照し、作業を開始する
+- Assets/MyGame/Documentation フォルダ以下のタスク用文書を参照し、作業を開始する
 - 機能ごとに適切にフォルダを分け、テストを実装する場合はTestsフォルダを作成し、実装する
   - EditModeテストはTests/EditModeフォルダに構築する
   - PlayModeテストはTests/PlayModeフォルダに構築する
@@ -69,17 +70,17 @@ Assets/MyGame/
 
 ### ドキュメント構造
 ```
-Documentation/
+Assets/MyGame/Documentation/
 ├── Specifications/    # ゲーム仕様書、機能仕様書
-├── Tasks/            # タスク管理用ドキュメント
+├── Tasks/            # タスク管理用ドキュメント（進行中・完了含む）
 ├── Templates/        # ドキュメントテンプレート
 ```
 
 ### ドキュメント参照ルール
-- タスク実行前に必ず Documentation/Specifications/ 配下の関連ドキュメントを確認する
+- タスク実行前に必ず Assets/MyGame/Documentation/Specifications/ 配下の関連ドキュメントを確認する
 - 新機能開発時は該当する仕様書を参照し、仕様に従って実装する
 - 仕様に不明な点があれば作業を中断し、ユーザに確認を求める
-- タスク完了後は Documentation/Tasks/ にタスクの実行結果を記録する
+- タスク完了後は Assets/MyGame/Documentation/Tasks/ にタスクの実行結果を記録する
 
 ### ドキュメントファイル命名規則
 - 仕様書: `{機能名}_spec.md`

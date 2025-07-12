@@ -4,6 +4,7 @@ using UnityEngine;
 namespace MyGame.Player.Tests
 {
     [TestFixture]
+    [Description("PlayerMoveServiceクラスの移動ロジックとして、4方向移動と位置設定の正確性をテストする")]
     public class PlayerMoveServiceTests
     {
         private PlayerMoveService _service;
@@ -15,6 +16,7 @@ namespace MyGame.Player.Tests
         }
 
         [Test]
+        [Description("上方向への移動時に座標のY値が1増加することを検証")]
         public void Move_WithUpDirection_ShouldUpdatePositionUpward()
         {
             // Arrange
@@ -29,6 +31,7 @@ namespace MyGame.Player.Tests
         }
 
         [Test]
+        [Description("下方向への移動時に座標のY値が1減少することを検証")]
         public void Move_WithDownDirection_ShouldUpdatePositionDownward()
         {
             // Arrange
@@ -43,6 +46,7 @@ namespace MyGame.Player.Tests
         }
 
         [Test]
+        [Description("左方向への移動時に座標のX値が1減少することを検証")]
         public void Move_WithLeftDirection_ShouldUpdatePositionLeft()
         {
             // Arrange
@@ -57,6 +61,7 @@ namespace MyGame.Player.Tests
         }
 
         [Test]
+        [Description("右方向への移動時に座標のX値が1増加することを検証")]
         public void Move_WithRightDirection_ShouldUpdatePositionRight()
         {
             // Arrange
@@ -71,6 +76,7 @@ namespace MyGame.Player.Tests
         }
 
         [Test]
+        [Description("SetPositionメソッドで指定した座標にCurrentPositionが正確に設定されることを検証")]
         public void SetPosition_ShouldUpdateCurrentPosition()
         {
             // Arrange

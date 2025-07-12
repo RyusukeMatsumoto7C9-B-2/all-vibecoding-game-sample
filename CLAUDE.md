@@ -13,10 +13,15 @@
 Assets/MyGame/
 ├── Scripts/           # コアゲームロジック
 ├── Scenes/           # ゲームシーン (Sample)
+├── Documentation/     # プロジェクトドキュメント
 ```
 
 # 開発ルール
-- Documents フォルダ以下のタスク用文書を参照し、作業を開始する
+- Assets/MyGame/Documentation フォルダ以下のタスク用文書を参照し、作業を開始する
+- 機能ごとに適切にフォルダを分け、テストを実装する場合はTestsフォルダを作成し、実装する
+  - EditModeテストはTests/EditModeフォルダに構築する
+  - PlayModeテストはTests/PlayModeフォルダに構築する
+    - PlayModeテストはテスト仕様書をタスク報告書に記述し、ユーザが手動で構築するものとする
 - 作業を開始する際は適切なブランチを作成し、作業を行い作業完了後プルリクエストを作成する
 - 日本語で受け答えをする
 - 絵文字は使用禁止
@@ -26,8 +31,24 @@ Assets/MyGame/
 - コミットのコメントは日本語で行うこと
 
 ## コーディングルール
-- 重要なロジックはPureC#のクラスで作成する
+- 重要なロジックはPureC#のクラスで作成し、UnityTestRunnerでテストを行える実装とする
+  - ロジック内でUnityのコンポーネントを利用する場合はコンストラクタまたはVContainerにて参照を取得する
 - PureC#で構築されたクラスは必ずUnity TestRunner でテストが行える形にする
+- シングルトンクラスを作成しない
+  - VContainerを利用した置換可能な設計とする
+- UI部分の設計は R3 を用いた MV(R)P の設計とする
+  - UIは原則としPresenter,View以外はPureC#で構築し、UnityTestRunnerでテストが実施できるようにする
+  - Viewで参照を紐づけるコンポーネントはpublicフィールドではなくprivateフィールドに[SerializeField]属性をつけることで実現する
+- クラス内の宣言は以下の優先度順に上から記述する
+  - public定数 ( public定数は必ず public readonly で宣言 )
+  - private定数
+  - enum定義
+  - publicプロパティ
+  - privateプロパティ
+  - privateフィールド
+  - Unityイベント
+  - publicメソッド
+  - privateメソッド
 
 ### テストルール テストコードの作成は以下の方針 ( t-wada流 ) で実施する
 #### 基本方針
@@ -49,17 +70,17 @@ Assets/MyGame/
 
 ### ドキュメント構造
 ```
-Documentation/
+Assets/MyGame/Documentation/
 ├── Specifications/    # ゲーム仕様書、機能仕様書
-├── Tasks/            # タスク管理用ドキュメント
+├── Tasks/            # タスク管理用ドキュメント（進行中・完了含む）
 ├── Templates/        # ドキュメントテンプレート
 ```
 
 ### ドキュメント参照ルール
-- タスク実行前に必ず Documentation/Specifications/ 配下の関連ドキュメントを確認する
+- タスク実行前に必ず Assets/MyGame/Documentation/Specifications/ 配下の関連ドキュメントを確認する
 - 新機能開発時は該当する仕様書を参照し、仕様に従って実装する
 - 仕様に不明な点があれば作業を中断し、ユーザに確認を求める
-- タスク完了後は Documentation/Tasks/ にタスクの実行結果を記録する
+- タスク完了後は Assets/MyGame/Documentation/Tasks/ にタスクの実行結果を記録する
 
 ### ドキュメントファイル命名規則
 - 仕様書: `{機能名}_spec.md`

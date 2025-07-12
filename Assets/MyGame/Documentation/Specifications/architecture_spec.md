@@ -115,26 +115,39 @@ public class GameLifetimeScope : LifetimeScope
 ```
 Assets/MyGame/
 ├── Scripts/
-│   ├── Application/          # アプリケーション層
-│   │   ├── Services/         # ビジネスロジック（PureC#）
-│   │   └── UseCases/         # ユースケース（PureC#）
-│   ├── Domain/               # ドメイン層
-│   │   ├── Models/           # ドメインモデル（PureC#）
-│   │   ├── Services/         # ドメインサービス（PureC#）
-│   │   └── Repositories/     # リポジトリインターフェース（PureC#）
-│   ├── Infrastructure/       # インフラストラクチャ層
-│   │   ├── Repositories/     # リポジトリ実装
-│   │   └── Unity/            # Unity固有実装
-│   └── Presentation/         # プレゼンテーション層
-│       ├── Views/            # View（MonoBehaviour）
-│       ├── Presenters/       # Presenter（MonoBehaviour）
-│       └── UI/               # UI Components
-└── Tests/
-    ├── EditMode/             # EditModeテスト
-    │   ├── Application/
-    │   ├── Domain/
-    │   └── Infrastructure/
-    └── PlayMode/             # 手動テスト用（実装なし）
+│   ├── UI/                          # UI関連（MV(R)P設計）
+│   │   ├── Views/                   # View層
+│   │   ├── Presenters/              # Presenter層
+│   │   ├── Components/              # 再利用可能UIコンポーネント
+│   │   └── Tests/                   # UIテスト
+│   │       ├── EditMode/
+│   │       └── PlayMode/
+│   │
+│   ├── GameSystem/                  # ゲームロジック
+│   │   ├── Player/                  # プレイヤー機能
+│   │   │   └── Tests/
+│   │   │       ├── EditMode/
+│   │   │       └── PlayMode/
+│   │   ├── Enemy/                   # 敵機能
+│   │   │   └── Tests/
+│   │   │       ├── EditMode/
+│   │   │       └── PlayMode/
+│   │   ├── Game/                    # ゲーム全体管理
+│   │   │   └── Tests/
+│   │   │       ├── EditMode/
+│   │   │       └── PlayMode/
+│   │   ├── Data/                    # データ管理
+│   │   │   └── Tests/
+│   │   │       └── EditMode/
+│   │   └── Shared/                  # 共通ユーティリティ
+│   │       └── Tests/
+│   │           └── EditMode/
+│   │
+│   └── Infrastructure/              # 基盤設定
+│       ├── DI/                      # VContainer設定
+│       ├── Interfaces/              # 共通インターフェース
+│       └── Tests/
+│           └── EditMode/
 ```
 
 ### 実装手順

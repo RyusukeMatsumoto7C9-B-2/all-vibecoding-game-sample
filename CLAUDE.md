@@ -63,6 +63,12 @@ Assets/MyGame/
 - テストリストを常に更新する
 - 不安なところからテストを書く
 
+#### テスト記述ルール
+- 全てのテストメソッドには[Description("")]属性を付与し、日本語でテストの概要を記述する
+- Descriptionの記述例: [Description("上方向への移動時に座標のY値が1増加することを検証")]
+- テストクラス自体にも[Description("")]属性を付与し、そのクラスがテストする対象と目的を記述する
+- テストの意図と期待結果が日本語で明確に理解できるようにする
+
 ### リファクタリングルール
 - リファクタリングはMartin Fowlerの提唱する手法で実施する
 - リファクタリング後は必ずテストコードを検証する
@@ -87,3 +93,15 @@ Assets/MyGame/Documentation/
 - 仕様書: `{機能名}_spec.md`
 - タスク記録: `{YYYY-MM-DD}_{タスク名}.md`
 - テンプレート: `{種類}_template.md`
+
+## GitHub操作ルール
+
+### GitHub CLI使用規則
+- GitHub CLIのパスは `.claude/settings.local.json` の `github_cli.path` で設定されている
+- プッシュやプルリクエスト作成時は設定されたパスを使用する
+- GitHub CLI コマンド実行例: `"/mnt/c/Program Files/GitHub CLI/gh.exe" pr create`
+
+### Git操作ルール
+- ブランチ作成後は必ずリモートにプッシュする
+- プルリクエスト作成は GitHub CLI を優先使用する
+- 認証エラー時は `.claude/settings.local.json` の設定を確認する

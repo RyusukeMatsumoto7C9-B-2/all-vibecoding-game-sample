@@ -18,10 +18,11 @@ Assets/MyGame/
 
 # 開発ルール
 - Assets/MyGame/Documentation フォルダ以下のタスク用文書を参照し、作業を開始する
-- 機能ごとに適切にフォルダを分け、テストを実装する場合はTestsフォルダを作成し、実装する
-  - EditModeテストはTests/EditModeフォルダに構築する
-  - PlayModeテストはTests/PlayModeフォルダに構築する
+- 機能ごとに適切にフォルダを分け、各機能フォルダ内にTestsフォルダを作成しテストを実装する
+  - EditModeテストは各機能フォルダ/Tests/EditModeフォルダに構築する
+  - PlayModeテストは各機能フォルダ/Tests/PlayModeフォルダに構築する
     - PlayModeテストはテスト仕様書をタスク報告書に記述し、ユーザが手動で構築するものとする
+  - この構成により機能単位での.unitypackage化と再利用性を向上させる
 - 作業を開始する際は適切なブランチを作成し、作業を行い作業完了後プルリクエストを作成する
 - 日本語で受け答えをする
 - 絵文字は使用禁止

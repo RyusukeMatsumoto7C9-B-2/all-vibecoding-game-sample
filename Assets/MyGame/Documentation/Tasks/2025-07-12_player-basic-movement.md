@@ -60,18 +60,22 @@ Assets/MyGame/Scripts/Player/
 
 ### テスト環境
 - Unity 6000.0.51f1
-- Sample シーン使用
+- Sample シーン使用（設定済み）
+
+### シーン設定完了済み内容
+- プレイヤーオブジェクト "Player" 作成済み
+- SpriteRenderer に Unity built-in sprite "UISprite" を設定済み（正方形）
+- PlayerController と PlayerInputHandler コンポーネント設定済み
+- カメラを2D用（Orthographic、size: 8）に設定済み
+- プレイヤー初期位置: (0, 4, 0)
+- カメラ位置: (0, 4, -10) でプレイヤーを中心に表示
 
 ### テスト手順
 
-1. **シーン準備**
-   - Sampleシーンを開く
-   - 空のGameObjectを作成し"Player"と命名
-   - SpriteRendererコンポーネントを追加
-   - Spriteに Unity built-in sprite "Knob" を設定（正方形に近い形）
-   - PlayerControllerコンポーネントを追加
-   - PlayerInputHandlerコンポーネントを追加
-   - PlayerControllerのInputHandlerフィールドに PlayerInputHandler を設定
+1. **Unity Editorでのシーン確認**
+   - Sample シーンを開く
+   - プレイヤーオブジェクトが正方形のスプライトで表示されることを確認
+   - カメラがプレイヤーを中心に表示していることを確認
 
 2. **移動テスト**
    - Play Mode で実行

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Tilemaps;
 using MyGame.TilemapSystem.Core;
 using MyGame.TilemapSystem.Generation;
 using System.Collections.Generic;
@@ -8,9 +7,11 @@ namespace MyGame.TilemapSystem
 {
     public class TilemapSystemTester : MonoBehaviour
     {
-        [SerializeField] private Tilemap tilemap;
-        [SerializeField] private TileBase wallTile;
-        [SerializeField] private TileBase groundTile;
+        [Header("Tile Prefabs")]
+        [SerializeField] private GameObject wallTilePrefab;
+        [SerializeField] private GameObject groundTilePrefab;
+        
+        [Header("Test Settings")]
         [SerializeField] private int testLevel = 1;
         [SerializeField] private int testSeed = 12345;
 
@@ -29,13 +30,13 @@ namespace MyGame.TilemapSystem
             _seedManager = new SeedManager(testSeed);
             _generator = new TilemapGenerator(_seedManager);
 
-            var tileAssets = new Dictionary<TileType, TileBase>
+            var tilePrefabs = new Dictionary<TileType, GameObject>
             {
-                { TileType.Wall, wallTile },
-                { TileType.Ground, groundTile }
+                { TileType.Wall, wallTilePrefab },
+                { TileType.Ground, groundTilePrefab }
             };
 
-            _manager = new TilemapManager(tilemap, tileAssets);
+            _manager = new TilemapManager(transform, tilePrefabs);
             _manager.OnMapGenerated += OnMapGenerated;
         }
 

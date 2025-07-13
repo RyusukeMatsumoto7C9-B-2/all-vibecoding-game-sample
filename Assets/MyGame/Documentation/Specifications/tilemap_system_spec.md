@@ -27,8 +27,9 @@
 
 ### マップ設計
 - **マップサイズ**: 横20マス × 縦30マス
-- **タイル単位**: Unity Tilemap System準拠
-- **座標系**: Unity標準座標系（原点左下）
+- **タイル単位**: Unity 2DSprite Square Scale1:1のゲームオブジェクト
+  - **タイルの並べ方**: 2DSpriteを隙間なく並べる
+- **座標系**: Unity標準座標系（原点スプライト中心）
 
 ### レベル定義
 - **レベル単位**: 1スクロール = 1レベル
@@ -55,10 +56,10 @@
 TilemapSystem/
 ├── Core/
 │   ├── TilemapGenerator      # プロシージャル生成ロジック ✅実装済み
-│   ├── TilemapManager        # タイル管理・操作 ✅実装済み
+│   ├── TilemapManager        # 2DSprite Prefabタイル管理・操作 ✅実装済み
 │   └── TileDefinition        # タイル種別定義 ✅実装済み
 ├── Generation/
-│   ├── ProceduralGenerator   # 生成アルゴリズム ❌未実装
+│   ├── ProceduralGenerator   # セルラーオートマトン生成アルゴリズム ✅実装済み
 │   ├── TerrainPattern        # 地形パターン定義 ❌未実装
 │   └── SeedManager           # シード管理 ✅実装済み
 └── Management/
@@ -96,7 +97,7 @@ public struct MapData
 2. **基本地形生成**: ベースとなる地形パターン作成 ✅実装済み（基本版）
 3. **通路確保**: プレイヤー進行ルート保証 ✅実装済み（中央通路）
 4. **詳細配置**: お宝・エネミー配置位置決定 ❌未実装
-5. **タイル配置**: Unity Tilemapへの実際の配置 ✅実装済み
+5. **タイル配置**: 2DSprite Prefabの動的生成による実際の配置 ✅実装済み
 
 ### メモリ管理
 - **アクティブ範囲**: 現在地 ± 2レベル分のタイル保持 ✅実装済み
@@ -204,7 +205,7 @@ public class TilemapGeneratorTests
 - **動的サイズ**: 可変マップサイズの対応
 
 ## 依存関係
-- **Unity Tilemap System**: 基盤システム
+- **Unity 2D Sprite System**: 基盤システム
 - **Unity Mathematics**: 数学計算ライブラリ
 - **UniTask**: 非同期処理ライブラリ
 - **VContainer**: 依存性注入フレームワーク
@@ -216,57 +217,60 @@ public class TilemapGeneratorTests
 
 ```
 TilemapSystem (空のGameObject)
-├── Grid (GridコンポーネントをアタッチしたGameObject)
-│   └── Tilemap (Tilemap + TilemapRenderer コンポーネントをアタッチしたGameObject)
 └── TilemapSystemTester (TilemapSystemTesterコンポーネントをアタッチしたGameObject)
+    ├── (動的生成される2DSpriteタイル群)
+    └── (レベル毎に生成・削除される)
 ```
 
 ### セットアップ手順
 
-#### 1. Grid と Tilemap の作成
-1. Hierarchy で右クリック → 2D Object → Tilemap → Rectangular を選択
-2. 自動的に Grid と Tilemap GameObjectが作成される
-
-#### 2. TilemapSystemTester の設定
+#### 1. TilemapSystemTester の作成
 1. 空のGameObjectを作成し「TilemapSystemTester」と命名
 2. TilemapSystemTesterコンポーネントをアタッチ
-3. インスペクターで以下を設定：
-   - **Tilemap**: 作成した Tilemap を参照
-   - **Wall Tile**: 壁用のTileBaseアセット（例：Sprite-Default）
-   - **Ground Tile**: 地面用のTileBaseアセット（例：別のSprite）
-   - **Test Level**: テスト用レベル番号（初期値：1）
-   - **Test Seed**: テスト用シード値（初期値：12345）
 
-#### 3. TileBase アセットの準備
+#### 2. タイル用Prefabの準備
 
-**推奨方法: Tile Paletteから作成（Unity公式手順）**
-1. **Spriteの準備**
+**壁タイル用Prefab**
+1. 空のGameObjectを作成し「WallTilePrefab」と命名
+2. SpriteRendererコンポーネントをアタッチ
+3. Spriteフィールドに壁用のSpriteを設定
+4. Prefab化：ProjectウィンドウのPrefabsフォルダにドラッグ&ドロップ
+
+**地面タイル用Prefab**
+1. 空のGameObjectを作成し「GroundTilePrefab」と命名
+2. SpriteRendererコンポーネントをアタッチ
+3. Spriteフィールドに地面用のSpriteを設定
+4. Prefab化：ProjectウィンドウのPrefabsフォルダにドラッグ&ドロップ
+
+#### 3. TilemapSystemTester の設定
+インスペクターで以下を設定：
+- **Wall Tile Prefab**: 作成した壁用Prefabを参照
+- **Ground Tile Prefab**: 作成した地面用Prefabを参照
+- **Test Level**: テスト用レベル番号（初期値：1）
+- **Test Seed**: テスト用シード値（初期値：12345）
+
+#### 4. Sprite アセットの準備
+
+**推奨方法: Unity標準のSquare Spriteを使用**
+1. **壁用Sprite**
    - Project ウィンドウで右クリック → Create → 2D → Sprites → Square
-   - 作成されたSpriteを選択し、Inspector で以下を設定：
-     - Sprite Mode: Single
-     - Pixels Per Unit: 1（タイルサイズに応じて調整）
-   - Apply ボタンをクリックして設定を反映
+   - 「WallSprite」と命名
+   - Inspector で Sprite Mode: Single、Pixels Per Unit: 1 に設定
+   - 色を変更したい場合は SpriteRenderer の Color プロパティで調整
 
-2. **Tile Paletteウィンドウを開く**
-   - メニューから Window → 2D → Tile Palette を選択
+2. **地面用Sprite**
+   - 同様に「GroundSprite」を作成
+   - 壁用とは異なる色に設定
 
-3. **TileアセットをTile Paletteで作成**
-   - 準備したSpriteをTile Paletteウィンドウにドラッグ&ドロップ
-   - 保存場所の選択ダイアログが表示されるので、適切なフォルダーを選択
-   - Tileアセットが自動的に作成され、Project ウィンドウで確認可能
-
-4. **壁用と地面用のアセット作成**
-   - 上記手順を繰り返して、異なる色のSpriteから壁用・地面用のTileアセットを作成
-   - 作成されたTileアセットはTilemapSystemTesterの設定で使用
-
-**注意**: TilemapSystemで使用するのはTileBase（Tileアセット）です。Tile Paletteから作成することで、適切なTileアセットが生成されます。
+**注意**: 新システムでは2DSprite Prefabを使用します。Unity Tilemapシステムは使用しません。
 
 ### 動作確認方法
 
 #### 基本動作テスト
 1. Play モードに入る
-2. 自動的にタイルマップが生成される
+2. 自動的に2DSpriteタイルマップが生成される
 3. Sceneビューでタイルの配置を確認
+4. Hierarchyウィンドウで動的生成されたタイルGameObjectを確認
 
 #### コンテキストメニューでのテスト
 TilemapSystemTesterコンポーネントの右上メニュー（⋮）から：
@@ -276,28 +280,39 @@ TilemapSystemTesterコンポーネントの右上メニュー（⋮）から：
 ### 設定可能なパラメータ
 
 #### TilemapSystemTester
-- `tilemap`: タイル配置対象のTilemap
-- `wallTile`: 壁タイプのTileBase
-- `groundTile`: 地面タイプのTileBase
+- `wallTilePrefab`: 壁タイプのGameObject Prefab
+- `groundTilePrefab`: 地面タイプのGameObject Prefab
 - `testLevel`: 生成するレベル番号
 - `testSeed`: プロシージャル生成用シード値
 
 ### トラブルシューティング
 
 #### タイルが表示されない場合
-1. TilemapRendererコンポーネントが有効か確認
-2. 使用するTileBaseが正しく設定されているか確認
-3. Grid の Cell Size が適切か確認（デフォルト：1, 1, 1）
+1. SpriteRendererコンポーネントが有効か確認
+2. 使用するPrefabが正しく設定されているか確認
+3. Spriteアセットが正しくアサインされているか確認
+4. PrefabのSpriteRendererにSpriteが設定されているか確認
 
 #### マップ生成に失敗する場合
 1. Console ウィンドウでエラーメッセージを確認
 2. TilemapSystemTester の必須フィールドが設定されているか確認
-3. TileBase アセットが null でないか確認
+3. Prefab アセットが null でないか確認
+4. Prefabに必要なコンポーネント（SpriteRenderer）があるか確認
+
+#### パフォーマンスの問題
+- 大量のGameObjectが生成されるため、適切なメモリ最適化が重要
+- 不要なレベルのタイルは適時削除される設計
 
 ### カメラ設定の推奨事項
 - Projection: Orthographic
 - Size: 10-15（マップサイズに応じて調整）
 - Position: (10, 15, -10)（マップ中央が見える位置）
+
+### システムの特徴
+- **動的タイル生成**: 必要時にGameObjectとしてタイルを生成
+- **レベル別管理**: レベル毎にタイルを管理し、メモリ効率を向上
+- **プレハブベース**: 再利用可能なPrefabシステムを採用
+- **座標系**: Unity標準の2D座標系を使用（原点スプライト中心）
 
 ## 注意事項
 - Unity TestRunnerはEditModeのみで実施

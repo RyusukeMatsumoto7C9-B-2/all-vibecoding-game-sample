@@ -239,20 +239,27 @@ TilemapSystem (空のGameObject)
 
 #### 3. TileBase アセットの準備
 
-**方法1: Tileアセットを直接作成（推奨）**
-1. Project ウィンドウで右クリック → Create → 2D → Tile
-2. 作成されたTileアセットを選択し、Inspector で Sprite フィールドに使用したいSpriteを設定
-3. 壁用と地面用のTileアセットをそれぞれ作成
+**推奨方法: Tile Paletteから作成（Unity公式手順）**
+1. **Spriteの準備**
+   - Project ウィンドウで右クリック → Create → 2D → Sprites → Square
+   - 作成されたSpriteを選択し、Inspector で以下を設定：
+     - Sprite Mode: Single
+     - Pixels Per Unit: 1（タイルサイズに応じて調整）
+   - Apply ボタンをクリックして設定を反映
 
-**方法2: Spriteから自動生成**
-1. Project ウィンドウで右クリック → Create → 2D → Sprites → Square（Spriteアセット作成）
-2. 作成されたSpriteを選択し、Inspector で以下を設定：
-   - Sprite Mode: Single
-   - Pixels Per Unit: 1（タイルサイズに応じて調整）
-3. Sprite選択状態でInspector下部の「Create Tile」ボタンをクリック
-4. 壁用と地面用の異なる色のSpriteとTileをそれぞれ用意
+2. **Tile Paletteウィンドウを開く**
+   - メニューから Window → 2D → Tile Palette を選択
 
-**注意**: TilemapSystemで使用するのはTileBase（Tileアセット）であり、Spriteアセットではありません。
+3. **TileアセットをTile Paletteで作成**
+   - 準備したSpriteをTile Paletteウィンドウにドラッグ&ドロップ
+   - 保存場所の選択ダイアログが表示されるので、適切なフォルダーを選択
+   - Tileアセットが自動的に作成され、Project ウィンドウで確認可能
+
+4. **壁用と地面用のアセット作成**
+   - 上記手順を繰り返して、異なる色のSpriteから壁用・地面用のTileアセットを作成
+   - 作成されたTileアセットはTilemapSystemTesterの設定で使用
+
+**注意**: TilemapSystemで使用するのはTileBase（Tileアセット）です。Tile Paletteから作成することで、適切なTileアセットが生成されます。
 
 ### 動作確認方法
 
@@ -305,3 +312,4 @@ TilemapSystemTesterコンポーネントの右上メニュー（⋮）から：
 | 2025-07-13 | 基本機能実装完了、実装状況マーキング追加 | Claude |
 | 2025-07-13 | Unityシーンでの実装方法を追記 | Claude |
 | 2025-07-13 | TileBaseアセット作成方法を正しい手順に修正 | Claude |
+| 2025-07-13 | TileBaseアセット作成をTile Palette使用手順に変更 | Claude |

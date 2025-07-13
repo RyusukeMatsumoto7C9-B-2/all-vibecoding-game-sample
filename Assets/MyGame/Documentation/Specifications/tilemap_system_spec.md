@@ -27,9 +27,11 @@
 
 ### マップ設計
 - **マップサイズ**: 横20マス × 縦30マス
-- **タイル単位**: Unity 2DSprite Square Scale1:1のゲームオブジェクト
-  - **タイルの並べ方**: 2DSpriteを隙間なく並べる
-- **座標系**: Unity標準座標系（原点スプライト中心）
+- **タイル単位**: Unity 2DSprite GameObjectとして配置
+  - **スプライトサイズ**: 32x32ピクセル
+  - **スケール設定**: spritePixelsPerUnit: 100 (標準設定)
+  - **タイルの並べ方**: 2DSpriteを1Unityユニット間隔で並べる
+- **座標系**: Unity標準2D座標系（整数座標でタイル配置）
 
 ### レベル定義
 - **レベル単位**: 1スクロール = 1レベル
@@ -94,10 +96,16 @@ public struct MapData
 
 ### 生成処理フロー
 1. **シード設定**: レベル番号から生成シード決定 ✅実装済み
-2. **基本地形生成**: ベースとなる地形パターン作成 ✅実装済み（基本版）
-3. **通路確保**: プレイヤー進行ルート保証 ✅実装済み（中央通路）
-4. **詳細配置**: お宝・エネミー配置位置決定 ❌未実装
-5. **タイル配置**: 2DSprite Prefabの動的生成による実際の配置 ✅実装済み
+2. **プロシージャル地形生成**: ProceduralGeneratorによる高度な地形作成 ✅実装済み
+   - セルラーオートマトンによる基本地形生成
+   - メイン通路・横通路の確保
+   - 接続性チェックと孤立エリアの解消
+   - 地形の滑らか化処理
+3. **詳細配置**: お宝・エネミー配置位置決定 ❌未実装
+4. **タイル配置**: 2DSprite Prefabの動的生成による実際の配置 ✅実装済み
+   - GameObject.Instantiate()による動的生成
+   - Transform階層での親子関係管理
+   - レベル別のタイル管理
 
 ### メモリ管理
 - **アクティブ範囲**: 現在地 ± 2レベル分のタイル保持 ✅実装済み
@@ -141,41 +149,44 @@ event Action<int> OnMemoryOptimized;
 ### テスト方針
 - **TDD適用**: t-wada流によるテスト駆動開発
 - **ユニットテスト**: PureC#クラスのロジックテスト
-- **統合テスト**: Unity Tilemap連携テスト
+- **統合テスト**: 2DSprite Prefabシステム連携テスト
 
-### テスト項目
+### 実装済みテストクラス
 
-#### 1. プロシージャル生成テスト
+#### 1. ProceduralGeneratorTests
+- セルラーオートマトン地形生成の検証
+- 通路確保と接続性テスト
+- 同一シードでの一貫性確認
+- カスタムサイズ対応テスト
+
+#### 2. SpriteTilemapManagerTests  
+- GameObject動的生成の検証
+- タイル座標配置の正確性テスト
+- メモリ管理（生成・削除）テスト
+- レベル別管理機能テスト
+
+#### 3. TilemapGeneratorTests
+- 統合的なマップ生成テスト
+- ProceduralGenerator連携テスト
+- 地上エリア空間確保テスト
+
+#### 4. SeedManagerTests
+- シード管理機能テスト
+- レベル別ランダム生成テスト
+
+### テスト項目カバレッジ
+
+#### ✅ 実装済み
 - **生成一貫性**: 同一シードでの同一マップ生成確認
 - **サイズ検証**: 指定サイズでのマップ生成確認
 - **地上エリア**: 上5マスの空間確保確認
+- **GameObject管理**: 動的生成・削除・座標配置テスト
+- **メモリ最適化**: レベル別タイル管理テスト
 
-#### 2. メモリ管理テスト
-- **メモリ使用量**: 指定範囲内でのメモリ使用確認
-- **破棄処理**: 不要タイルの正常破棄確認
-- **リーク検出**: メモリリークの有無確認
-
-#### 3. 座標変換テスト
-- **スクロール対応**: スクロール前後の座標正確性確認
-- **境界値**: マップ端での座標処理確認
-
-#### 4. パフォーマンステスト
-- **生成速度**: マップ生成時間の測定
-- **フレームレート**: 生成処理中のFPS維持確認
-
-### テストクラス例
-```csharp
-[Description("タイルマップ生成システムのテスト")]
-public class TilemapGeneratorTests
-{
-    [Test]
-    [Description("指定サイズでマップが正しく生成されることを検証")]
-    public void GenerateMap_WithSpecifiedSize_CreatesCorrectSizeMap()
-    {
-        // テスト実装
-    }
-}
-```
+#### ❌ 未実装
+- **パフォーマンステスト**: 生成速度・FPS測定
+- **スクロール連携テスト**: 座標変換・境界値処理
+- **大規模テスト**: 長時間実行・メモリリーク検出
 
 ## パフォーマンス最適化
 
@@ -203,6 +214,34 @@ public class TilemapGeneratorTests
 - **タイル種別追加**: 新しいタイルタイプの対応
 - **生成アルゴリズム**: 複数生成方式の切り替え
 - **動的サイズ**: 可変マップサイズの対応
+
+## プロジェクト構造
+
+### アセット構成
+```
+Assets/MyGame/
+├── Sprites/                    # 2DSprite画像アセット
+│   ├── WallSprite.png         # 壁用32x32グレースプライト
+│   └── GroundSprite.png       # 地面用32x32茶色スプライト
+├── Prefabs/Tiles/             # GameObject Prefabアセット
+│   ├── WallTile.prefab        # 壁タイル用Prefab (SpriteRenderer付き)
+│   └── GroundTile.prefab      # 地面タイル用Prefab (SpriteRenderer付き)
+├── Scripts/TilemapSystem/     # システム実装
+│   ├── Core/                  # コア機能
+│   ├── Generation/            # 生成ロジック
+│   ├── Management/            # 管理機能（未実装）
+│   ├── Tests/EditMode/        # テストコード
+│   └── TilemapSystemTester.cs # シーンテスト用コンポーネント
+└── Scripts/Editor/            # エディタ拡張
+    ├── TilemapSetupEditor.cs  # セットアップ自動化ツール
+    └── MyGame.Editor.asmdef   # エディタ用Assembly Definition
+```
+
+### 主要クラス詳細
+- **TilemapGenerator**: ProceduralGeneratorを使用した高度な地形生成
+- **TilemapManager**: GameObject Instantiate/Destroyによるタイル管理
+- **ProceduralGenerator**: セルラーオートマトン + 通路確保 + 滑らか化
+- **TilemapSystemTester**: GameObject Prefab参照でのシーンテスト
 
 ## 依存関係
 - **Unity 2D Sprite System**: 基盤システム
@@ -251,16 +290,17 @@ TilemapSystem (空のGameObject)
 
 #### 4. Sprite アセットの準備
 
-**推奨方法: Unity標準のSquare Spriteを使用**
-1. **壁用Sprite**
-   - Project ウィンドウで右クリック → Create → 2D → Sprites → Square
-   - 「WallSprite」と命名
-   - Inspector で Sprite Mode: Single、Pixels Per Unit: 1 に設定
-   - 色を変更したい場合は SpriteRenderer の Color プロパティで調整
+**現在の実装状況**
+1. **作成済みSprite**
+   - Assets/MyGame/Sprites/WallSprite.png (32x32 グレー)
+   - Assets/MyGame/Sprites/GroundSprite.png (32x32 茶色)
+   - Pixels Per Unit: 100 (Unity標準設定)
+   - Filter Mode: Point (ピクセルアート用)
 
-2. **地面用Sprite**
-   - 同様に「GroundSprite」を作成
-   - 壁用とは異なる色に設定
+2. **作成済みPrefab**
+   - Assets/MyGame/Prefabs/Tiles/WallTile.prefab
+   - Assets/MyGame/Prefabs/Tiles/GroundTile.prefab
+   - 各Prefabは対応するSpriteを参照するSpriteRendererを持つ
 
 **注意**: 新システムでは2DSprite Prefabを使用します。Unity Tilemapシステムは使用しません。
 
@@ -328,3 +368,6 @@ TilemapSystemTesterコンポーネントの右上メニュー（⋮）から：
 | 2025-07-13 | Unityシーンでの実装方法を追記 | Claude |
 | 2025-07-13 | TileBaseアセット作成方法を正しい手順に修正 | Claude |
 | 2025-07-13 | TileBaseアセット作成をTile Palette使用手順に変更 | Claude |
+| 2025-07-13 | Unity TilemapSystemから2DSprite Prefabシステムに大幅変更 | Claude |
+| 2025-07-13 | ProceduralGenerator実装、セルラーオートマトン地形生成追加 | Claude |
+| 2025-07-13 | 現在の実装状況に合わせて仕様書全体を更新・検証 | Claude |

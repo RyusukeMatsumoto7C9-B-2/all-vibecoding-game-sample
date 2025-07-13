@@ -209,6 +209,79 @@ public class TilemapGeneratorTests
 - **UniTask**: 非同期処理ライブラリ
 - **VContainer**: 依存性注入フレームワーク
 
+## Unityシーンでの実装方法
+
+### 必要なGameObject構成
+シーンに以下のGameObjectを配置してタイルマップシステムを動作させます：
+
+```
+TilemapSystem (空のGameObject)
+├── Grid (GridコンポーネントをアタッチしたGameObject)
+│   └── Tilemap (Tilemap + TilemapRenderer コンポーネントをアタッチしたGameObject)
+└── TilemapSystemTester (TilemapSystemTesterコンポーネントをアタッチしたGameObject)
+```
+
+### セットアップ手順
+
+#### 1. Grid と Tilemap の作成
+1. Hierarchy で右クリック → 2D Object → Tilemap → Rectangular を選択
+2. 自動的に Grid と Tilemap GameObjectが作成される
+
+#### 2. TilemapSystemTester の設定
+1. 空のGameObjectを作成し「TilemapSystemTester」と命名
+2. TilemapSystemTesterコンポーネントをアタッチ
+3. インスペクターで以下を設定：
+   - **Tilemap**: 作成した Tilemap を参照
+   - **Wall Tile**: 壁用のTileBaseアセット（例：Sprite-Default）
+   - **Ground Tile**: 地面用のTileBaseアセット（例：別のSprite）
+   - **Test Level**: テスト用レベル番号（初期値：1）
+   - **Test Seed**: テスト用シード値（初期値：12345）
+
+#### 3. TileBase アセットの準備
+1. Project ウィンドウで右クリック → Create → 2D → Sprites → Square
+2. 作成されたSpriteを選択し、Inspector で以下を設定：
+   - Sprite Mode: Single
+   - Pixels Per Unit: 1（タイルサイズに応じて調整）
+3. 壁用と地面用の異なる色のSpriteを用意
+
+### 動作確認方法
+
+#### 基本動作テスト
+1. Play モードに入る
+2. 自動的にタイルマップが生成される
+3. Sceneビューでタイルの配置を確認
+
+#### コンテキストメニューでのテスト
+TilemapSystemTesterコンポーネントの右上メニュー（⋮）から：
+- **新しいマップを生成**: 次のレベルのマップを生成
+- **メモリ最適化テスト**: 不要なマップの削除をテスト
+
+### 設定可能なパラメータ
+
+#### TilemapSystemTester
+- `tilemap`: タイル配置対象のTilemap
+- `wallTile`: 壁タイプのTileBase
+- `groundTile`: 地面タイプのTileBase
+- `testLevel`: 生成するレベル番号
+- `testSeed`: プロシージャル生成用シード値
+
+### トラブルシューティング
+
+#### タイルが表示されない場合
+1. TilemapRendererコンポーネントが有効か確認
+2. 使用するTileBaseが正しく設定されているか確認
+3. Grid の Cell Size が適切か確認（デフォルト：1, 1, 1）
+
+#### マップ生成に失敗する場合
+1. Console ウィンドウでエラーメッセージを確認
+2. TilemapSystemTester の必須フィールドが設定されているか確認
+3. TileBase アセットが null でないか確認
+
+### カメラ設定の推奨事項
+- Projection: Orthographic
+- Size: 10-15（マップサイズに応じて調整）
+- Position: (10, 15, -10)（マップ中央が見える位置）
+
 ## 注意事項
 - Unity TestRunnerはEditModeのみで実施
 - PureC#での実装を優先し、テスト容易性を確保
@@ -219,3 +292,5 @@ public class TilemapGeneratorTests
 | 日付 | 変更内容 | 担当者 |
 |------|----------|--------|
 | 2025-07-13 | 初版作成（game_overview_spec.mdから分離） | Claude |
+| 2025-07-13 | 基本機能実装完了、実装状況マーキング追加 | Claude |
+| 2025-07-13 | Unityシーンでの実装方法を追記 | Claude |

@@ -238,11 +238,21 @@ TilemapSystem (空のGameObject)
    - **Test Seed**: テスト用シード値（初期値：12345）
 
 #### 3. TileBase アセットの準備
-1. Project ウィンドウで右クリック → Create → 2D → Sprites → Square
+
+**方法1: Tileアセットを直接作成（推奨）**
+1. Project ウィンドウで右クリック → Create → 2D → Tile
+2. 作成されたTileアセットを選択し、Inspector で Sprite フィールドに使用したいSpriteを設定
+3. 壁用と地面用のTileアセットをそれぞれ作成
+
+**方法2: Spriteから自動生成**
+1. Project ウィンドウで右クリック → Create → 2D → Sprites → Square（Spriteアセット作成）
 2. 作成されたSpriteを選択し、Inspector で以下を設定：
    - Sprite Mode: Single
    - Pixels Per Unit: 1（タイルサイズに応じて調整）
-3. 壁用と地面用の異なる色のSpriteを用意
+3. Sprite選択状態でInspector下部の「Create Tile」ボタンをクリック
+4. 壁用と地面用の異なる色のSpriteとTileをそれぞれ用意
+
+**注意**: TilemapSystemで使用するのはTileBase（Tileアセット）であり、Spriteアセットではありません。
 
 ### 動作確認方法
 
@@ -294,3 +304,4 @@ TilemapSystemTesterコンポーネントの右上メニュー（⋮）から：
 | 2025-07-13 | 初版作成（game_overview_spec.mdから分離） | Claude |
 | 2025-07-13 | 基本機能実装完了、実装状況マーキング追加 | Claude |
 | 2025-07-13 | Unityシーンでの実装方法を追記 | Claude |
+| 2025-07-13 | TileBaseアセット作成方法を正しい手順に修正 | Claude |

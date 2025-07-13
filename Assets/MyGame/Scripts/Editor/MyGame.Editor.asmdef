@@ -2,7 +2,8 @@
     "name": "MyGame.Editor",
     "rootNamespace": "MyGame.Editor",
     "references": [
-        "GUID:1407de70dc8d7b543a60245e4e5c6985"
+        "GUID:a8a5474918064e3448a428fcce67911b",
+        "GUID:7b4afe07b0400814ba87c4c19bf042ad"
     ],
     "includePlatforms": [
         "Editor"

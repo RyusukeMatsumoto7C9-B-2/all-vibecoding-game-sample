@@ -3,7 +3,8 @@
     "rootNamespace": "MyGame.TilemapSystem.Tests",
     "references": [
         "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner"
+        "UnityEditor.TestRunner",
+        "MyGame"
     ],
     "includePlatforms": [
         "Editor"

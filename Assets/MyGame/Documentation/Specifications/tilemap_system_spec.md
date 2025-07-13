@@ -54,16 +54,16 @@
 ```
 TilemapSystem/
 ├── Core/
-│   ├── TilemapGenerator      # プロシージャル生成ロジック
-│   ├── TilemapManager        # タイル管理・操作
-│   └── TileDefinition        # タイル種別定義
+│   ├── TilemapGenerator      # プロシージャル生成ロジック ✅実装済み
+│   ├── TilemapManager        # タイル管理・操作 ✅実装済み
+│   └── TileDefinition        # タイル種別定義 ✅実装済み
 ├── Generation/
-│   ├── ProceduralGenerator   # 生成アルゴリズム
-│   ├── TerrainPattern        # 地形パターン定義
-│   └── SeedManager           # シード管理
+│   ├── ProceduralGenerator   # 生成アルゴリズム ❌未実装
+│   ├── TerrainPattern        # 地形パターン定義 ❌未実装
+│   └── SeedManager           # シード管理 ✅実装済み
 └── Management/
-    ├── TileMemoryManager     # メモリ最適化
-    └── TilePooling           # オブジェクトプーリング
+    ├── TileMemoryManager     # メモリ最適化 ❌未実装
+    └── TilePooling           # オブジェクトプーリング ❌未実装
 ```
 
 ### データ構造
@@ -92,21 +92,21 @@ public struct MapData
 ## 実装仕様
 
 ### 生成処理フロー
-1. **シード設定**: レベル番号から生成シード決定
-2. **基本地形生成**: ベースとなる地形パターン作成
-3. **通路確保**: プレイヤー進行ルート保証
-4. **詳細配置**: お宝・エネミー配置位置決定
-5. **タイル配置**: Unity Tilemapへの実際の配置
+1. **シード設定**: レベル番号から生成シード決定 ✅実装済み
+2. **基本地形生成**: ベースとなる地形パターン作成 ✅実装済み（基本版）
+3. **通路確保**: プレイヤー進行ルート保証 ✅実装済み（中央通路）
+4. **詳細配置**: お宝・エネミー配置位置決定 ❌未実装
+5. **タイル配置**: Unity Tilemapへの実際の配置 ✅実装済み
 
 ### メモリ管理
-- **アクティブ範囲**: 現在地 ± 2レベル分のタイル保持
-- **非アクティブ化**: 範囲外タイルの破棄
-- **プリロード**: 次レベルの事前生成
+- **アクティブ範囲**: 現在地 ± 2レベル分のタイル保持 ✅実装済み
+- **非アクティブ化**: 範囲外タイルの破棄 ✅実装済み
+- **プリロード**: 次レベルの事前生成 ❌未実装
 
 ### スクロール連携
-- **トリガー検知**: スクロールシステムからの通知受信
-- **新レベル生成**: スクロール開始時の次レベル準備
-- **座標変換**: スクロール後の座標系調整
+- **トリガー検知**: スクロールシステムからの通知受信 ❌未実装
+- **新レベル生成**: スクロール開始時の次レベル準備 ❌未実装
+- **座標変換**: スクロール後の座標系調整 ❌未実装
 
 ## インターフェース設計
 
@@ -179,14 +179,14 @@ public class TilemapGeneratorTests
 ## パフォーマンス最適化
 
 ### メモリ最適化戦略
-- **オブジェクトプーリング**: 頻繁に生成・破棄されるタイルの再利用
-- **遅延生成**: 必要時のみのタイル生成
-- **バッチ処理**: 複数タイルの一括処理
+- **オブジェクトプーリング**: 頻繁に生成・破棄されるタイルの再利用 ❌未実装
+- **遅延生成**: 必要時のみのタイル生成 ✅実装済み（基本版）
+- **バッチ処理**: 複数タイルの一括処理 ✅実装済み
 
 ### 処理速度最適化
-- **非同期処理**: 重い生成処理の分散実行
-- **キャッシュ活用**: 生成済みパターンの再利用
-- **LOD適用**: 遠距離タイルの簡略化
+- **非同期処理**: 重い生成処理の分散実行 ❌未実装
+- **キャッシュ活用**: 生成済みパターンの再利用 ❌未実装
+- **LOD適用**: 遠距離タイルの簡略化 ❌未実装
 
 ## セキュリティ考慮事項
 - **シード検証**: 不正なシード値の排除
@@ -209,6 +209,96 @@ public class TilemapGeneratorTests
 - **UniTask**: 非同期処理ライブラリ
 - **VContainer**: 依存性注入フレームワーク
 
+## Unityシーンでの実装方法
+
+### 必要なGameObject構成
+シーンに以下のGameObjectを配置してタイルマップシステムを動作させます：
+
+```
+TilemapSystem (空のGameObject)
+├── Grid (GridコンポーネントをアタッチしたGameObject)
+│   └── Tilemap (Tilemap + TilemapRenderer コンポーネントをアタッチしたGameObject)
+└── TilemapSystemTester (TilemapSystemTesterコンポーネントをアタッチしたGameObject)
+```
+
+### セットアップ手順
+
+#### 1. Grid と Tilemap の作成
+1. Hierarchy で右クリック → 2D Object → Tilemap → Rectangular を選択
+2. 自動的に Grid と Tilemap GameObjectが作成される
+
+#### 2. TilemapSystemTester の設定
+1. 空のGameObjectを作成し「TilemapSystemTester」と命名
+2. TilemapSystemTesterコンポーネントをアタッチ
+3. インスペクターで以下を設定：
+   - **Tilemap**: 作成した Tilemap を参照
+   - **Wall Tile**: 壁用のTileBaseアセット（例：Sprite-Default）
+   - **Ground Tile**: 地面用のTileBaseアセット（例：別のSprite）
+   - **Test Level**: テスト用レベル番号（初期値：1）
+   - **Test Seed**: テスト用シード値（初期値：12345）
+
+#### 3. TileBase アセットの準備
+
+**推奨方法: Tile Paletteから作成（Unity公式手順）**
+1. **Spriteの準備**
+   - Project ウィンドウで右クリック → Create → 2D → Sprites → Square
+   - 作成されたSpriteを選択し、Inspector で以下を設定：
+     - Sprite Mode: Single
+     - Pixels Per Unit: 1（タイルサイズに応じて調整）
+   - Apply ボタンをクリックして設定を反映
+
+2. **Tile Paletteウィンドウを開く**
+   - メニューから Window → 2D → Tile Palette を選択
+
+3. **TileアセットをTile Paletteで作成**
+   - 準備したSpriteをTile Paletteウィンドウにドラッグ&ドロップ
+   - 保存場所の選択ダイアログが表示されるので、適切なフォルダーを選択
+   - Tileアセットが自動的に作成され、Project ウィンドウで確認可能
+
+4. **壁用と地面用のアセット作成**
+   - 上記手順を繰り返して、異なる色のSpriteから壁用・地面用のTileアセットを作成
+   - 作成されたTileアセットはTilemapSystemTesterの設定で使用
+
+**注意**: TilemapSystemで使用するのはTileBase（Tileアセット）です。Tile Paletteから作成することで、適切なTileアセットが生成されます。
+
+### 動作確認方法
+
+#### 基本動作テスト
+1. Play モードに入る
+2. 自動的にタイルマップが生成される
+3. Sceneビューでタイルの配置を確認
+
+#### コンテキストメニューでのテスト
+TilemapSystemTesterコンポーネントの右上メニュー（⋮）から：
+- **新しいマップを生成**: 次のレベルのマップを生成
+- **メモリ最適化テスト**: 不要なマップの削除をテスト
+
+### 設定可能なパラメータ
+
+#### TilemapSystemTester
+- `tilemap`: タイル配置対象のTilemap
+- `wallTile`: 壁タイプのTileBase
+- `groundTile`: 地面タイプのTileBase
+- `testLevel`: 生成するレベル番号
+- `testSeed`: プロシージャル生成用シード値
+
+### トラブルシューティング
+
+#### タイルが表示されない場合
+1. TilemapRendererコンポーネントが有効か確認
+2. 使用するTileBaseが正しく設定されているか確認
+3. Grid の Cell Size が適切か確認（デフォルト：1, 1, 1）
+
+#### マップ生成に失敗する場合
+1. Console ウィンドウでエラーメッセージを確認
+2. TilemapSystemTester の必須フィールドが設定されているか確認
+3. TileBase アセットが null でないか確認
+
+### カメラ設定の推奨事項
+- Projection: Orthographic
+- Size: 10-15（マップサイズに応じて調整）
+- Position: (10, 15, -10)（マップ中央が見える位置）
+
 ## 注意事項
 - Unity TestRunnerはEditModeのみで実施
 - PureC#での実装を優先し、テスト容易性を確保
@@ -219,3 +309,7 @@ public class TilemapGeneratorTests
 | 日付 | 変更内容 | 担当者 |
 |------|----------|--------|
 | 2025-07-13 | 初版作成（game_overview_spec.mdから分離） | Claude |
+| 2025-07-13 | 基本機能実装完了、実装状況マーキング追加 | Claude |
+| 2025-07-13 | Unityシーンでの実装方法を追記 | Claude |
+| 2025-07-13 | TileBaseアセット作成方法を正しい手順に修正 | Claude |
+| 2025-07-13 | TileBaseアセット作成をTile Palette使用手順に変更 | Claude |

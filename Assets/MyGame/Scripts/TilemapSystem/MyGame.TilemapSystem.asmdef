@@ -1,0 +1,16 @@
+{
+    "name": "MyGame.TilemapSystem",
+    "rootNamespace": "MyGame.TilemapSystem",
+    "references": [
+        "MyGame"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

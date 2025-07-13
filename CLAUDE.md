@@ -94,12 +94,32 @@ Assets/MyGame/Documentation/
 - タスク記録: `{YYYY-MM-DD}_{タスク名}.md`
 - テンプレート: `{種類}_template.md`
 
+## ツール・コマンド実行ルール
+
+### 設定ファイル確認の必須化
+- **重要**: 外部ツールのコマンドを実行する前に、必ず以下の設定ファイルを確認する
+  1. `.claude/settings.json` (共通設定)
+  2. `.claude/settings.local.json` (ローカル環境設定)
+- 設定ファイルにツールのパスが定義されている場合は、必ずそのパスを使用する
+- パスが設定されていない場合のみ、標準コマンドを使用する
+
+### 対象ツール例
+- **GitHub CLI**: `.claude/settings.local.json` の `github_cli.path`
+- **Unity Editor**: `.claude/settings.local.json` の `unity.editor_path`
+- **その他外部ツール**: 各種開発ツール、ビルドツール等
+
+### 実行手順
+1. 設定ファイル確認: `Read .claude/settings.local.json` を実行
+2. パス設定の存在確認: 該当ツールのパス設定を確認
+3. パス使用: 設定されたフルパスでコマンド実行
+4. フォールバック: パス未設定の場合のみ標準コマンドを使用
+
 ## GitHub操作ルール
 
 ### GitHub CLI使用規則
 - GitHub CLIのパスは `.claude/settings.local.json` の `github_cli.path` で設定されている
 - プッシュやプルリクエスト作成時は設定されたパスを使用する
-- GitHub CLI コマンド実行例: `"/mnt/c/Program Files/GitHub CLI/gh.exe" pr create`
+- GitHub CLI コマンド実行例: `"/c/Program Files/GitHub CLI/gh.exe" pr create`
 
 ### Git操作ルール
 - ブランチ作成後は必ずリモートにプッシュする

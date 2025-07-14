@@ -1,24 +1,25 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 namespace MyGame.TilemapSystem.Core
 {
     public class TilemapManager
     {
-        private readonly Tilemap _tilemap;
-        private readonly Dictionary<TileType, TileBase> _tileAssets;
+        private readonly Transform _parentTransform;
+        private readonly Dictionary<TileType, GameObject> _tilePrefabs;
         private readonly Dictionary<int, MapData> _loadedMaps;
+        private readonly Dictionary<int, List<GameObject>> _instantiatedTiles;
 
         public event Action<MapData> OnMapGenerated;
         public event Action<int> OnMemoryOptimized;
 
-        public TilemapManager(Tilemap tilemap, Dictionary<TileType, TileBase> tileAssets)
+        public TilemapManager(Transform parentTransform, Dictionary<TileType, GameObject> tilePrefabs)
         {
-            _tilemap = tilemap ?? throw new ArgumentNullException(nameof(tilemap));
-            _tileAssets = tileAssets ?? throw new ArgumentNullException(nameof(tileAssets));
+            _parentTransform = parentTransform ?? throw new ArgumentNullException(nameof(parentTransform));
+            _tilePrefabs = tilePrefabs ?? throw new ArgumentNullException(nameof(tilePrefabs));
             _loadedMaps = new Dictionary<int, MapData>();
+            _instantiatedTiles = new Dictionary<int, List<GameObject>>();
         }
 
         public void PlaceTiles(MapData mapData)
@@ -29,8 +30,13 @@ namespace MyGame.TilemapSystem.Core
                 return;
             }
 
-            var positions = new List<Vector3Int>();
-            var tilesToPlace = new List<TileBase>();
+            // 既存のタイルを削除
+            if (_instantiatedTiles.ContainsKey(mapData.Level))
+            {
+                ClearTiles(mapData.Level);
+            }
+
+            var tileInstances = new List<GameObject>();
 
             for (int x = 0; x < mapData.Width; x++)
             {
@@ -38,48 +44,43 @@ namespace MyGame.TilemapSystem.Core
                 {
                     var tileType = mapData.Tiles[x, y];
                     
-                    if (tileType != TileType.Empty && _tileAssets.ContainsKey(tileType))
+                    if (tileType != TileType.Empty && _tilePrefabs.ContainsKey(tileType))
                     {
-                        var position = new Vector3Int(x, y, 0);
-                        positions.Add(position);
-                        tilesToPlace.Add(_tileAssets[tileType]);
+                        // 2DSprite座標系: スプライト中心が原点、隙間なく並べる
+                        var position = new Vector3(x, y, 0);
+                        var tileInstance = UnityEngine.Object.Instantiate(_tilePrefabs[tileType], position, Quaternion.identity, _parentTransform);
+                        
+                        // タイルにレベル情報を設定（デバッグ用）
+                        tileInstance.name = $"{tileType}_Level{mapData.Level}_{x}_{y}";
+                        
+                        tileInstances.Add(tileInstance);
                     }
                 }
             }
 
-            if (positions.Count > 0)
-            {
-                _tilemap.SetTiles(positions.ToArray(), tilesToPlace.ToArray());
-            }
-
+            _instantiatedTiles[mapData.Level] = tileInstances;
             _loadedMaps[mapData.Level] = mapData;
             OnMapGenerated?.Invoke(mapData);
         }
 
         public void ClearTiles(int level)
         {
-            if (!_loadedMaps.ContainsKey(level))
+            if (!_instantiatedTiles.ContainsKey(level))
             {
                 return;
             }
 
-            var mapData = _loadedMaps[level];
-            var positions = new List<Vector3Int>();
-
-            for (int x = 0; x < mapData.Width; x++)
+            var tileInstances = _instantiatedTiles[level];
+            
+            foreach (var tileInstance in tileInstances)
             {
-                for (int y = 0; y < mapData.Height; y++)
+                if (tileInstance != null)
                 {
-                    var position = new Vector3Int(x, y, 0);
-                    positions.Add(position);
+                    UnityEngine.Object.DestroyImmediate(tileInstance);
                 }
             }
 
-            if (positions.Count > 0)
-            {
-                _tilemap.SetTiles(positions.ToArray(), new TileBase[positions.Count]);
-            }
-
+            _instantiatedTiles.Remove(level);
             _loadedMaps.Remove(level);
         }
 

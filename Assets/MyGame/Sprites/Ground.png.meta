@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 53621c066109dcb45ac24a23ec12e6c5
+guid: bfb4c00051ac54b4f8f11fa458476d14
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 3452003437791708593
-    second: Rock_0
+      213: 6682738439518977790
+    second: Ground_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -46,12 +46,12 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 1
+  spritePixelsToUnits: 64
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -100,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Rock_0
+      name: Ground_0
       rect:
         serializedVersion: 2
         x: 0
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 1b5800156daf7ef20800000000000000
-      internalID: 3452003437791708593
+      spriteID: efe706e343bddbc50800000000000000
+      internalID: 6682738439518977790
       vertices: []
       indices: 
       edges: []
@@ -125,7 +125,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      Rock_0: 3452003437791708593
+      Ground_0: 6682738439518977790
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

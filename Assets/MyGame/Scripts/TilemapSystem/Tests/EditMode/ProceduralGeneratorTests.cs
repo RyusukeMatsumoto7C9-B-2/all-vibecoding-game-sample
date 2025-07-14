@@ -72,17 +72,16 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         }
 
         [Test]
-        [Description("ランダムにWallが配置され適切な割合で生成されることを検証")]
-        public void GenerateTerrain_Always_CreatesReasonableWallDistribution()
+        [Description("Wallの数が3~5個の範囲内で配置されることを検証")]
+        public void GenerateTerrain_Always_Creates3To5Walls()
         {
             var random = new Random(42);
             
             var tiles = _generator.GenerateTerrain(random);
             
             int wallCount = 0;
-            int totalTiles = TEST_WIDTH * TEST_HEIGHT;
             
-            // WallとGroundの数をカウント
+            // Wallの数をカウント
             for (int x = 0; x < TEST_WIDTH; x++)
             {
                 for (int y = 0; y < TEST_HEIGHT; y++)
@@ -94,11 +93,9 @@ namespace MyGame.TilemapSystem.Tests.EditMode
                 }
             }
             
-            double wallRatio = (double)wallCount / totalTiles;
-            
-            // Wallの割合が10%～50%の範囲内であることを確認
-            Assert.IsTrue(wallRatio >= 0.1 && wallRatio <= 0.5, 
-                $"Wallの割合が適切でない: {wallRatio:P2} (期待範囲: 10%-50%)");
+            // Wallの数が3~5個の範囲内であることを確認
+            Assert.IsTrue(wallCount >= 3 && wallCount <= 5, 
+                $"Wallの数が仕様範囲外: {wallCount}個 (期待: 3~5個)");
         }
 
         [Test]
@@ -129,28 +126,30 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         }
 
         [Test]
-        [Description("異なるシードで異なる結果が生成されることを検証")]
-        public void GenerateTerrain_DifferentSeeds_ProduceDifferentResults()
+        [Description("複数回の生成でWall数が一定範囲内であることを検証")]
+        public void GenerateTerrain_MultipleGenerations_ConsistentWallCount()
         {
-            var tiles1 = _generator.GenerateTerrain(new Random(12345));
-            var tiles2 = _generator.GenerateTerrain(new Random(67890));
+            const int iterations = 10;
             
-            bool foundDifference = false;
-            
-            // 異なるシードで生成されたマップが異なることを確認
-            for (int x = 0; x < TEST_WIDTH && !foundDifference; x++)
+            for (int i = 0; i < iterations; i++)
             {
-                for (int y = 0; y < TEST_HEIGHT; y++)
+                var tiles = _generator.GenerateTerrain(new Random(i));
+                
+                int wallCount = 0;
+                for (int x = 0; x < TEST_WIDTH; x++)
                 {
-                    if (tiles1[x, y] != tiles2[x, y])
+                    for (int y = 0; y < TEST_HEIGHT; y++)
                     {
-                        foundDifference = true;
-                        break;
+                        if (tiles[x, y] == TileType.Wall)
+                        {
+                            wallCount++;
+                        }
                     }
                 }
+                
+                Assert.IsTrue(wallCount >= 3 && wallCount <= 5, 
+                    $"反復{i + 1}: Wall数が範囲外 {wallCount}個 (期待: 3~5個)");
             }
-            
-            Assert.IsTrue(foundDifference, "異なるシードで生成したマップに差異がない");
         }
 
     }

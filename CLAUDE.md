@@ -114,14 +114,7 @@ Assets/MyGame/Documentation/
 3. パス使用: 設定されたフルパスでコマンド実行
 4. フォールバック: パス未設定の場合のみ標準コマンドを使用
 
-## GitHub操作ルール
+## Git操作ルール
 
-### GitHub CLI使用規則
-- GitHub CLIのパスは `.claude/settings.local.json` の `github_cli.path` で設定されている
-- プッシュやプルリクエスト作成時は設定されたパスを使用する
-- GitHub CLI コマンド実行例: `"/c/Program Files/GitHub CLI/gh.exe" pr create`
-
-### Git操作ルール
-- ブランチ作成後は必ずリモートにプッシュする
-- プルリクエスト作成は GitHub CLI を優先使用する
-- 認証エラー時は `.claude/settings.local.json` の設定を確認する
+### Git操作の参照先
+- Git操作に関する全ての詳細ルールは `Assets/MyGame/Documentation/Rules/GitRule.md` を参照すること

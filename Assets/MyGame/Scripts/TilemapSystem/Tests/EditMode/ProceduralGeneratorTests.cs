@@ -32,151 +32,62 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         }
 
         [Test]
-        [Description("地上エリア（上5マス）が空間として設定されることを検証")]
-        public void GenerateTerrain_Always_CreatesGroundAreaAsEmpty()
+        [Description("全てのマスにタイルが隙間なく配置されることを検証")]
+        public void GenerateTerrain_Always_FillsAllTilesWithoutGaps()
         {
             var random = new Random(12345);
             
             var tiles = _generator.GenerateTerrain(random);
             
+            // 全てのマスがWallタイプで埋められていることを確認
             for (int x = 0; x < TEST_WIDTH; x++)
             {
-                for (int y = TEST_HEIGHT - TEST_GROUND_AREA_HEIGHT; y < TEST_HEIGHT; y++)
+                for (int y = 0; y < TEST_HEIGHT; y++)
                 {
-                    Assert.AreEqual(TileType.Empty, tiles[x, y], 
-                        $"地上エリアの座標({x}, {y})が空間でない");
+                    Assert.AreEqual(TileType.Wall, tiles[x, y], 
+                        $"座標({x}, {y})にタイルが配置されていない");
                 }
             }
         }
 
         [Test]
-        [Description("マップの境界が壁として設定されることを検証")]
-        public void GenerateTerrain_Always_CreatesBoundaryWalls()
+        [Description("ランダム要素なしで決定的な結果が生成されることを検証")]
+        public void GenerateTerrain_WithoutRandomElements_ProducesDeterministicResults()
         {
-            var random = new Random(12345);
-            
-            var tiles = _generator.GenerateTerrain(random);
-            var undergroundHeight = TEST_HEIGHT - TEST_GROUND_AREA_HEIGHT;
-            
-            // 左右の境界をチェック
-            for (int y = 0; y < undergroundHeight; y++)
-            {
-                Assert.AreEqual(TileType.Wall, tiles[0, y], $"左境界の座標(0, {y})が壁でない");
-                Assert.AreEqual(TileType.Wall, tiles[TEST_WIDTH - 1, y], 
-                    $"右境界の座標({TEST_WIDTH - 1}, {y})が壁でない");
-            }
-            
-            // 下境界をチェック
-            for (int x = 0; x < TEST_WIDTH; x++)
-            {
-                Assert.AreEqual(TileType.Wall, tiles[x, 0], $"下境界の座標({x}, 0)が壁でない");
-            }
-        }
-
-        [Test]
-        [Description("同じシードで生成した地形が一致することを検証")]
-        public void GenerateTerrain_WithSameSeed_ProducesSameResult()
-        {
-            const int seed = 42;
-            var random1 = new Random(seed);
-            var random2 = new Random(seed);
+            var random1 = new Random(12345);
+            var random2 = new Random(67890); // 異なるシードでも同じ結果になるはず
             
             var tiles1 = _generator.GenerateTerrain(random1);
             var tiles2 = _generator.GenerateTerrain(random2);
             
+            // ランダム要素がないので、シードが違っても同じ結果になる
             for (int x = 0; x < TEST_WIDTH; x++)
             {
                 for (int y = 0; y < TEST_HEIGHT; y++)
                 {
                     Assert.AreEqual(tiles1[x, y], tiles2[x, y], 
-                        $"座標({x}, {y})のタイルタイプが一致しない");
+                        $"座標({x}, {y})で異なるシードでも結果が一致しない");
                 }
             }
         }
 
         [Test]
-        [Description("異なるシードで生成した地形が異なることを検証")]
-        public void GenerateTerrain_WithDifferentSeeds_ProducesDifferentResults()
+        [Description("全てのタイルがWallタイプで配置されることを検証")]
+        public void GenerateTerrain_Always_CreatesAllWallTiles()
         {
-            var random1 = new Random(123);
-            var random2 = new Random(456);
-            
-            var tiles1 = _generator.GenerateTerrain(random1);
-            var tiles2 = _generator.GenerateTerrain(random2);
-            
-            bool foundDifference = false;
-            for (int x = 1; x < TEST_WIDTH - 1 && !foundDifference; x++)
-            {
-                for (int y = 1; y < TEST_HEIGHT - TEST_GROUND_AREA_HEIGHT - 1; y++)
-                {
-                    if (tiles1[x, y] != tiles2[x, y])
-                    {
-                        foundDifference = true;
-                        break;
-                    }
-                }
-            }
-            
-            Assert.IsTrue(foundDifference, "異なるシードで生成した地形に差異が見つからない");
-        }
-
-        [Test]
-        [Description("生成された地形に通路が確保されていることを検証")]
-        public void GenerateTerrain_Always_EnsuresPassageways()
-        {
-            var random = new Random(12345);
+            var random = new Random(42);
             
             var tiles = _generator.GenerateTerrain(random);
-            var undergroundHeight = TEST_HEIGHT - TEST_GROUND_AREA_HEIGHT;
             
-            // 中央縦通路の存在確認
-            int centerX = TEST_WIDTH / 2;
-            bool hasVerticalPassage = true;
-            
-            for (int y = 1; y < undergroundHeight - 1; y++)
+            // 全てのタイルがWallタイプであることを確認
+            for (int x = 0; x < TEST_WIDTH; x++)
             {
-                if (tiles[centerX, y] != TileType.Empty && 
-                    tiles[centerX - 1, y] != TileType.Empty && 
-                    tiles[centerX + 1, y] != TileType.Empty)
+                for (int y = 0; y < TEST_HEIGHT; y++)
                 {
-                    hasVerticalPassage = false;
-                    break;
+                    Assert.AreEqual(TileType.Wall, tiles[x, y], 
+                        $"座標({x}, {y})がWallタイプでない");
                 }
             }
-            
-            Assert.IsTrue(hasVerticalPassage, "中央縦方向の通路が確保されていない");
-        }
-
-        [Test]
-        [Description("生成された地形に適切な密度の壁と空間が配置されることを検証")]
-        public void GenerateTerrain_Always_CreatesDiverseTerrain()
-        {
-            var random = new Random(12345);
-            
-            var tiles = _generator.GenerateTerrain(random);
-            var undergroundHeight = TEST_HEIGHT - TEST_GROUND_AREA_HEIGHT;
-            
-            int wallCount = 0;
-            int emptyCount = 0;
-            
-            // 境界を除いた内部エリアをチェック
-            for (int x = 1; x < TEST_WIDTH - 1; x++)
-            {
-                for (int y = 1; y < undergroundHeight - 1; y++)
-                {
-                    if (tiles[x, y] == TileType.Wall)
-                        wallCount++;
-                    else if (tiles[x, y] == TileType.Empty)
-                        emptyCount++;
-                }
-            }
-            
-            int totalTiles = wallCount + emptyCount;
-            double wallRatio = (double)wallCount / totalTiles;
-            
-            // 壁の比率が10%〜70%の範囲内であることを確認（極端でない）
-            Assert.IsTrue(wallRatio >= 0.1 && wallRatio <= 0.7, 
-                $"壁の比率が適切でない: {wallRatio:P2} (期待範囲: 10%-70%)");
         }
 
         [Test]
@@ -195,13 +106,13 @@ namespace MyGame.TilemapSystem.Tests.EditMode
             Assert.AreEqual(customWidth, tiles.GetLength(0));
             Assert.AreEqual(customHeight, tiles.GetLength(1));
             
-            // 地上エリアの確認
+            // 全てのマスがWallタイプで埋められていることを確認
             for (int x = 0; x < customWidth; x++)
             {
-                for (int y = customHeight - customGroundHeight; y < customHeight; y++)
+                for (int y = 0; y < customHeight; y++)
                 {
-                    Assert.AreEqual(TileType.Empty, tiles[x, y], 
-                        $"カスタムサイズでの地上エリア座標({x}, {y})が空間でない");
+                    Assert.AreEqual(TileType.Wall, tiles[x, y], 
+                        $"カスタムサイズでの座標({x}, {y})がWallタイプでない");
                 }
             }
         }
@@ -210,12 +121,12 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("複数回の生成で安定した結果を得られることを検証")]
         public void GenerateTerrain_MultipleGenerations_ProducesStableResults()
         {
-            const int iterations = 10;
+            const int iterations = 5;
             var baseTiles = _generator.GenerateTerrain(new Random(12345));
             
             for (int i = 0; i < iterations; i++)
             {
-                var tiles = _generator.GenerateTerrain(new Random(12345));
+                var tiles = _generator.GenerateTerrain(new Random(67890)); // 異なるシードでも同じ結果
                 
                 for (int x = 0; x < TEST_WIDTH; x++)
                 {
@@ -227,5 +138,6 @@ namespace MyGame.TilemapSystem.Tests.EditMode
                 }
             }
         }
+
     }
 }

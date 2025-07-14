@@ -179,25 +179,25 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("メモリ最適化で範囲外のレベルが削除されることを検証")]
         public void OptimizeMemory_WithMultipleLevels_RemovesOutOfRangeLevels()
         {
-            // 複数レベルのマップを配置
+            // 複数レベルのマップを配置（各レベルで1個のWallタイル）
             for (int level = 1; level <= 5; level++)
             {
                 var tiles = new TileType[2, 2];
-                tiles[0, 0] = TileType.Wall;
+                tiles[0, 0] = TileType.Wall;  // 1個だけWall、残り3個はEmpty（デフォルト）
                 var mapData = new MapData(2, 2, tiles, 12345, level);
                 _manager.PlaceTiles(mapData);
             }
 
-            // 初期状態で5レベル分のタイルが配置されている
-            Assert.AreEqual(10, _parentTransform.childCount, "複数レベル配置後のタイル数が正しくない");
+            // 初期状態で5レベル分のタイルが配置されている（各レベル1個ずつ）
+            Assert.AreEqual(5, _parentTransform.childCount, "複数レベル配置後のタイル数が正しくない");
 
             // レベル3で最適化実行（±2の範囲なので1,2,3,4,5全て残る）
             _manager.OptimizeMemory(3);
-            Assert.AreEqual(10, _parentTransform.childCount, "最適化後のタイル数が正しくない（全て範囲内）");
+            Assert.AreEqual(5, _parentTransform.childCount, "最適化後のタイル数が正しくない（全て範囲内）");
 
             // レベル1で最適化実行（±2の範囲なので1,2,3のみ残る）
             _manager.OptimizeMemory(1);
-            Assert.AreEqual(6, _parentTransform.childCount, "最適化後のタイル数が正しくない（レベル4,5が削除されるはず）");
+            Assert.AreEqual(3, _parentTransform.childCount, "最適化後のタイル数が正しくない（レベル4,5が削除されるはず）");
         }
 
         [Test]

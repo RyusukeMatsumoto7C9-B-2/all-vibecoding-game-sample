@@ -28,5 +28,10 @@ namespace MyGame.TilemapSystem.Core
             
             return new MapData(MAP_WIDTH, MAP_HEIGHT, tiles, seed, level);
         }
+
+        public int GetSeedForLevel(int level)
+        {
+            return _seedManager.GetSeedForLevel(level);
+        }
     }
 }

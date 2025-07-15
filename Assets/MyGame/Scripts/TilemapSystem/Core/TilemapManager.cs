@@ -114,5 +114,10 @@ namespace MyGame.TilemapSystem.Core
         {
             return _loadedMaps.ContainsKey(level) ? _loadedMaps[level] : default;
         }
+
+        public List<GameObject> GetTilesForLevel(int level)
+        {
+            return _instantiatedTiles.ContainsKey(level) ? _instantiatedTiles[level] : null;
+        }
     }
 }

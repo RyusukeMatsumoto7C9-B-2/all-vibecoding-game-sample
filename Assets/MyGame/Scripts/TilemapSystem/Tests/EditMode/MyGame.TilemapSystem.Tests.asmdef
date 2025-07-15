@@ -5,7 +5,7 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "MyGame",
-        "MyGame.TilemapSystem"
+        "UniTask"
     ],
     "includePlatforms": [
         "Editor"

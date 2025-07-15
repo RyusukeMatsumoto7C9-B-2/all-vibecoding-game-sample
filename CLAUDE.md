@@ -23,6 +23,7 @@ Assets/MyGame/
   - PlayModeテストは各機能フォルダ/Tests/PlayModeフォルダに構築する
     - PlayModeテストはテスト仕様書をタスク報告書に記述し、ユーザが手動で構築するものとする
   - この構成により機能単位での.unitypackage化と再利用性を向上させる
+  - .asmdefファイルは各機能ごとではなく、各機能のEditModeまたはPlayModeのフォルダに配置しアセンブリの過度な分割を避ける
 - 作業を開始する際は適切なブランチを作成し、作業を行い作業完了後プルリクエストを作成する
 - 日本語で受け答えをする
 - 絵文字は使用禁止
@@ -115,6 +116,4 @@ Assets/MyGame/Documentation/
 4. フォールバック: パス未設定の場合のみ標準コマンドを使用
 
 ## Git操作ルール
-
-### Git操作の参照先
-- Git操作に関する全ての詳細ルールは `Assets/MyGame/Documentation/Rules/GitRule.md` を参照すること
+- Git操作をする際は必ず`Assets/MyGame/Documentation/Rules/GitRule.md`を参照してから操作をすること

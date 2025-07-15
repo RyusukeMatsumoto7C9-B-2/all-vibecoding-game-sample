@@ -105,14 +105,13 @@ namespace MyGame.TilemapSystem.Core
             var nextMapData = _generator.GenerateMap(nextLevel, _generator.GetSeedForLevel(nextLevel));
             
             // 現在のマップの上に配置（Y座標をオフセット）
-            var offsetMapData = new MapData
-            {
-                Width = nextMapData.Width,
-                Height = nextMapData.Height,
-                Tiles = nextMapData.Tiles,
-                Seed = nextMapData.Seed,
-                Level = nextMapData.Level
-            };
+            var offsetMapData = new MapData(
+                nextMapData.Width,
+                nextMapData.Height,
+                nextMapData.Tiles,
+                nextMapData.Seed,
+                nextMapData.Level
+            );
             
             _manager.PlaceTiles(offsetMapData);
             

@@ -15,6 +15,8 @@ namespace MyGame.TilemapSystem
         [Header("Test Settings")]
         [SerializeField] private int testLevel = 1;
         [SerializeField] private int testSeed = 12345;
+        [SerializeField] private bool autoScrollEnabled = true;
+        [SerializeField] private float autoScrollInterval = 3.0f;
 
         private TilemapGenerator _generator;
         private TilemapManager _manager;
@@ -26,8 +28,11 @@ namespace MyGame.TilemapSystem
             InitializeSystem();
             GenerateTestMap();
             
-            // 3秒後にスクロール開始
-            StartScrollAfterDelay().Forget();
+            // 自動スクロールを開始
+            if (autoScrollEnabled)
+            {
+                StartAutoScroll().Forget();
+            }
         }
 
         private void InitializeSystem()
@@ -91,14 +96,17 @@ namespace MyGame.TilemapSystem
             }
         }
 
-        private async UniTask StartScrollAfterDelay()
+        private async UniTask StartAutoScroll()
         {
-            await UniTask.Delay(3000); // 3秒待機
+            await UniTask.Delay((int)(autoScrollInterval * 1000)); // 最初の待機
             
-            if (_scrollController != null)
+            while (autoScrollEnabled && _scrollController != null)
             {
-                Debug.Log("3秒経過、スクロールを開始します");
+                Debug.Log($"自動スクロール開始: レベル {_scrollController.CurrentLevel}");
                 await _scrollController.StartScrollAsync();
+                
+                // 次のスクロールまで待機
+                await UniTask.Delay((int)(autoScrollInterval * 1000));
             }
         }
         
@@ -123,6 +131,24 @@ namespace MyGame.TilemapSystem
             if (_scrollController != null)
             {
                 _scrollController.StartScrollAsync().Forget();
+            }
+        }
+        
+        [ContextMenu("自動スクロール停止")]
+        private void StopAutoScroll()
+        {
+            autoScrollEnabled = false;
+            Debug.Log("自動スクロールを停止しました");
+        }
+        
+        [ContextMenu("自動スクロール開始")]
+        private void StartAutoScrollManual()
+        {
+            if (!autoScrollEnabled)
+            {
+                autoScrollEnabled = true;
+                StartAutoScroll().Forget();
+                Debug.Log("自動スクロールを開始しました");
             }
         }
 

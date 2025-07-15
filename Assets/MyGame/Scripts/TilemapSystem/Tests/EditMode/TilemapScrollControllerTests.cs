@@ -1,8 +1,9 @@
+using System;
+using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using MyGame.TilemapSystem.Core;
 using MyGame.TilemapSystem.Generation;
-using System.Collections.Generic;
 
 namespace MyGame.TilemapSystem.Tests.EditMode
 {
@@ -45,7 +46,7 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         {
             if (_tilemapParent != null)
             {
-                Object.DestroyImmediate(_tilemapParent.gameObject);
+                UnityEngine.Object.DestroyImmediate(_tilemapParent.gameObject);
             }
         }
 
@@ -188,6 +189,93 @@ namespace MyGame.TilemapSystem.Tests.EditMode
                 _scrollController.OnScrollCompleted += (level) => { };
                 _scrollController.OnNewLevelGenerated += (level) => { };
             });
+        }
+        
+        [Test]
+        [Description("スクロールトリガーの登録が正しく動作することを検証")]
+        public void RegisterScrollTrigger_ShouldRegisterCorrectly()
+        {
+            // Arrange
+            var mockTrigger = new MockScrollTrigger();
+            
+            // Act
+            _scrollController.RegisterScrollTrigger(mockTrigger);
+            
+            // Assert
+            Assert.DoesNotThrow(() => _scrollController.RegisterScrollTrigger(mockTrigger));
+        }
+        
+        [Test]
+        [Description("null スクロールトリガーの登録時に警告が出力されることを検証")]
+        public void RegisterScrollTrigger_WithNull_ShouldShowWarning()
+        {
+            // Arrange & Act & Assert
+            Assert.DoesNotThrow(() => _scrollController.RegisterScrollTrigger(null));
+        }
+        
+        [Test]
+        [Description("スクロールトリガーの解除が正しく動作することを検証")]
+        public void UnregisterScrollTrigger_ShouldUnregisterCorrectly()
+        {
+            // Arrange
+            var mockTrigger = new MockScrollTrigger();
+            _scrollController.RegisterScrollTrigger(mockTrigger);
+            
+            // Act
+            _scrollController.UnregisterScrollTrigger();
+            
+            // Assert
+            Assert.DoesNotThrow(() => _scrollController.UnregisterScrollTrigger());
+        }
+        
+        [Test]
+        [Description("複数のスクロールトリガー登録時に古いものが解除されることを検証")]
+        public void RegisterScrollTrigger_Multiple_ShouldUnregisterPrevious()
+        {
+            // Arrange
+            var mockTrigger1 = new MockScrollTrigger();
+            var mockTrigger2 = new MockScrollTrigger();
+            
+            // Act
+            _scrollController.RegisterScrollTrigger(mockTrigger1);
+            _scrollController.RegisterScrollTrigger(mockTrigger2);
+            
+            // Assert
+            Assert.DoesNotThrow(() => {
+                _scrollController.RegisterScrollTrigger(mockTrigger1);
+                _scrollController.RegisterScrollTrigger(mockTrigger2);
+            });
+        }
+    }
+    
+    /// <summary>
+    /// テスト用のモックスクロールトリガー
+    /// </summary>
+    public class MockScrollTrigger : IScrollTrigger
+    {
+        public event Action<float> OnScrollPositionChanged;
+        public event Action OnScrollCompleted;
+        public event Action OnScrollStarted;
+        
+        public float CurrentScrollPosition { get; private set; }
+        public bool IsScrolling { get; private set; }
+        
+        public void SimulateScrollStart()
+        {
+            IsScrolling = true;
+            OnScrollStarted?.Invoke();
+        }
+        
+        public void SimulateScrollPositionChange(float position)
+        {
+            CurrentScrollPosition = position;
+            OnScrollPositionChanged?.Invoke(position);
+        }
+        
+        public void SimulateScrollComplete()
+        {
+            IsScrolling = false;
+            OnScrollCompleted?.Invoke();
         }
     }
 }

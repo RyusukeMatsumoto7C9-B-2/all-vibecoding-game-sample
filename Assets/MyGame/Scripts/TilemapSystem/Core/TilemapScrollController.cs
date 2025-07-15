@@ -14,6 +14,7 @@ namespace MyGame.TilemapSystem.Core
         private bool _isScrolling = false;
         private float _scrollSpeed = 5.0f;
         private float _scrollDistance = 25.0f; // 25マス分
+        private IScrollTrigger _scrollTrigger;
         
         public event Action<int> OnScrollStarted;
         public event Action<int> OnScrollCompleted;
@@ -115,8 +116,8 @@ namespace MyGame.TilemapSystem.Core
             
             _manager.PlaceTiles(offsetMapData);
             
-            // 次のレベルのタイルを上方向にオフセット
-            OffsetTilesForLevel(nextLevel, new Vector3(0, _scrollDistance, 0));
+            // 次のレベルのタイルを下方向にオフセット（スクロール後に正しい位置に配置されるため）
+            OffsetTilesForLevel(nextLevel, new Vector3(0, -_scrollDistance, 0));
             
             OnNewLevelGenerated?.Invoke(nextLevel);
         }
@@ -130,7 +131,14 @@ namespace MyGame.TilemapSystem.Core
             {
                 if (tile != null)
                 {
-                    tile.transform.position += offset;
+                    // 座標系の正確な計算 - レベル間の相対位置を考慮
+                    var currentPos = tile.transform.position;
+                    var newPos = new Vector3(
+                        currentPos.x, 
+                        currentPos.y + offset.y, 
+                        currentPos.z
+                    );
+                    tile.transform.position = newPos;
                 }
             }
         }
@@ -140,7 +148,7 @@ namespace MyGame.TilemapSystem.Core
             float elapsedTime = 0;
             float duration = _scrollDistance / _scrollSpeed;
             Vector3 startPosition = _tilemapParent.position;
-            Vector3 targetPosition = startPosition + new Vector3(0, -_scrollDistance, 0);
+            Vector3 targetPosition = startPosition + new Vector3(0, _scrollDistance, 0);
             
             while (elapsedTime < duration)
             {
@@ -166,6 +174,78 @@ namespace MyGame.TilemapSystem.Core
             }
             
             _currentLevel = level;
+        }
+        
+        /// <summary>
+        /// スクロールトリガーを登録
+        /// </summary>
+        /// <param name="trigger">スクロールトリガー</param>
+        public void RegisterScrollTrigger(IScrollTrigger trigger)
+        {
+            if (trigger == null)
+            {
+                Debug.LogWarning("ScrollTrigger cannot be null");
+                return;
+            }
+            
+            // 既存のトリガーがあれば解除
+            UnregisterScrollTrigger();
+            
+            _scrollTrigger = trigger;
+            _scrollTrigger.OnScrollStarted += HandleScrollStarted;
+            _scrollTrigger.OnScrollPositionChanged += HandleScrollPositionChanged;
+            _scrollTrigger.OnScrollCompleted += HandleScrollCompleted;
+        }
+        
+        /// <summary>
+        /// スクロールトリガーを解除
+        /// </summary>
+        public void UnregisterScrollTrigger()
+        {
+            if (_scrollTrigger != null)
+            {
+                _scrollTrigger.OnScrollStarted -= HandleScrollStarted;
+                _scrollTrigger.OnScrollPositionChanged -= HandleScrollPositionChanged;
+                _scrollTrigger.OnScrollCompleted -= HandleScrollCompleted;
+                _scrollTrigger = null;
+            }
+        }
+        
+        /// <summary>
+        /// スクロール開始イベントハンドラー
+        /// </summary>
+        private void HandleScrollStarted()
+        {
+            if (!_isScrolling)
+            {
+                StartScrollAsync().Forget();
+            }
+        }
+        
+        /// <summary>
+        /// スクロール位置変更イベントハンドラー
+        /// </summary>
+        /// <param name="scrollPosition">スクロール位置</param>
+        private void HandleScrollPositionChanged(float scrollPosition)
+        {
+            // 必要に応じて、スクロール位置に応じた処理を追加
+            // 例: 特定の位置に達したら次のレベルを生成
+            if (scrollPosition >= _currentLevel * _scrollDistance)
+            {
+                if (!_isScrolling)
+                {
+                    StartScrollAsync().Forget();
+                }
+            }
+        }
+        
+        /// <summary>
+        /// スクロール完了イベントハンドラー
+        /// </summary>
+        private void HandleScrollCompleted()
+        {
+            // スクロール完了時の追加処理
+            Debug.Log($"Scroll completed for level {_currentLevel}");
         }
     }
 }

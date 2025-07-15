@@ -116,6 +116,4 @@ Assets/MyGame/Documentation/
 4. フォールバック: パス未設定の場合のみ標準コマンドを使用
 
 ## Git操作ルール
-
-### Git操作の参照先
-- Git操作に関する全ての詳細ルールは `Assets/MyGame/Documentation/Rules/GitRule.md` を参照すること
+- Git操作をする際は必ず`Assets/MyGame/Documentation/Rules/GitRule.md`を参照してから操作をすること

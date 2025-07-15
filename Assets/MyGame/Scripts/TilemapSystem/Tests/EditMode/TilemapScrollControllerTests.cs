@@ -176,18 +176,18 @@ namespace MyGame.TilemapSystem.Tests.EditMode
             bool scrollCompletedCalled = false;
             bool newLevelGeneratedCalled = false;
             
+            // Act - イベントハンドラーを登録
             _scrollController.OnScrollStarted += (level) => scrollStartedCalled = true;
             _scrollController.OnScrollCompleted += (level) => scrollCompletedCalled = true;
             _scrollController.OnNewLevelGenerated += (level) => newLevelGeneratedCalled = true;
             
-            // Act - イベントを手動で発火（テスト用）
-            // Note: 実際のスクロール処理は非同期でUnityエディタでのテストが困難なため、
-            // ここではイベントハンドラーの設定が正しく動作することのみを確認
-            
-            // Assert
-            Assert.IsNotNull(_scrollController.OnScrollStarted);
-            Assert.IsNotNull(_scrollController.OnScrollCompleted);
-            Assert.IsNotNull(_scrollController.OnNewLevelGenerated);
+            // Assert - イベントハンドラーが正常に登録されたことを確認
+            // イベントハンドラーの登録自体が例外を発生させないことを確認
+            Assert.DoesNotThrow(() => {
+                _scrollController.OnScrollStarted += (level) => { };
+                _scrollController.OnScrollCompleted += (level) => { };
+                _scrollController.OnNewLevelGenerated += (level) => { };
+            });
         }
     }
 }

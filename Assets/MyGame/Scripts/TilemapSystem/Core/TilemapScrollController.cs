@@ -106,7 +106,7 @@ namespace MyGame.TilemapSystem.Core
             var nextMapData = _generator.GenerateMap(nextLevel, _generator.GetSeedForLevel(nextLevel));
             
             // 重複エリアの適切な処理
-            // 重複エリア5マス分を考慮して、新しいレベルを上側に配置
+            // スクロール前の配置: 新しいレベルを下側に配置し、スクロール後に正しい位置に来るようにする
             int overlapHeight = 5; // 重複エリア：5マス
             int levelOffset = TilemapGenerator.MAP_HEIGHT - overlapHeight; // 25マス分
             
@@ -114,8 +114,8 @@ namespace MyGame.TilemapSystem.Core
             _manager.PlaceTiles(nextMapData);
             
             // 次のレベルのタイルを正しい位置に配置
-            // 重複エリア5マス分を考慮して、-20マス分オフセットする（-25 + 5 = -20）
-            float correctOffset = -(levelOffset); // -20マス分のオフセット
+            // スクロール後に重複エリアが適切に配置されるよう、-25マス分オフセットする
+            float correctOffset = -_scrollDistance; // -25マス分のオフセット
             
             OffsetTilesForLevel(nextLevel, new Vector3(0, correctOffset, 0));
             

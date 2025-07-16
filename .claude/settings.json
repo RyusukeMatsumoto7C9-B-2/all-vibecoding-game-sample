@@ -55,5 +55,13 @@
     "structure_section_marker": "### Unityプロジェクト構造",
     "auto_update_on_structure_change": true,
     "backup_before_update": true
+  },
+  "commands": {
+    "sprite-create-tool": {
+      "path": "ClaudeCodeTools/sprite-create-tool.bat",
+      "description": "64x64のスプライト画像を作成します。引数: (R,G,B,A)",
+      "working_directory": ".",
+      "enabled": true
+    }
   }
 }

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3186642491570654467}
   - component: {fileID: 3186642491570654466}
   m_Layer: 0
-  m_Name: GroundTile
+  m_Name: EmptyBlock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,12 +76,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: bfb4c00051ac54b4f8f11fa458476d14, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4102e00e2d592ef46ab166112f0f3ee1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.41025642, y: 0.41025642}
+  m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1

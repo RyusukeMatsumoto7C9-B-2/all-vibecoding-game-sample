@@ -105,19 +105,19 @@ namespace MyGame.TilemapSystem.Core
             // 次のレベルのマップを生成
             var nextMapData = _generator.GenerateMap(nextLevel, _generator.GetSeedForLevel(nextLevel));
             
-            // 現在のマップの上に配置（Y座標をオフセット）
-            var offsetMapData = new MapData(
-                nextMapData.Width,
-                nextMapData.Height,
-                nextMapData.Tiles,
-                nextMapData.Seed,
-                nextMapData.Level
-            );
+            // 重複エリアの適切な処理
+            // スクロール前の配置: 新しいレベルを下側に配置し、スクロール後に正しい位置に来るようにする
+            int overlapHeight = 5; // 重複エリア：5マス
+            int levelOffset = TilemapGenerator.MAP_HEIGHT - overlapHeight; // 25マス分
             
-            _manager.PlaceTiles(offsetMapData);
+            // 次のレベルのタイルを生成し、重複エリア保護機能を使用
+            _manager.PlaceTilesWithOverlapProtection(nextMapData, overlapHeight);
             
-            // 次のレベルのタイルを下方向にオフセット（スクロール後に正しい位置に配置されるため）
-            OffsetTilesForLevel(nextLevel, new Vector3(0, -_scrollDistance, 0));
+            // 次のレベルのタイルを正しい位置に配置
+            // スクロール後に重複エリアが適切に配置されるよう、-25マス分オフセットする
+            float correctOffset = -_scrollDistance; // -25マス分のオフセット
+            
+            OffsetTilesForLevel(nextLevel, new Vector3(0, correctOffset, 0));
             
             OnNewLevelGenerated?.Invoke(nextLevel);
         }

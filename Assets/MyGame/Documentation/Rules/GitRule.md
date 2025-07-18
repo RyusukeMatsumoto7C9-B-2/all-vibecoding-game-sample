@@ -4,28 +4,8 @@
 
 ### アカウント切り替え必須化
 - **重要**: ClaudeがGit操作を実行する際は、必ず以下の手順に従う
-  1. Git操作前: 直接コマンドでClaude用アカウントに切り替え
+  1. Git操作前: `/switch-to-claude-git` コマンドでClaude用アカウントに切り替え
   2. Git操作実行: 必要なGit操作を実行
-  3. Git操作後: 直接コマンドでユーザーアカウントに戻す
-
-### アカウント切り替えコマンド（Windows環境）
-- **Claude用アカウント切り替え**:
-  ```bash
-  git config --global user.name "Claude"
-  git config --global user.email "noreply@anthropic.com"
-  ```
-- **ユーザーアカウント切り替え**:
-  ```bash
-  git config --global user.name "RyusukeMatsumoto"
-  git config --global user.email "matsumotokakadevelop1102@gmail.com"
-  ```
-
-### 補助スクリプト（Windows環境）
-- **Claude用スクリプト**: `ClaudeCodeTools/use-claude-account.bat`
-- **ユーザー用スクリプト**: `ClaudeCodeTools/use-user-account.bat`
-- **実行方法**: Windows環境では個別のgitコマンドを順次実行
-- **注意**: エラーハンドリング付きでスクリプトを改良済み
-- **フォルダ説明**: ClaudeCodeToolsフォルダには今後追加されるPowerShellスクリプトなどのツール類を配置
 
 ### Git操作の基本ルール
 - ブランチ作成後は必ずリモートにプッシュする
@@ -43,39 +23,18 @@
 ## Git操作実行例
 
 ### 基本的なGit操作フロー（Windows環境）
-```bash
-# 1. Claude用アカウントに切り替え
-git config --global user.name "Claude"
-git config --global user.email "noreply@anthropic.com"
-
-# 2. Git操作実行
-git add .
-git commit -m "機能追加: 新機能の実装"
-git push origin feature-branch
-
-# 3. ユーザーアカウントに戻す
-git config --global user.name "RyusukeMatsumoto"
-git config --global user.email "matsumotokakadevelop1102@gmail.com"
-```
+1. Git操作前: `/switch-to-claude-git` コマンドでClaude用アカウントに切り替え
+2. Git操作実行: 必要なGit操作を実行
 
 ### プルリクエスト作成フロー（Windows環境）
-```bash
-# 1. Claude用アカウントに切り替え
-git config --global user.name "Claude"
-git config --global user.email "noreply@anthropic.com"
-
-# 2. ブランチプッシュ
-git push -u origin feature-branch
-
-# 3. プルリクエスト作成
-"/c/Program Files/GitHub CLI/gh.exe" pr create --title "タイトル" --body "説明"
-
-# 4. ユーザーアカウントに戻す
-git config --global user.name "RyusukeMatsumoto"
-git config --global user.email "matsumotokakadevelop1102@gmail.com"
-```
+1. Git操作前: `/switch-to-claude-git` コマンドでClaude用アカウントに切り替え
+2. Git操作実行: 必要なGit操作を実行
 
 ## 注意事項
 - Git操作を忘れずに必ずアカウント切り替えを行うこと
-- 操作完了後は必ずユーザーアカウントに戻すこと
 - アカウント切り替え忘れによる権限エラーに注意すること
+
+## 利用可能なカスタムコマンド
+- `/switch-to-claude-git`: git設定をClaude Code用アカウントに切り替え
+- `/switch-to-user-git`: git設定をユーザーアカウントに切り替え
+- `/show-git-config`: 現在のgit設定を表示・確認

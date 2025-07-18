@@ -33,46 +33,12 @@ Assets/MyGame/
 - コミットのコメントは日本語で行うこと
 
 ## コーディングルール
-- 重要なロジックはPureC#のクラスで作成し、UnityTestRunnerでテストを行える実装とする
-  - ロジック内でUnityのコンポーネントを利用する場合はコンストラクタまたはVContainerにて参照を取得する
-- PureC#で構築されたクラスは必ずUnity TestRunner でテストが行える形にする
-- シングルトンクラスを作成しない
-  - VContainerを利用した置換可能な設計とする
-- UI部分の設計は R3 を用いた MV(R)P の設計とする
-  - UIは原則としPresenter,View以外はPureC#で構築し、UnityTestRunnerでテストが実施できるようにする
-  - Viewで参照を紐づけるコンポーネントはpublicフィールドではなくprivateフィールドに[SerializeField]属性をつけることで実現する
-- クラス内の宣言は以下の優先度順に上から記述する
-  - public定数 ( public定数は必ず public readonly で宣言 )
-  - private定数
-  - enum定義
-  - publicプロパティ
-  - privateプロパティ
-  - privateフィールド
-  - Unityイベント
-  - publicメソッド
-  - privateメソッド
+コーディング規約と実装方針については、以下のドキュメントを参照してください：
+- `Assets/MyGame/Documentation/Rules/CodingRule.md`
 
-### テストルール テストコードの作成は以下の方針 ( t-wada流 ) で実施する
-#### 基本方針
-- Red: 失敗するテストを書く
-- Green: テストを通す最小限の実装
-- Refactor: リファクタリング
-- 小さなステップで進める
-- 仮実装（ベタ書き）から始める
-- 三角測量で一般化する
-- 明白な実装が分かる場合は直接実装してもOK
-- テストリストを常に更新する
-- 不安なところからテストを書く
-
-#### テスト記述ルール
-- 全てのテストメソッドには[Description("")]属性を付与し、日本語でテストの概要を記述する
-- Descriptionの記述例: [Description("上方向への移動時に座標のY値が1増加することを検証")]
-- テストクラス自体にも[Description("")]属性を付与し、そのクラスがテストする対象と目的を記述する
-- テストの意図と期待結果が日本語で明確に理解できるようにする
-
-### リファクタリングルール
-- リファクタリングはMartin Fowlerの提唱する手法で実施する
-- リファクタリング後は必ずテストコードを検証する
+## テストルール
+テスト実装の方針とルールについては、以下のドキュメントを参照してください：
+- `Assets/MyGame/Documentation/Rules/TestRule.md`
 
 ## ドキュメント管理
 

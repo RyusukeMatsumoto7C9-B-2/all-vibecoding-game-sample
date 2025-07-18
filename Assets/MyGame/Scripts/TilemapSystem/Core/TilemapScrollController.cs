@@ -114,8 +114,8 @@ namespace MyGame.TilemapSystem.Core
             _manager.PlaceTilesWithOverlapProtection(nextMapData, overlapHeight);
             
             // 次のレベルのタイルを正しい位置に配置
-            // スクロール後に重複エリアが適切に配置されるよう、-25マス分オフセットする
-            float correctOffset = -_scrollDistance; // -25マス分のオフセット
+            // 既存レベルとの重複を完全に回避するため、-30マス分オフセットする
+            float correctOffset = -TilemapGenerator.MAP_HEIGHT; // -30マス分のオフセット（重複回避）
             
             OffsetTilesForLevel(nextLevel, new Vector3(0, correctOffset, 0));
             

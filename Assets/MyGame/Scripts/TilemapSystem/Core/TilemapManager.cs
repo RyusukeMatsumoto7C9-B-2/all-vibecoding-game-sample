@@ -10,14 +10,17 @@ namespace MyGame.TilemapSystem.Core
         private readonly Dictionary<TileType, GameObject> _tilePrefabs;
         private readonly Dictionary<int, MapData> _loadedMaps;
         private readonly Dictionary<int, List<GameObject>> _instantiatedTiles;
+        private readonly ITileBehavior _tileBehavior;
 
         public event Action<MapData> OnMapGenerated;
         public event Action<int> OnMemoryOptimized;
+        public event Action<Vector2Int, TileType, int> OnTileHit; // position, oldType, scoreGained
 
-        public TilemapManager(Transform parentTransform, Dictionary<TileType, GameObject> tilePrefabs)
+        public TilemapManager(Transform parentTransform, Dictionary<TileType, GameObject> tilePrefabs, ITileBehavior tileBehavior = null)
         {
             _parentTransform = parentTransform ?? throw new ArgumentNullException(nameof(parentTransform));
             _tilePrefabs = tilePrefabs ?? throw new ArgumentNullException(nameof(tilePrefabs));
+            _tileBehavior = tileBehavior ?? new TileBehavior();
             _loadedMaps = new Dictionary<int, MapData>();
             _instantiatedTiles = new Dictionary<int, List<GameObject>>();
         }
@@ -118,6 +121,94 @@ namespace MyGame.TilemapSystem.Core
         public List<GameObject> GetTilesForLevel(int level)
         {
             return _instantiatedTiles.ContainsKey(level) ? _instantiatedTiles[level] : null;
+        }
+
+        public bool CanPlayerPassThrough(Vector2Int position, int level)
+        {
+            if (!_loadedMaps.ContainsKey(level))
+                return true;
+
+            var mapData = _loadedMaps[level];
+            if (position.x < 0 || position.x >= mapData.Width || position.y < 0 || position.y >= mapData.Height)
+                return true;
+
+            var tileType = mapData.Tiles[position.x, position.y];
+            return _tileBehavior.CanPlayerPassThrough(tileType);
+        }
+
+        public void OnPlayerHitTile(Vector2Int position, int level)
+        {
+            if (!_loadedMaps.ContainsKey(level))
+                return;
+
+            var mapData = _loadedMaps[level];
+            if (position.x < 0 || position.x >= mapData.Width || position.y < 0 || position.y >= mapData.Height)
+                return;
+
+            var oldTileType = mapData.Tiles[position.x, position.y];
+            var newTileType = _tileBehavior.OnPlayerHit(oldTileType, position, out int scoreGained);
+
+            if (oldTileType != newTileType)
+            {
+                // MapDataは読み取り専用なので、新しいMapDataを作成
+                var newTiles = (TileType[,])mapData.Tiles.Clone();
+                newTiles[position.x, position.y] = newTileType;
+                
+                var newMapData = new MapData(mapData.Width, mapData.Height, newTiles, mapData.Seed, mapData.Level);
+                _loadedMaps[level] = newMapData;
+
+                // タイルの表示を更新
+                UpdateTileDisplay(position, newTileType, level);
+
+                OnTileHit?.Invoke(position, oldTileType, scoreGained);
+            }
+        }
+
+        private void UpdateTileDisplay(Vector2Int position, TileType newTileType, int level)
+        {
+            if (!_instantiatedTiles.ContainsKey(level))
+                return;
+
+            var tileInstances = _instantiatedTiles[level];
+            
+            // 既存のタイルを削除
+            for (int i = tileInstances.Count - 1; i >= 0; i--)
+            {
+                var tileInstance = tileInstances[i];
+                if (tileInstance != null && tileInstance.name.Contains($"_{position.x}_{position.y}"))
+                {
+                    UnityEngine.Object.DestroyImmediate(tileInstance);
+                    tileInstances.RemoveAt(i);
+                    break;
+                }
+            }
+
+            // 新しいタイルを生成（Emptyの場合は生成しない）
+            if (newTileType != TileType.Empty && _tilePrefabs.ContainsKey(newTileType))
+            {
+                var worldPosition = new Vector3(position.x, position.y, 0);
+                var tileInstance = UnityEngine.Object.Instantiate(_tilePrefabs[newTileType], worldPosition, Quaternion.identity, _parentTransform);
+                tileInstance.name = $"{newTileType}_Level{level}_{position.x}_{position.y}";
+                tileInstances.Add(tileInstance);
+            }
+        }
+
+        public void UpdateTilesWithTime(int level, float deltaTime)
+        {
+            if (!_loadedMaps.ContainsKey(level))
+                return;
+
+            var mapData = _loadedMaps[level];
+            
+            // Rock属性ブロックの時間更新処理
+            for (int x = 0; x < mapData.Width; x++)
+            {
+                for (int y = 0; y < mapData.Height; y++)
+                {
+                    var position = new Vector2Int(x, y);
+                    _tileBehavior.OnTimeUpdate(position, mapData.Tiles, deltaTime);
+                }
+            }
         }
     }
 }

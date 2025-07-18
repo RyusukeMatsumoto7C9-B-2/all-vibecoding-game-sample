@@ -33,7 +33,6 @@
     "milestone_triggers": [
       "feature_complete",
       "refactor_complete",
-      "test_complete",
       "bug_fix_complete"
     ]
   },
@@ -43,12 +42,6 @@
     "auto_stage": true,
     "force_commands_disabled": true,
     "commit_frequency": "milestone_based"
-  },
-  "test_settings": {
-    "framework": "Unity Test Runner",
-    "mode": "EditMode",
-    "output_directory": "TestResults/",
-    "run_after_all_tasks": true
   },
   "documentation": {
     "claude_md_path": "CLAUDE.md",

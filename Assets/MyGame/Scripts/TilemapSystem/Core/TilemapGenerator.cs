@@ -23,8 +23,8 @@ namespace MyGame.TilemapSystem.Core
             _seedManager.SetSeed(seed);
             var random = _seedManager.CreateRandomForLevel(level);
             
-            // ProceduralGeneratorを使用して高度な地形生成
-            var tiles = _proceduralGenerator.GenerateTerrain(random);
+            // ProceduralGeneratorを使用して高度な地形生成（レベル情報を渡す）
+            var tiles = _proceduralGenerator.GenerateTerrain(random, level);
             
             return new MapData(MAP_WIDTH, MAP_HEIGHT, tiles, seed, level);
         }

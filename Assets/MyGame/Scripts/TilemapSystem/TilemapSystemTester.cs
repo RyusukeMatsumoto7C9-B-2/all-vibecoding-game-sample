@@ -9,8 +9,10 @@ namespace MyGame.TilemapSystem
     public class TilemapSystemTester : MonoBehaviour
     {
         [Header("Tile Prefabs")]
-        [SerializeField] private GameObject wallTilePrefab;
+        [SerializeField] private GameObject skyTilePrefab;
         [SerializeField] private GameObject groundTilePrefab;
+        [SerializeField] private GameObject rockTilePrefab;
+        [SerializeField] private GameObject treasureTilePrefab;
         
         [Header("Test Settings")]
         [SerializeField] private int testLevel = 1;
@@ -42,8 +44,10 @@ namespace MyGame.TilemapSystem
 
             var tilePrefabs = new Dictionary<TileType, GameObject>
             {
-                { TileType.Wall, wallTilePrefab },
-                { TileType.Ground, groundTilePrefab }
+                { TileType.Sky, skyTilePrefab },
+                { TileType.Ground, groundTilePrefab },
+                { TileType.Rock, rockTilePrefab },
+                { TileType.Treasure, treasureTilePrefab }
             };
 
             _manager = new TilemapManager(transform, tilePrefabs);

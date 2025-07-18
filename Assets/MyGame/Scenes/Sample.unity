@@ -181,7 +181,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 17
+  orthographic size: 15
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -206,7 +206,7 @@ Transform:
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10, y: 16.5, z: -10}
+  m_LocalPosition: {x: 10, y: 14.5, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -342,10 +342,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5753010b6f37eaa48b98fe2006aac76b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wallTilePrefab: {fileID: 3186642491570654464, guid: c3d4e5f6789012345678901234abcdef, type: 3}
+  skyTilePrefab: {fileID: 3186642491570654464, guid: f269e846428970b4189c7248b7fd6d7e, type: 3}
   groundTilePrefab: {fileID: 3186642491570654464, guid: d4e5f6789012345678901234abcdef01, type: 3}
+  rockTilePrefab: {fileID: 3186642491570654464, guid: c3d4e5f6789012345678901234abcdef, type: 3}
+  treasureTilePrefab: {fileID: 3186642491570654464, guid: f269e846428970b4189c7248b7fd6d7e, type: 3}
   testLevel: 1
   testSeed: 12345
+  autoScrollEnabled: 1
+  autoScrollInterval: 3
 --- !u!4 &1562230938
 Transform:
   m_ObjectHideFlags: 0
@@ -355,7 +359,7 @@ Transform:
   m_GameObject: {fileID: 1562230936}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 23.595158, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

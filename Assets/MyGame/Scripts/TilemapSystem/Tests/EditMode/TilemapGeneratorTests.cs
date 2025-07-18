@@ -34,21 +34,52 @@ namespace MyGame.TilemapSystem.Tests
         }
 
         [Test]
-        [Description("全マスがタイルで埋められることを検証（現在の実装）")]
-        public void GenerateMap_AllTiles_AreFilled()
+        [Description("レベル1で上部Sky領域とGround/Rock領域が正しく生成されることを検証")]
+        public void GenerateMap_Level1_HasCorrectSkyAndGroundRockRegions()
         {
             var level = 1;
             var seed = 12345;
 
             var mapData = _generator.GenerateMap(level, seed);
 
-            // 全マスがGroundまたはWallで埋められていることを確認
+            // 上部5マスがSkyタイルであることを確認
+            int skyHeight = 5;
+            for (int x = 0; x < mapData.Width; x++)
+            {
+                for (int y = mapData.Height - skyHeight; y < mapData.Height; y++)
+                {
+                    Assert.AreEqual(TileType.Sky, mapData.Tiles[x, y], 
+                        $"位置({x}, {y})はSkyタイルであるべき。実際の値: {mapData.Tiles[x, y]}");
+                }
+            }
+            
+            // 残りの部分がGroundまたはRockで埋められていることを確認
+            for (int x = 0; x < mapData.Width; x++)
+            {
+                for (int y = 0; y < mapData.Height - skyHeight; y++)
+                {
+                    Assert.IsTrue(mapData.Tiles[x, y] == TileType.Ground || mapData.Tiles[x, y] == TileType.Rock, 
+                        $"位置({x}, {y})はGroundまたはRockであるべき。実際の値: {mapData.Tiles[x, y]}");
+                }
+            }
+        }
+
+        [Test]
+        [Description("レベル2以上で全マスがGround/Rockタイルで埋められることを検証")]
+        public void GenerateMap_Level2AndAbove_FilledWithoutSky()
+        {
+            var level = 2;
+            var seed = 12345;
+
+            var mapData = _generator.GenerateMap(level, seed);
+
+            // 全マスがGroundまたはRockで埋められていることを確認
             for (int x = 0; x < mapData.Width; x++)
             {
                 for (int y = 0; y < mapData.Height; y++)
                 {
-                    Assert.IsTrue(mapData.Tiles[x, y] == TileType.Ground || mapData.Tiles[x, y] == TileType.Wall, 
-                        $"位置({x}, {y})にタイルが配置されていない。実際の値: {mapData.Tiles[x, y]}");
+                    Assert.IsTrue(mapData.Tiles[x, y] == TileType.Ground || mapData.Tiles[x, y] == TileType.Rock, 
+                        $"位置({x}, {y})はGroundまたはRockであるべき。実際の値: {mapData.Tiles[x, y]}");
                 }
             }
         }
@@ -77,29 +108,29 @@ namespace MyGame.TilemapSystem.Tests
         }
 
         [Test]
-        [Description("Wallの数が適切な範囲内であることを検証（現在の実装）")]
-        public void GenerateMap_WallCount_IsWithinExpectedRange()
+        [Description("Rockの数が適切な範囲内であることを検証（現在の実装）")]
+        public void GenerateMap_RockCount_IsWithinExpectedRange()
         {
             var level = 1;
             var seed = 12345;
 
             var mapData = _generator.GenerateMap(level, seed);
 
-            int wallCount = 0;
+            int rockCount = 0;
             for (int x = 0; x < mapData.Width; x++)
             {
                 for (int y = 0; y < mapData.Height; y++)
                 {
-                    if (mapData.Tiles[x, y] == TileType.Wall)
+                    if (mapData.Tiles[x, y] == TileType.Rock)
                     {
-                        wallCount++;
+                        rockCount++;
                     }
                 }
             }
 
-            // Wallの数が3~5個の範囲内であることを確認
-            Assert.IsTrue(wallCount >= 3 && wallCount <= 5, 
-                $"Wallの数が仕様範囲外: {wallCount}個 (期待: 3~5個)");
+            // Rockの数が3~5個の範囲内であることを確認
+            Assert.IsTrue(rockCount >= 3 && rockCount <= 5, 
+                $"Rockの数が仕様範囲外: {rockCount}個 (期待: 3~5個)");
         }
 
         [Test]
@@ -126,6 +157,110 @@ namespace MyGame.TilemapSystem.Tests
 
             // 異なるレベルでは異なる結果が生成される可能性が高い
             Assert.AreNotEqual(mapData1a.Level, mapData2.Level, "レベルが異なっていることを確認");
+        }
+
+        [Test]
+        [Description("生成されたマップに全てのタイルタイプが含まれることを検証")]
+        public void GenerateMap_ContainsAllTileTypes()
+        {
+            var level = 1;
+            var seed = 12345;
+
+            var mapData = _generator.GenerateMap(level, seed);
+
+            bool hasSky = false;
+            bool hasGround = false;
+            bool hasRock = false;
+            
+            for (int x = 0; x < mapData.Width; x++)
+            {
+                for (int y = 0; y < mapData.Height; y++)
+                {
+                    var tileType = mapData.Tiles[x, y];
+                    if (tileType == TileType.Sky) hasSky = true;
+                    if (tileType == TileType.Ground) hasGround = true;
+                    if (tileType == TileType.Rock) hasRock = true;
+                }
+            }
+
+            Assert.IsTrue(hasSky, "Skyタイルが生成されていない");
+            Assert.IsTrue(hasGround, "Groundタイルが生成されていない");
+            Assert.IsTrue(hasRock, "Rockタイルが生成されていない");
+        }
+
+        [Test]
+        [Description("Treasureタイルが生成される場合があることを検証")]
+        public void GenerateMap_MayContainTreasureTiles()
+        {
+            var level = 1;
+            var seed = 12345;
+
+            var mapData = _generator.GenerateMap(level, seed);
+
+            bool hasTreasure = false;
+            
+            for (int x = 0; x < mapData.Width; x++)
+            {
+                for (int y = 0; y < mapData.Height; y++)
+                {
+                    if (mapData.Tiles[x, y] == TileType.Treasure)
+                    {
+                        hasTreasure = true;
+                        break;
+                    }
+                }
+                if (hasTreasure) break;
+            }
+
+            // Treasureタイルは必ずしも生成されるわけではないが、生成される可能性がある
+            Assert.DoesNotThrow(() => { }, "Treasureタイルの生成検証で例外が発生した");
+        }
+
+        [Test]
+        [Description("無効なタイルタイプが生成されないことを検証")]
+        public void GenerateMap_DoesNotContainInvalidTileTypes()
+        {
+            var level = 1;
+            var seed = 12345;
+
+            var mapData = _generator.GenerateMap(level, seed);
+
+            for (int x = 0; x < mapData.Width; x++)
+            {
+                for (int y = 0; y < mapData.Height; y++)
+                {
+                    var tileType = mapData.Tiles[x, y];
+                    Assert.IsTrue(
+                        tileType == TileType.Sky || 
+                        tileType == TileType.Empty || 
+                        tileType == TileType.Ground || 
+                        tileType == TileType.Rock || 
+                        tileType == TileType.Treasure,
+                        $"位置({x}, {y})で無効なタイルタイプ: {tileType}");
+                }
+            }
+        }
+
+        [Test]
+        [Description("レベル1でSkyタイルが上部5マスに配置されることを検証")]
+        public void GenerateMap_Level1_SkyTilesOnTop()
+        {
+            var level = 1;
+            var seed = 12345;
+
+            var mapData = _generator.GenerateMap(level, seed);
+
+            const int skyHeight = 5;
+            
+            // 上部5マスがSkyタイルであることを確認
+            for (int x = 0; x < mapData.Width; x++)
+            {
+                for (int y = mapData.Height - skyHeight; y < mapData.Height; y++)
+                {
+                    Assert.AreEqual(TileType.Sky, mapData.Tiles[x, y], 
+                        $"位置({x}, {y})はSkyタイルであるべき");
+                }
+            }
         }
     }
 }

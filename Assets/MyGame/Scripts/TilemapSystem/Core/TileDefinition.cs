@@ -4,11 +4,11 @@ namespace MyGame.TilemapSystem.Core
 {
     public enum TileType
     {
+        Sky,        // 空
         Empty,      // 空間
         Ground,     // 地面
-        Wall,       // 壁
+        Rock,       // 岩
         Treasure,   // お宝
-        Enemy       // エネミー配置位置
     }
 
     public struct MapData

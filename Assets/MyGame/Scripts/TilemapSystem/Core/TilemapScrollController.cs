@@ -110,8 +110,8 @@ namespace MyGame.TilemapSystem.Core
             int overlapHeight = 5; // 重複エリア：5マス
             int levelOffset = TilemapGenerator.MAP_HEIGHT - overlapHeight; // 25マス分
             
-            // 次のレベルのタイルを生成し、重複エリアを考慮してオフセット
-            _manager.PlaceTiles(nextMapData);
+            // 次のレベルのタイルを生成し、重複エリア保護機能を使用
+            _manager.PlaceTilesWithOverlapProtection(nextMapData, overlapHeight);
             
             // 次のレベルのタイルを正しい位置に配置
             // スクロール後に重複エリアが適切に配置されるよう、-25マス分オフセットする

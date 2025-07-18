@@ -66,6 +66,76 @@ namespace MyGame.TilemapSystem.Core
             OnMapGenerated?.Invoke(mapData);
         }
 
+        public void PlaceTilesWithOverlapProtection(MapData mapData, int overlapHeight = 5)
+        {
+            if (mapData.Tiles == null)
+            {
+                Debug.LogError("MapData.Tiles is null");
+                return;
+            }
+
+            // 既存のタイルを削除
+            if (_instantiatedTiles.ContainsKey(mapData.Level))
+            {
+                ClearTiles(mapData.Level);
+            }
+
+            var tileInstances = new List<GameObject>();
+
+            for (int x = 0; x < mapData.Width; x++)
+            {
+                for (int y = 0; y < mapData.Height; y++)
+                {
+                    var tileType = mapData.Tiles[x, y];
+                    
+                    if (tileType != TileType.Empty && _tilePrefabs.ContainsKey(tileType))
+                    {
+                        // 重複エリア（下5マス）での既存ブロック保護チェック
+                        var position = new Vector3(x, y, 0);
+                        
+                        // 重複エリアで既存のWallブロックとの衝突チェック
+                        if (y < overlapHeight && IsExistingWallBlockAtPosition(position))
+                        {
+                            Debug.Log($"重複エリアで既存Wallブロックを保護: Level{mapData.Level} 位置({x}, {y})");
+                            continue; // 既存Wallブロックを保護するため、新しいタイルを生成しない
+                        }
+                        
+                        var tileInstance = UnityEngine.Object.Instantiate(_tilePrefabs[tileType], position, Quaternion.identity, _parentTransform);
+                        
+                        // タイルにレベル情報を設定（デバッグ用）
+                        tileInstance.name = $"{tileType}_Level{mapData.Level}_{x}_{y}";
+                        
+                        tileInstances.Add(tileInstance);
+                    }
+                }
+            }
+
+            _instantiatedTiles[mapData.Level] = tileInstances;
+            _loadedMaps[mapData.Level] = mapData;
+            OnMapGenerated?.Invoke(mapData);
+        }
+
+        private bool IsExistingWallBlockAtPosition(Vector3 position)
+        {
+            // 全てのレベルの既存タイルをチェック
+            foreach (var levelTiles in _instantiatedTiles.Values)
+            {
+                foreach (var tile in levelTiles)
+                {
+                    if (tile != null && Vector3.Distance(tile.transform.position, position) < 0.1f)
+                    {
+                        // タイル名からタイプを判定（Wallブロック系の保護）
+                        var tileName = tile.name.ToLower();
+                        if (tileName.Contains("rock") || tileName.Contains("wall") || tileName.Contains("ground"))
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
+
         public void ClearTiles(int level)
         {
             if (!_instantiatedTiles.ContainsKey(level))

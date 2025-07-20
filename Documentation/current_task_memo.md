@@ -10,4 +10,5 @@
   - タイルマップの一要素 : ブロック
   - 全体の構成 : タイルマップ
 - MapData 構造体を TilemapDefinition から独立した一つのスクリプトとして定義
-- 
+- IScrollTrigger リファクタリング
+  - event の利用を取りやめ R3 の Subject & Observable で購読する形に変更

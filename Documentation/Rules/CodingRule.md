@@ -15,12 +15,20 @@
 - UI部分の設計は R3 を用いた MV(R)P の設計とする
   - UIは原則としPresenter,View以外はPureC#で構築し、UnityTestRunnerでテストが実施できるようにする
   - Viewで参照を紐づけるコンポーネントはpublicフィールドではなくprivateフィールドに[SerializeField]属性をつけることで実現する
+- イベント購読系処理は R3 を利用し、UnityEvent や event を利用しない
+
+## クラス内宣言ルール
+1. public で公開する定数は public static readonly として定義する ( PascalCase )  
+2. const 定数は private でのみ利用できる ( ALL_UPPER_CASE )  
+3. フィールドは _ プリフィックスをつけ極力 private readonly として宣言する   
+4. メソッド間の空行は2行開けるものとする
+
 
 ## クラス内宣言順序
 
 クラス内の宣言は以下の優先度順に上から記述する：
 
-1. public定数 ( public定数は必ず public readonly で宣言 )
+1. public定数  
 2. private定数
 3. enum定義
 4. publicプロパティ

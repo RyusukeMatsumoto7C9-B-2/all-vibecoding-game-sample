@@ -1,8 +1,10 @@
+using System;
 using UnityEngine;
 using MyGame.TilemapSystem.Core;
 using MyGame.TilemapSystem.Generation;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using R3;
 
 namespace MyGame.TilemapSystem
 {
@@ -24,7 +26,7 @@ namespace MyGame.TilemapSystem
         private TilemapManager _manager;
         private SeedManager _seedManager;
         private TilemapScrollController _scrollController;
-
+        
         private void Start()
         {
             InitializeSystem();
@@ -51,13 +53,13 @@ namespace MyGame.TilemapSystem
             };
 
             _manager = new TilemapManager(transform, tilePrefabs);
-            _manager.OnMapGenerated += OnMapGenerated;
+            _manager.OnMapGenerated.Subscribe(OnMapGenerated).AddTo(this);
             
             // スクロールコントローラーを初期化
             _scrollController = new TilemapScrollController(_generator, _manager, transform);
-            _scrollController.OnScrollStarted += OnScrollStarted;
-            _scrollController.OnScrollCompleted += OnScrollCompleted;
-            _scrollController.OnNewLevelGenerated += OnNewLevelGenerated;
+            _scrollController.OnScrollStarted?.Subscribe(OnScrollStarted).AddTo(this);
+            _scrollController.OnScrollCompleted?.Subscribe(OnScrollCompleted).AddTo(this);
+            _scrollController.OnNewLevelGenerated?.Subscribe(OnNewLevelGenerated).AddTo(this);
         }
 
         private void GenerateTestMap()
@@ -153,21 +155,6 @@ namespace MyGame.TilemapSystem
                 autoScrollEnabled = true;
                 StartAutoScroll().Forget();
                 Debug.Log("自動スクロールを開始しました");
-            }
-        }
-
-        private void OnDestroy()
-        {
-            if (_manager != null)
-            {
-                _manager.OnMapGenerated -= OnMapGenerated;
-            }
-            
-            if (_scrollController != null)
-            {
-                _scrollController.OnScrollStarted -= OnScrollStarted;
-                _scrollController.OnScrollCompleted -= OnScrollCompleted;
-                _scrollController.OnNewLevelGenerated -= OnNewLevelGenerated;
             }
         }
     }

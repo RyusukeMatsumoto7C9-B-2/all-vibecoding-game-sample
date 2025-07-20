@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 using R3;
 
@@ -19,9 +18,9 @@ namespace MyGame.TilemapSystem.Core
         [SerializeField] private float _scrollDistance = 25.0f;
         [SerializeField] private KeyCode _scrollKey = KeyCode.Space;
         
-        private Subject<float> _onScrollPositionChanged = new Subject<float>();
-        private Subject<Unit> _onScrollCompleted = new Subject<Unit>();
-        private Subject<Unit> _onScrollStarted = new Subject<Unit>();
+        private readonly Subject<float> _onScrollPositionChanged = new Subject<float>();
+        private readonly Subject<Unit> _onScrollCompleted = new Subject<Unit>();
+        private readonly Subject<Unit> _onScrollStarted = new Subject<Unit>();
         private float _currentScrollPosition = 0f;
         private bool _isScrolling = false;
         private float _scrollStartTime;

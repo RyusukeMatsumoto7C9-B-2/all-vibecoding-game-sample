@@ -5,9 +5,9 @@ namespace MyGame.TilemapSystem.Core
 {
     public class TilemapGenerator
     {
-        public const int MAP_WIDTH = 20;
-        public const int MAP_HEIGHT = 30;
-        public const int GROUND_AREA_HEIGHT = 5;
+        public static readonly int MAP_WIDTH = 20;
+        public static readonly int MAP_HEIGHT = 30;
+        public static readonly int GROUND_AREA_HEIGHT = 5;
 
         private readonly SeedManager _seedManager;
         private readonly ProceduralGenerator _proceduralGenerator;

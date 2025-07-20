@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using R3;
 
 namespace MyGame.TilemapSystem.Core
 {
@@ -11,11 +12,16 @@ namespace MyGame.TilemapSystem.Core
         private readonly Dictionary<int, MapData> _loadedMaps;
         private readonly Dictionary<int, List<GameObject>> _instantiatedTiles;
         private readonly ITileBehavior _tileBehavior;
-
-        public event Action<MapData> OnMapGenerated;
-        public event Action<int> OnMemoryOptimized;
-        public event Action<Vector2Int, BlockType, int> OnTileHit; // position, oldType, scoreGained
-
+        
+        public Observable<MapData> OnMapGenerated => _onMapGenerated;
+        public Observable<int> OnMemoryOptimized => _onMemoryOptimized;
+        public Observable<(Vector2Int, BlockType, int)> OnTileHit => _onTileHit; // position, oldType, scoreGained
+        
+        private readonly Subject<MapData> _onMapGenerated = new Subject<MapData>();
+        private readonly Subject<int> _onMemoryOptimized = new Subject<int>();
+        private readonly Subject<(Vector2Int, BlockType, int)> _onTileHit = new Subject<(Vector2Int, BlockType, int)>();
+        
+        
         public TilemapManager(Transform parentTransform, Dictionary<BlockType, GameObject> tilePrefabs, ITileBehavior tileBehavior = null)
         {
             _parentTransform = parentTransform ?? throw new ArgumentNullException(nameof(parentTransform));
@@ -63,7 +69,7 @@ namespace MyGame.TilemapSystem.Core
 
             _instantiatedTiles[mapData.Level] = tileInstances;
             _loadedMaps[mapData.Level] = mapData;
-            OnMapGenerated?.Invoke(mapData);
+            _onMapGenerated?.OnNext(mapData);
         }
 
         public void PlaceTilesWithOverlapProtection(MapData mapData, int overlapHeight = 5)
@@ -112,7 +118,7 @@ namespace MyGame.TilemapSystem.Core
 
             _instantiatedTiles[mapData.Level] = tileInstances;
             _loadedMaps[mapData.Level] = mapData;
-            OnMapGenerated?.Invoke(mapData);
+            _onMapGenerated?.OnNext(mapData);
         }
 
         private bool IsExistingWallBlockAtPosition(Vector3 position)
@@ -175,7 +181,7 @@ namespace MyGame.TilemapSystem.Core
                 ClearTiles(level);
             }
 
-            OnMemoryOptimized?.Invoke(currentLevel);
+            _onMemoryOptimized?.OnNext(currentLevel);
         }
 
         public bool IsMapLoaded(int level)
@@ -229,8 +235,7 @@ namespace MyGame.TilemapSystem.Core
 
                 // タイルの表示を更新
                 UpdateTileDisplay(position, newTileType, level);
-
-                OnTileHit?.Invoke(position, oldTileType, scoreGained);
+                _onTileHit?.OnNext((position, oldTileType, scoreGained));
             }
         }
 

@@ -1,0 +1,78 @@
+@startuml
+' TilemapSystem UML Diagram
+
+package "MyGame.TilemapSystem.Core" {
+  class TilemapScrollController {
+    - TilemapGenerator _generator
+    - TilemapManager _manager
+    - IScrollTrigger _scrollTrigger
+    + event OnScrollStarted
+    + event OnScrollCompleted
+    + event OnNewLevelGenerated
+  }
+  class TilemapManager {
+    - ITileBehavior _tileBehavior
+    + event OnMapGenerated
+    + event OnMemoryOptimized
+    + event OnTileHit
+  }
+  class TilemapGenerator {
+    - SeedManager _seedManager
+    - ProceduralGenerator _proceduralGenerator
+    + GenerateMap()
+    + GetSeedForLevel()
+  }
+  class TileBehavior
+  interface ITileBehavior {
+    + CanPlayerPassThrough()
+    + OnPlayerHit()
+    + OnTimeUpdate()
+  }
+  class SimpleScrollTrigger
+  interface IScrollTrigger {
+    + event OnScrollPositionChanged
+    + event OnScrollCompleted
+    + event OnScrollStarted
+    + CurrentScrollPosition
+    + IsScrolling
+  }
+  enum TileType
+  struct MapData
+}
+
+package "MyGame.TilemapSystem.Generation" {
+  class SeedManager
+  class ProceduralGenerator
+}
+
+class TilemapSystemTester {
+  - TilemapGenerator _generator
+  - TilemapManager _manager
+  - SeedManager _seedManager
+  - TilemapScrollController _scrollController
+}
+
+TilemapSystemTester --> TilemapGenerator
+TilemapSystemTester --> TilemapManager
+TilemapSystemTester --> SeedManager
+TilemapSystemTester --> TilemapScrollController
+
+TilemapScrollController --> TilemapGenerator
+TilemapScrollController --> TilemapManager
+TilemapScrollController --> IScrollTrigger
+
+TilemapManager --> ITileBehavior
+TilemapManager --> MapData
+TilemapManager --> TileType
+
+TilemapGenerator --> SeedManager
+TilemapGenerator --> ProceduralGenerator
+TilemapGenerator --> MapData
+
+TileBehavior ..|> ITileBehavior
+SimpleScrollTrigger ..|> IScrollTrigger
+
+ProceduralGenerator --> TileType
+
+@enduml
+

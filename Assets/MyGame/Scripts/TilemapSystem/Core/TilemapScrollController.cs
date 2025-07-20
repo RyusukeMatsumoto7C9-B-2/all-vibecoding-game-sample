@@ -7,34 +7,33 @@ namespace MyGame.TilemapSystem.Core
 {
     public class TilemapScrollController : IDisposable
     {
+        // publicプロパティ
+        public Observable<int> OnScrollStarted => _onScrollStarted;
+        public Observable<int> OnScrollCompleted => _onScrollCompleted;
+        public Observable<int> OnNewLevelGenerated => _onNewLevelGenerated;
+        public bool IsScrolling => _isScrolling;
+        public int CurrentLevel => _currentLevel;
+        public float ScrollSpeed => _scrollSpeed;
+        public float ScrollDistance => _scrollDistance;
+        
+        // privateフィールド
         private readonly TilemapGenerator _generator;
         private readonly TilemapManager _manager;
         private readonly Transform _tilemapParent;
-        
+        private readonly Subject<int> _onScrollStarted = new Subject<int>();
+        private readonly Subject<int> _onScrollCompleted = new Subject<int>();
+        private readonly Subject<int> _onNewLevelGenerated = new Subject<int>();
         private int _currentLevel = 1;
         private bool _isScrolling = false;
         private float _scrollSpeed = 5.0f;
         private float _scrollDistance = 25.0f; // 25マス分
         private IScrollTrigger _scrollTrigger;
-        
-        public Observable<int> OnScrollStarted => _onScrollStarted;
-        public Observable<int> OnScrollCompleted => _onScrollCompleted;
-        public Observable<int> OnNewLevelGenerated => _onNewLevelGenerated;
-        
-        private readonly Subject<int> _onScrollStarted = new Subject<int>();
-        private readonly Subject<int> _onScrollCompleted = new Subject<int>();
-        private readonly Subject<int> _onNewLevelGenerated = new Subject<int>();
-        
-        
-        public bool IsScrolling => _isScrolling;
-        public int CurrentLevel => _currentLevel;
-        public float ScrollSpeed => _scrollSpeed;
-        public float ScrollDistance => _scrollDistance;
-
         private IDisposable _scrollStartedDisposable = null;
         private IDisposable _scrollPositionChangedDisposable = null;
         private IDisposable _scrollCompletedDisposable = null;
-        
+
+
+        // publicメソッド
         public TilemapScrollController(TilemapGenerator generator, TilemapManager manager, Transform tilemapParent)
         {
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));

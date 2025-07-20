@@ -4,6 +4,7 @@ namespace MyGame.TilemapSystem.Core
 {
     public class TileBehavior : ITileBehavior
     {
+        // publicメソッド
         public bool CanPlayerPassThrough(BlockType blockType)
         {
             return blockType switch
@@ -16,6 +17,7 @@ namespace MyGame.TilemapSystem.Core
                 _ => true
             };
         }
+
 
         public BlockType OnPlayerHit(BlockType blockType, Vector2Int position, out int scoreGained)
         {
@@ -38,6 +40,7 @@ namespace MyGame.TilemapSystem.Core
             }
         }
 
+
         public void OnTimeUpdate(Vector2Int position, BlockType[,] tiles, float deltaTime)
         {
             // Rock属性のブロックの落下処理を実装
@@ -47,6 +50,8 @@ namespace MyGame.TilemapSystem.Core
             }
         }
 
+
+        // privateメソッド
         private void ProcessRockFalling(Vector2Int position, BlockType[,] tiles)
         {
             int width = tiles.GetLength(0);
@@ -71,6 +76,7 @@ namespace MyGame.TilemapSystem.Core
                 }
             }
         }
+
 
         private void StartRockFalling(Vector2Int position, BlockType[,] tiles)
         {

@@ -150,7 +150,7 @@ public void GenerateTerrain_Always_Creates3To5Walls()
 ### 変更ファイル
 1. `Assets/MyGame/Scripts/TilemapSystem/Generation/ProceduralGenerator.cs`
 2. `Assets/MyGame/Scripts/TilemapSystem/Tests/EditMode/ProceduralGeneratorTests.cs`
-3. `Assets/MyGame/Documentation/Specifications/tilemap_system_spec.md`
+3. `Documentation/Specifications/tilemap_system_spec.md`
 4. `Assets/MyGame/Scenes/Sample.unity` (カメラ調整)
 
 ### Git履歴

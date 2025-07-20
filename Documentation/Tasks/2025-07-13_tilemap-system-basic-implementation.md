@@ -4,7 +4,7 @@
 **作業日**: 2025年7月13日  
 **担当者**: Claude  
 **ブランチ**: feature/tilemap-system-basic  
-**仕様書**: Assets/MyGame/Documentation/Specifications/tilemap_system_spec.md  
+**仕様書**: Documentation/Specifications/tilemap_system_spec.md  
 
 ## 作業内容
 

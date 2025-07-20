@@ -72,7 +72,7 @@
 
 ## 参考情報
 - **Issue URL**: https://github.com/RyusukeMatsumoto7C9-B-2/all-vibecoding-game-sample/issues/8
-- **関連仕様書**: `Assets/MyGame/Documentation/Specifications/tilemap_system_spec.md`
+- **関連仕様書**: `Documentation/Specifications/tilemap_system_spec.md`
 - **関連実装**: `Assets/MyGame/Scripts/TilemapSystem/Core/`
 
 ## 技術的な考慮事項

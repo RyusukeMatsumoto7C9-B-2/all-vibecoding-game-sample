@@ -9,7 +9,7 @@ tilemap_system_spec.mdの仕様更新に基づき、「タイル生成時は必�
 ## 実施内容
 
 ### 1. 仕様書確認
-- **対象ファイル**: `Assets/MyGame/Documentation/Specifications/tilemap_system_spec.md`
+- **対象ファイル**: `Documentation/Specifications/tilemap_system_spec.md`
 - **確認内容**: 106行目に追加された新ルール「タイル生成時は必ず何かしらのタイルが表示され、空白がないものとする」を確認
 
 ### 2. 既存コード分析

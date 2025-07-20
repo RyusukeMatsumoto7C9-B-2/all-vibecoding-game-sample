@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using R3;
 
 namespace MyGame.TilemapSystem.Core
 {
@@ -9,14 +10,18 @@ namespace MyGame.TilemapSystem.Core
     /// </summary>
     public class SimpleScrollTrigger : MonoBehaviour, IScrollTrigger
     {
-        public event Action<float> OnScrollPositionChanged;
-        public event Action OnScrollCompleted;
-        public event Action OnScrollStarted;
+
+        public Observable<float> OnScrollPositionChanged => _onScrollPositionChanged;
+        public Observable<Unit> OnScrollCompleted => _onScrollCompleted;
+        public Observable<Unit> OnScrollStarted => _onScrollStarted;
         
         [SerializeField] private float _scrollSpeed = 10.0f;
         [SerializeField] private float _scrollDistance = 25.0f;
         [SerializeField] private KeyCode _scrollKey = KeyCode.Space;
         
+        private Subject<float> _onScrollPositionChanged = new Subject<float>();
+        private Subject<Unit> _onScrollCompleted = new Subject<Unit>();
+        private Subject<Unit> _onScrollStarted = new Subject<Unit>();
         private float _currentScrollPosition = 0f;
         private bool _isScrolling = false;
         private float _scrollStartTime;
@@ -25,7 +30,8 @@ namespace MyGame.TilemapSystem.Core
         public float CurrentScrollPosition => _currentScrollPosition;
         public bool IsScrolling => _isScrolling;
         
-        void Update()
+        
+        private void Update()
         {
             if (Input.GetKeyDown(_scrollKey) && !_isScrolling)
             {
@@ -37,13 +43,18 @@ namespace MyGame.TilemapSystem.Core
                 UpdateScroll();
             }
         }
-        
+
+        private void OnDestroy()
+        {
+            _onScrollPositionChanged.Dispose();
+        }
+
         private void StartScroll()
         {
             _isScrolling = true;
             _scrollStartTime = Time.time;
             _scrollStartPosition = _currentScrollPosition;
-            OnScrollStarted?.Invoke();
+            _onScrollStarted.OnNext(Unit.Default);
         }
         
         private void UpdateScroll()
@@ -56,15 +67,15 @@ namespace MyGame.TilemapSystem.Core
                 // スクロール完了
                 _currentScrollPosition = _scrollStartPosition + _scrollDistance;
                 _isScrolling = false;
-                OnScrollPositionChanged?.Invoke(_currentScrollPosition);
-                OnScrollCompleted?.Invoke();
+                _onScrollPositionChanged?.OnNext(_currentScrollPosition);
+                _onScrollCompleted?.OnNext(Unit.Default);
             }
             else
             {
                 // スクロール中
                 float progress = elapsedTime / duration;
                 _currentScrollPosition = _scrollStartPosition + (_scrollDistance * progress);
-                OnScrollPositionChanged?.Invoke(_currentScrollPosition);
+                _onScrollPositionChanged?.OnNext(_currentScrollPosition);
             }
         }
         

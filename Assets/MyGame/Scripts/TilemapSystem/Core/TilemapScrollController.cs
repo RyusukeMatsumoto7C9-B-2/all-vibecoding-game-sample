@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
+using R3;
 
 namespace MyGame.TilemapSystem.Core
 {
@@ -17,6 +18,7 @@ namespace MyGame.TilemapSystem.Core
         private IScrollTrigger _scrollTrigger;
         
         public event Action<int> OnScrollStarted;
+        
         public event Action<int> OnScrollCompleted;
         public event Action<int> OnNewLevelGenerated;
         
@@ -24,6 +26,10 @@ namespace MyGame.TilemapSystem.Core
         public int CurrentLevel => _currentLevel;
         public float ScrollSpeed => _scrollSpeed;
         public float ScrollDistance => _scrollDistance;
+
+        private IDisposable _scrollStartedDisposable = null;
+        private IDisposable _scrollPositionChangedDisposable = null;
+        private IDisposable _scrollCompletedDisposable = null;
         
         public TilemapScrollController(TilemapGenerator generator, TilemapManager manager, Transform tilemapParent)
         {
@@ -192,9 +198,9 @@ namespace MyGame.TilemapSystem.Core
             UnregisterScrollTrigger();
             
             _scrollTrigger = trigger;
-            _scrollTrigger.OnScrollStarted += HandleScrollStarted;
-            _scrollTrigger.OnScrollPositionChanged += HandleScrollPositionChanged;
-            _scrollTrigger.OnScrollCompleted += HandleScrollCompleted;
+            _scrollStartedDisposable = _scrollTrigger.OnScrollStarted?.Subscribe(HandleScrollStarted);
+            _scrollPositionChangedDisposable = _scrollTrigger.OnScrollPositionChanged.Subscribe(HandleScrollPositionChanged);
+            _scrollCompletedDisposable = _scrollTrigger.OnScrollCompleted.Subscribe(HandleScrollCompleted);
         }
         
         /// <summary>
@@ -204,9 +210,9 @@ namespace MyGame.TilemapSystem.Core
         {
             if (_scrollTrigger != null)
             {
-                _scrollTrigger.OnScrollStarted -= HandleScrollStarted;
-                _scrollTrigger.OnScrollPositionChanged -= HandleScrollPositionChanged;
-                _scrollTrigger.OnScrollCompleted -= HandleScrollCompleted;
+                _scrollStartedDisposable?.Dispose();
+                _scrollPositionChangedDisposable?.Dispose();
+                _scrollCompletedDisposable?.Dispose();
                 _scrollTrigger = null;
             }
         }
@@ -214,7 +220,7 @@ namespace MyGame.TilemapSystem.Core
         /// <summary>
         /// スクロール開始イベントハンドラー
         /// </summary>
-        private void HandleScrollStarted()
+        private void HandleScrollStarted(Unit unit)
         {
             if (!_isScrolling)
             {
@@ -242,7 +248,7 @@ namespace MyGame.TilemapSystem.Core
         /// <summary>
         /// スクロール完了イベントハンドラー
         /// </summary>
-        private void HandleScrollCompleted()
+        private void HandleScrollCompleted(Unit unit)
         {
             // スクロール完了時の追加処理
             Debug.Log($"Scroll completed for level {_currentLevel}");

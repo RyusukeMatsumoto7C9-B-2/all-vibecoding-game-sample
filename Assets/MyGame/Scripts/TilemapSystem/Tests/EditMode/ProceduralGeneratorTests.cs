@@ -3,7 +3,7 @@ using NUnit.Framework;
 using MyGame.TilemapSystem.Core;
 using MyGame.TilemapSystem.Generation;
 
-namespace MyGame.TilemapSystem.Tests.EditMode
+namespace MyGame.TilemapSystem.Tests
 {
     [Description("プロシージャル地形生成システムのテスト")]
     public class ProceduralGeneratorTests

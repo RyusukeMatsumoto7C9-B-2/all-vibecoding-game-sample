@@ -9,3 +9,5 @@
 - TileType を BlockType へと変更した(システム名自体はTilemapSystemのままとしている)
   - タイルマップの一要素 : ブロック
   - 全体の構成 : タイルマップ
+- MapData 構造体を TilemapDefinition から独立した一つのスクリプトとして定義
+- 

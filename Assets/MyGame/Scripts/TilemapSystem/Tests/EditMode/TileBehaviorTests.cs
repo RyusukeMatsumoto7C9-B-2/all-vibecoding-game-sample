@@ -2,7 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using MyGame.TilemapSystem.Core;
 
-namespace MyGame.TilemapSystem.Tests.EditMode
+namespace MyGame.TilemapSystem.Tests
 {
     [Description("タイル挙動システムのテスト")]
     public class TileBehaviorTests

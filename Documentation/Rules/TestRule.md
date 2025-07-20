@@ -24,11 +24,18 @@
 - テストクラス自体にも`[Description("")]`属性を付与し、そのクラスがテストする対象と目的を記述する
 - テストの意図と期待結果が日本語で明確に理解できるようにする
 
+### 名前空間規則
+- EditModeテストクラスの名前空間は `MyGame.機能名.Tests` の形式で統一する
+- 例: `MyGame.TilemapSystem.Tests`、`MyGame.Player.Tests`
+- PlayModeテストクラスの名前空間も同様の形式を使用する
+
 ### 記述例
 ```csharp
-[Description("プレイヤーの移動機能をテストするクラス")]
-public class PlayerMovementTests
+namespace MyGame.Player.Tests
 {
+    [Description("プレイヤーの移動機能をテストするクラス")]
+    public class PlayerMovementTests
+    {
     [Test]
     [Description("上方向への移動時に座標のY値が1増加することを検証")]
     public void MoveUp_WhenCalled_IncreasesYCoordinateByOne()
@@ -41,6 +48,7 @@ public class PlayerMovementTests
         
         // Assert
         Assert.AreEqual(1, player.Position.y);
+    }
     }
 }
 ```
@@ -63,6 +71,9 @@ Assets/MyGame/Scripts/[機能名]/
 - 各機能フォルダ/Tests/EditModeフォルダに構築する
 - PureC#ロジックのテストを実装する
 - Unityのライフサイクルに依存しない処理のテスト
+- **重要**: EditModeテストではGameObject、Transform、その他UnityEngineオブジェクトの使用を禁止する
+- GameObjectを利用するテストは不安定で実行タイミングによって成功したりしなかったりするため
+- GameObjectが必要なテストはPlayModeテストとして実装する
 
 ### PlayModeテスト
 - 各機能フォルダ/Tests/PlayModeフォルダに構築する

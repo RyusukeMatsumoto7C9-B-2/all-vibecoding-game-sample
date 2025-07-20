@@ -1,6 +1,4 @@
-using System;
-
-namespace MyGame.TilemapSystem.Core
+﻿namespace MyGame.TilemapSystem.Core
 {
     public struct MapData
     {

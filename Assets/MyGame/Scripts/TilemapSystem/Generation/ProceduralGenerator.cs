@@ -16,9 +16,9 @@ namespace MyGame.TilemapSystem.Generation
             _groundAreaHeight = groundAreaHeight;
         }
         
-        public TileType[,] GenerateTerrain(Random random, int level = 1)
+        public BlockType[,] GenerateTerrain(Random random, int level = 1)
         {
-            var tiles = new TileType[_mapWidth, _mapHeight];
+            var tiles = new BlockType[_mapWidth, _mapHeight];
             
             // レベル1の場合は上5マス分をSkyブロックに設定
             if (level == 1)
@@ -34,7 +34,7 @@ namespace MyGame.TilemapSystem.Generation
             return tiles;
         }
         
-        private void FillWithSkyAndGround(TileType[,] tiles, Random random)
+        private void FillWithSkyAndGround(BlockType[,] tiles, Random random)
         {
             // レベル1専用：上5マス分をSkyブロック、残りをGroundで埋める
             for (int x = 0; x < _mapWidth; x++)
@@ -44,11 +44,11 @@ namespace MyGame.TilemapSystem.Generation
                     // 上5マス分（y座標が25以上）をSkyブロックに設定
                     if (y >= _mapHeight - _groundAreaHeight)
                     {
-                        tiles[x, y] = TileType.Sky;
+                        tiles[x, y] = BlockType.Sky;
                     }
                     else
                     {
-                        tiles[x, y] = TileType.Ground;
+                        tiles[x, y] = BlockType.Ground;
                     }
                 }
             }
@@ -57,7 +57,7 @@ namespace MyGame.TilemapSystem.Generation
             PlaceLimitedRocks(tiles, random);
         }
         
-        private void FillAllTilesWithoutGaps(TileType[,] tiles, Random random)
+        private void FillAllTilesWithoutGaps(BlockType[,] tiles, Random random)
         {
             // 横20 x 縦30のグリッドを隙間なく配置
             // まず全てをGroundで埋める
@@ -65,7 +65,7 @@ namespace MyGame.TilemapSystem.Generation
             {
                 for (int y = 0; y < _mapHeight; y++)
                 {
-                    tiles[x, y] = TileType.Ground;
+                    tiles[x, y] = BlockType.Ground;
                 }
             }
             
@@ -73,7 +73,7 @@ namespace MyGame.TilemapSystem.Generation
             PlaceLimitedRocks(tiles, random);
         }
         
-        private void PlaceLimitedRocks(TileType[,] tiles, Random random)
+        private void PlaceLimitedRocks(BlockType[,] tiles, Random random)
         {
             // 3~5個のランダムな数のRockを配置
             int rockCount = random.Next(3, 6); // 3以上6未満（つまり3~5個）
@@ -90,10 +90,10 @@ namespace MyGame.TilemapSystem.Generation
                     x = random.Next(0, _mapWidth);
                     y = random.Next(0, _mapHeight);
                     attempts++;
-                } while ((tiles[x, y] == TileType.Rock || tiles[x, y] == TileType.Sky) && attempts < maxAttempts);
+                } while ((tiles[x, y] == BlockType.Rock || tiles[x, y] == BlockType.Sky) && attempts < maxAttempts);
                 
                 // Rockを配置
-                tiles[x, y] = TileType.Rock;
+                tiles[x, y] = BlockType.Rock;
             }
         }
     }

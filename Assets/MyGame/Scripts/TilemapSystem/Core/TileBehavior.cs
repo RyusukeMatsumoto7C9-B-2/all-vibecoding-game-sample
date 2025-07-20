@@ -5,57 +5,57 @@ namespace MyGame.TilemapSystem.Core
 {
     public interface ITileBehavior
     {
-        bool CanPlayerPassThrough(TileType tileType);
-        TileType OnPlayerHit(TileType tileType, Vector2Int position, out int scoreGained);
-        void OnTimeUpdate(Vector2Int position, TileType[,] tiles, float deltaTime);
+        bool CanPlayerPassThrough(BlockType blockType);
+        BlockType OnPlayerHit(BlockType blockType, Vector2Int position, out int scoreGained);
+        void OnTimeUpdate(Vector2Int position, BlockType[,] tiles, float deltaTime);
     }
 
     public class TileBehavior : ITileBehavior
     {
-        public bool CanPlayerPassThrough(TileType tileType)
+        public bool CanPlayerPassThrough(BlockType blockType)
         {
-            return tileType switch
+            return blockType switch
             {
-                TileType.Sky => true,
-                TileType.Empty => true,
-                TileType.Ground => true,
-                TileType.Rock => false,     // Playerは通過できない
-                TileType.Treasure => true,
+                BlockType.Sky => true,
+                BlockType.Empty => true,
+                BlockType.Ground => true,
+                BlockType.Rock => false,     // Playerは通過できない
+                BlockType.Treasure => true,
                 _ => true
             };
         }
 
-        public TileType OnPlayerHit(TileType tileType, Vector2Int position, out int scoreGained)
+        public BlockType OnPlayerHit(BlockType blockType, Vector2Int position, out int scoreGained)
         {
             scoreGained = 0;
             
-            switch (tileType)
+            switch (blockType)
             {
-                case TileType.Ground:
+                case BlockType.Ground:
                     // Playerがヒットした場合、タイルはEmptyタイルに変化する
                     scoreGained = 0;
-                    return TileType.Empty;
+                    return BlockType.Empty;
                     
-                case TileType.Treasure:
+                case BlockType.Treasure:
                     // Playerとヒットしたらスコアが加算される
                     scoreGained = 100;
-                    return TileType.Empty;
+                    return BlockType.Empty;
                     
                 default:
-                    return tileType;
+                    return blockType;
             }
         }
 
-        public void OnTimeUpdate(Vector2Int position, TileType[,] tiles, float deltaTime)
+        public void OnTimeUpdate(Vector2Int position, BlockType[,] tiles, float deltaTime)
         {
             // Rock属性のブロックの落下処理を実装
-            if (tiles[position.x, position.y] == TileType.Rock)
+            if (tiles[position.x, position.y] == BlockType.Rock)
             {
                 ProcessRockFalling(position, tiles);
             }
         }
 
-        private void ProcessRockFalling(Vector2Int position, TileType[,] tiles)
+        private void ProcessRockFalling(Vector2Int position, BlockType[,] tiles)
         {
             int width = tiles.GetLength(0);
             int height = tiles.GetLength(1);
@@ -66,21 +66,21 @@ namespace MyGame.TilemapSystem.Core
                 var belowTile = tiles[position.x, position.y - 1];
                 
                 // 一つ下のブロックがGroundブロックでかつその下がEmptyブロックの場合
-                if (belowTile == TileType.Ground && position.y - 2 >= 0 && tiles[position.x, position.y - 2] == TileType.Empty)
+                if (belowTile == BlockType.Ground && position.y - 2 >= 0 && tiles[position.x, position.y - 2] == BlockType.Empty)
                 {
                     // 2秒後に一つ下のEmptyブロックをEmptyブロックに変更（既にEmpty）
                     // 次のGroundブロックに到達するまで落下する
                     StartRockFalling(position, tiles);
                 }
                 // 一つ下のブロックがEmptyになったら即座に落下開始
-                else if (belowTile == TileType.Empty)
+                else if (belowTile == BlockType.Empty)
                 {
                     StartRockFalling(position, tiles);
                 }
             }
         }
 
-        private void StartRockFalling(Vector2Int position, TileType[,] tiles)
+        private void StartRockFalling(Vector2Int position, BlockType[,] tiles)
         {
             int width = tiles.GetLength(0);
             int height = tiles.GetLength(1);
@@ -91,7 +91,7 @@ namespace MyGame.TilemapSystem.Core
             while (fallTargetY >= 0)
             {
                 var targetTile = tiles[position.x, fallTargetY];
-                if (targetTile == TileType.Ground || targetTile == TileType.Rock)
+                if (targetTile == BlockType.Ground || targetTile == BlockType.Rock)
                 {
                     break;
                 }
@@ -102,9 +102,9 @@ namespace MyGame.TilemapSystem.Core
             if (fallTargetY >= 0 && fallTargetY < position.y - 1)
             {
                 // 元の位置をEmptyに
-                tiles[position.x, position.y] = TileType.Empty;
+                tiles[position.x, position.y] = BlockType.Empty;
                 // 落下先の一つ上にRockを配置
-                tiles[position.x, fallTargetY + 1] = TileType.Rock;
+                tiles[position.x, fallTargetY + 1] = BlockType.Rock;
             }
         }
     }

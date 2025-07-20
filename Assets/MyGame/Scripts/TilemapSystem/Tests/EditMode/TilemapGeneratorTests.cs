@@ -48,7 +48,7 @@ namespace MyGame.TilemapSystem.Tests
             {
                 for (int y = mapData.Height - skyHeight; y < mapData.Height; y++)
                 {
-                    Assert.AreEqual(TileType.Sky, mapData.Tiles[x, y], 
+                    Assert.AreEqual(BlockType.Sky, mapData.Tiles[x, y], 
                         $"位置({x}, {y})はSkyタイルであるべき。実際の値: {mapData.Tiles[x, y]}");
                 }
             }
@@ -58,7 +58,7 @@ namespace MyGame.TilemapSystem.Tests
             {
                 for (int y = 0; y < mapData.Height - skyHeight; y++)
                 {
-                    Assert.IsTrue(mapData.Tiles[x, y] == TileType.Ground || mapData.Tiles[x, y] == TileType.Rock, 
+                    Assert.IsTrue(mapData.Tiles[x, y] == BlockType.Ground || mapData.Tiles[x, y] == BlockType.Rock, 
                         $"位置({x}, {y})はGroundまたはRockであるべき。実際の値: {mapData.Tiles[x, y]}");
                 }
             }
@@ -78,7 +78,7 @@ namespace MyGame.TilemapSystem.Tests
             {
                 for (int y = 0; y < mapData.Height; y++)
                 {
-                    Assert.IsTrue(mapData.Tiles[x, y] == TileType.Ground || mapData.Tiles[x, y] == TileType.Rock, 
+                    Assert.IsTrue(mapData.Tiles[x, y] == BlockType.Ground || mapData.Tiles[x, y] == BlockType.Rock, 
                         $"位置({x}, {y})はGroundまたはRockであるべき。実際の値: {mapData.Tiles[x, y]}");
                 }
             }
@@ -121,7 +121,7 @@ namespace MyGame.TilemapSystem.Tests
             {
                 for (int y = 0; y < mapData.Height; y++)
                 {
-                    if (mapData.Tiles[x, y] == TileType.Rock)
+                    if (mapData.Tiles[x, y] == BlockType.Rock)
                     {
                         rockCount++;
                     }
@@ -177,9 +177,9 @@ namespace MyGame.TilemapSystem.Tests
                 for (int y = 0; y < mapData.Height; y++)
                 {
                     var tileType = mapData.Tiles[x, y];
-                    if (tileType == TileType.Sky) hasSky = true;
-                    if (tileType == TileType.Ground) hasGround = true;
-                    if (tileType == TileType.Rock) hasRock = true;
+                    if (tileType == BlockType.Sky) hasSky = true;
+                    if (tileType == BlockType.Ground) hasGround = true;
+                    if (tileType == BlockType.Rock) hasRock = true;
                 }
             }
 
@@ -203,7 +203,7 @@ namespace MyGame.TilemapSystem.Tests
             {
                 for (int y = 0; y < mapData.Height; y++)
                 {
-                    if (mapData.Tiles[x, y] == TileType.Treasure)
+                    if (mapData.Tiles[x, y] == BlockType.Treasure)
                     {
                         hasTreasure = true;
                         break;
@@ -231,11 +231,11 @@ namespace MyGame.TilemapSystem.Tests
                 {
                     var tileType = mapData.Tiles[x, y];
                     Assert.IsTrue(
-                        tileType == TileType.Sky || 
-                        tileType == TileType.Empty || 
-                        tileType == TileType.Ground || 
-                        tileType == TileType.Rock || 
-                        tileType == TileType.Treasure,
+                        tileType == BlockType.Sky || 
+                        tileType == BlockType.Empty || 
+                        tileType == BlockType.Ground || 
+                        tileType == BlockType.Rock || 
+                        tileType == BlockType.Treasure,
                         $"位置({x}, {y})で無効なタイルタイプ: {tileType}");
                 }
             }
@@ -257,7 +257,7 @@ namespace MyGame.TilemapSystem.Tests
             {
                 for (int y = mapData.Height - skyHeight; y < mapData.Height; y++)
                 {
-                    Assert.AreEqual(TileType.Sky, mapData.Tiles[x, y], 
+                    Assert.AreEqual(BlockType.Sky, mapData.Tiles[x, y], 
                         $"位置({x}, {y})はSkyタイルであるべき");
                 }
             }

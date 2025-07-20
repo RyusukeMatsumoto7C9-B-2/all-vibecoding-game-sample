@@ -30,12 +30,12 @@ namespace MyGame.TilemapSystem.Tests.EditMode
             _generator = new TilemapGenerator(_seedManager);
             
             // TilemapManagerを作成（ダミーPrefabを使用）
-            var tilePrefabs = new Dictionary<TileType, GameObject>
+            var tilePrefabs = new Dictionary<BlockType, GameObject>
             {
-                { TileType.Sky, new GameObject("SkyTile") },
-                { TileType.Ground, new GameObject("GroundTile") },
-                { TileType.Rock, new GameObject("RockTile") },
-                { TileType.Treasure, new GameObject("TreasureTile") }
+                { BlockType.Sky, new GameObject("SkyTile") },
+                { BlockType.Ground, new GameObject("GroundTile") },
+                { BlockType.Rock, new GameObject("RockTile") },
+                { BlockType.Treasure, new GameObject("TreasureTile") }
             };
             _manager = new TilemapManager(_tilemapParent, tilePrefabs);
             

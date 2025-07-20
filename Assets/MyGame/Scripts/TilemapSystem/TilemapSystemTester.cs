@@ -42,12 +42,12 @@ namespace MyGame.TilemapSystem
             _seedManager = new SeedManager(testSeed);
             _generator = new TilemapGenerator(_seedManager);
 
-            var tilePrefabs = new Dictionary<TileType, GameObject>
+            var tilePrefabs = new Dictionary<BlockType, GameObject>
             {
-                { TileType.Sky, skyTilePrefab },
-                { TileType.Ground, groundTilePrefab },
-                { TileType.Rock, rockTilePrefab },
-                { TileType.Treasure, treasureTilePrefab }
+                { BlockType.Sky, skyTilePrefab },
+                { BlockType.Ground, groundTilePrefab },
+                { BlockType.Rock, rockTilePrefab },
+                { BlockType.Treasure, treasureTilePrefab }
             };
 
             _manager = new TilemapManager(transform, tilePrefabs);

@@ -7,16 +7,16 @@ namespace MyGame.TilemapSystem.Core
     public class TilemapManager
     {
         private readonly Transform _parentTransform;
-        private readonly Dictionary<TileType, GameObject> _tilePrefabs;
+        private readonly Dictionary<BlockType, GameObject> _tilePrefabs;
         private readonly Dictionary<int, MapData> _loadedMaps;
         private readonly Dictionary<int, List<GameObject>> _instantiatedTiles;
         private readonly ITileBehavior _tileBehavior;
 
         public event Action<MapData> OnMapGenerated;
         public event Action<int> OnMemoryOptimized;
-        public event Action<Vector2Int, TileType, int> OnTileHit; // position, oldType, scoreGained
+        public event Action<Vector2Int, BlockType, int> OnTileHit; // position, oldType, scoreGained
 
-        public TilemapManager(Transform parentTransform, Dictionary<TileType, GameObject> tilePrefabs, ITileBehavior tileBehavior = null)
+        public TilemapManager(Transform parentTransform, Dictionary<BlockType, GameObject> tilePrefabs, ITileBehavior tileBehavior = null)
         {
             _parentTransform = parentTransform ?? throw new ArgumentNullException(nameof(parentTransform));
             _tilePrefabs = tilePrefabs ?? throw new ArgumentNullException(nameof(tilePrefabs));
@@ -47,7 +47,7 @@ namespace MyGame.TilemapSystem.Core
                 {
                     var tileType = mapData.Tiles[x, y];
                     
-                    if (tileType != TileType.Empty && _tilePrefabs.ContainsKey(tileType))
+                    if (tileType != BlockType.Empty && _tilePrefabs.ContainsKey(tileType))
                     {
                         // 2DSprite座標系: スプライト中心が原点、隙間なく並べる
                         var position = new Vector3(x, y, 0);
@@ -88,7 +88,7 @@ namespace MyGame.TilemapSystem.Core
                 {
                     var tileType = mapData.Tiles[x, y];
                     
-                    if (tileType != TileType.Empty && _tilePrefabs.ContainsKey(tileType))
+                    if (tileType != BlockType.Empty && _tilePrefabs.ContainsKey(tileType))
                     {
                         // 重複エリア（下5マス）での既存ブロック保護チェック
                         var position = new Vector3(x, y, 0);
@@ -221,7 +221,7 @@ namespace MyGame.TilemapSystem.Core
             if (oldTileType != newTileType)
             {
                 // MapDataは読み取り専用なので、新しいMapDataを作成
-                var newTiles = (TileType[,])mapData.Tiles.Clone();
+                var newTiles = (BlockType[,])mapData.Tiles.Clone();
                 newTiles[position.x, position.y] = newTileType;
                 
                 var newMapData = new MapData(mapData.Width, mapData.Height, newTiles, mapData.Seed, mapData.Level);
@@ -234,7 +234,7 @@ namespace MyGame.TilemapSystem.Core
             }
         }
 
-        private void UpdateTileDisplay(Vector2Int position, TileType newTileType, int level)
+        private void UpdateTileDisplay(Vector2Int position, BlockType newBlockType, int level)
         {
             if (!_instantiatedTiles.ContainsKey(level))
                 return;
@@ -254,11 +254,11 @@ namespace MyGame.TilemapSystem.Core
             }
 
             // 新しいタイルを生成（Emptyの場合は生成しない）
-            if (newTileType != TileType.Empty && _tilePrefabs.ContainsKey(newTileType))
+            if (newBlockType != BlockType.Empty && _tilePrefabs.ContainsKey(newBlockType))
             {
                 var worldPosition = new Vector3(position.x, position.y, 0);
-                var tileInstance = UnityEngine.Object.Instantiate(_tilePrefabs[newTileType], worldPosition, Quaternion.identity, _parentTransform);
-                tileInstance.name = $"{newTileType}_Level{level}_{position.x}_{position.y}";
+                var tileInstance = UnityEngine.Object.Instantiate(_tilePrefabs[newBlockType], worldPosition, Quaternion.identity, _parentTransform);
+                tileInstance.name = $"{newBlockType}_Level{level}_{position.x}_{position.y}";
                 tileInstances.Add(tileInstance);
             }
         }

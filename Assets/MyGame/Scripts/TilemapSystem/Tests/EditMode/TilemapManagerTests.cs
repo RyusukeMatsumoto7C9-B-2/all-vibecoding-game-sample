@@ -10,7 +10,7 @@ namespace MyGame.TilemapSystem.Tests.EditMode
     {
         private TilemapManager _manager;
         private Transform _parentTransform;
-        private Dictionary<TileType, GameObject> _tilePrefabs;
+        private Dictionary<BlockType, GameObject> _tilePrefabs;
         private GameObject _testGameObject;
 
         [SetUp]
@@ -33,12 +33,12 @@ namespace MyGame.TilemapSystem.Tests.EditMode
             var treasurePrefab = new GameObject("TreasureTile");
             treasurePrefab.AddComponent<SpriteRenderer>();
 
-            _tilePrefabs = new Dictionary<TileType, GameObject>
+            _tilePrefabs = new Dictionary<BlockType, GameObject>
             {
-                { TileType.Sky, skyPrefab },
-                { TileType.Ground, groundPrefab },
-                { TileType.Rock, rockPrefab },
-                { TileType.Treasure, treasurePrefab }
+                { BlockType.Sky, skyPrefab },
+                { BlockType.Ground, groundPrefab },
+                { BlockType.Rock, rockPrefab },
+                { BlockType.Treasure, treasurePrefab }
             };
 
             _manager = new TilemapManager(_parentTransform, _tilePrefabs);
@@ -65,10 +65,10 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("タイル配置でGameObjectが正しく生成されることを検証")]
         public void PlaceTiles_WithValidMapData_CreatesGameObjects()
         {
-            var tiles = new TileType[3, 3];
-            tiles[0, 0] = TileType.Rock;
-            tiles[1, 1] = TileType.Ground;
-            tiles[2, 2] = TileType.Treasure;
+            var tiles = new BlockType[3, 3];
+            tiles[0, 0] = BlockType.Rock;
+            tiles[1, 1] = BlockType.Ground;
+            tiles[2, 2] = BlockType.Treasure;
             
             var mapData = new MapData(3, 3, tiles, 12345, 1);
 
@@ -82,9 +82,9 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("タイル配置で正しい座標にGameObjectが配置されることを検証")]
         public void PlaceTiles_WithValidMapData_PlacesGameObjectsAtCorrectPositions()
         {
-            var tiles = new TileType[2, 2];
-            tiles[0, 0] = TileType.Rock;
-            tiles[1, 1] = TileType.Ground;
+            var tiles = new BlockType[2, 2];
+            tiles[0, 0] = BlockType.Rock;
+            tiles[1, 1] = BlockType.Ground;
             
             var mapData = new MapData(2, 2, tiles, 12345, 1);
 
@@ -120,16 +120,16 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("同じレベルのマップを再配置時に既存タイルが削除されることを検証")]
         public void PlaceTiles_SameLevel_ReplacesExistingTiles()
         {
-            var tiles1 = new TileType[2, 2];
-            tiles1[0, 0] = TileType.Rock;
+            var tiles1 = new BlockType[2, 2];
+            tiles1[0, 0] = BlockType.Rock;
             var mapData1 = new MapData(2, 2, tiles1, 12345, 1);
 
             _manager.PlaceTiles(mapData1);
             Assert.AreEqual(1, _parentTransform.childCount, "初回配置でタイル数が正しくない");
 
-            var tiles2 = new TileType[2, 2];
-            tiles2[0, 0] = TileType.Rock;
-            tiles2[1, 1] = TileType.Ground;
+            var tiles2 = new BlockType[2, 2];
+            tiles2[0, 0] = BlockType.Rock;
+            tiles2[1, 1] = BlockType.Ground;
             var mapData2 = new MapData(2, 2, tiles2, 12345, 1);
 
             _manager.PlaceTiles(mapData2);
@@ -140,9 +140,9 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("タイル削除でGameObjectが正しく破棄されることを検証")]
         public void ClearTiles_WithValidLevel_DestroysGameObjects()
         {
-            var tiles = new TileType[2, 2];
-            tiles[0, 0] = TileType.Rock;
-            tiles[1, 1] = TileType.Ground;
+            var tiles = new BlockType[2, 2];
+            tiles[0, 0] = BlockType.Rock;
+            tiles[1, 1] = BlockType.Ground;
             var mapData = new MapData(2, 2, tiles, 12345, 1);
 
             _manager.PlaceTiles(mapData);
@@ -173,8 +173,8 @@ namespace MyGame.TilemapSystem.Tests.EditMode
                 receivedMapData = mapData;
             };
 
-            var tiles = new TileType[2, 2];
-            tiles[0, 0] = TileType.Rock;
+            var tiles = new BlockType[2, 2];
+            tiles[0, 0] = BlockType.Rock;
             var mapData = new MapData(2, 2, tiles, 12345, 1);
 
             _manager.PlaceTiles(mapData);
@@ -190,8 +190,8 @@ namespace MyGame.TilemapSystem.Tests.EditMode
             // 複数レベルのマップを配置（各レベルで1個のRockタイル）
             for (int level = 1; level <= 5; level++)
             {
-                var tiles = new TileType[2, 2];
-                tiles[0, 0] = TileType.Rock;  // 1個だけRock、残り3個はEmpty（デフォルト）
+                var tiles = new BlockType[2, 2];
+                tiles[0, 0] = BlockType.Rock;  // 1個だけRock、残り3個はEmpty（デフォルト）
                 var mapData = new MapData(2, 2, tiles, 12345, level);
                 _manager.PlaceTiles(mapData);
             }
@@ -212,8 +212,8 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("ロードされたマップの状態確認が正しく動作することを検証")]
         public void IsMapLoaded_WithLoadedAndUnloadedMaps_ReturnsCorrectStatus()
         {
-            var tiles = new TileType[2, 2];
-            tiles[0, 0] = TileType.Rock;
+            var tiles = new BlockType[2, 2];
+            tiles[0, 0] = BlockType.Rock;
             var mapData = new MapData(2, 2, tiles, 12345, 1);
 
             Assert.IsFalse(_manager.IsMapLoaded(1), "マップ配置前にロード済みとして判定されている");
@@ -229,9 +229,9 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("Skyタイルが正しく配置されることを検証")]
         public void PlaceTiles_WithSkyTiles_PlacesCorrectly()
         {
-            var tiles = new TileType[2, 2];
-            tiles[0, 0] = TileType.Sky;
-            tiles[1, 1] = TileType.Sky;
+            var tiles = new BlockType[2, 2];
+            tiles[0, 0] = BlockType.Sky;
+            tiles[1, 1] = BlockType.Sky;
             
             var mapData = new MapData(2, 2, tiles, 12345, 1);
 
@@ -244,9 +244,9 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("Treasureタイルが正しく配置されることを検証")]
         public void PlaceTiles_WithTreasureTiles_PlacesCorrectly()
         {
-            var tiles = new TileType[2, 2];
-            tiles[0, 0] = TileType.Treasure;
-            tiles[1, 1] = TileType.Treasure;
+            var tiles = new BlockType[2, 2];
+            tiles[0, 0] = BlockType.Treasure;
+            tiles[1, 1] = BlockType.Treasure;
             
             var mapData = new MapData(2, 2, tiles, 12345, 1);
 
@@ -259,12 +259,12 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("全てのタイルタイプが混在するマップが正しく配置されることを検証")]
         public void PlaceTiles_WithMixedTileTypes_PlacesCorrectly()
         {
-            var tiles = new TileType[3, 3];
-            tiles[0, 0] = TileType.Sky;
-            tiles[1, 0] = TileType.Ground;
-            tiles[2, 0] = TileType.Rock;
-            tiles[0, 1] = TileType.Treasure;
-            tiles[1, 1] = TileType.Empty;  // Emptyは配置されない
+            var tiles = new BlockType[3, 3];
+            tiles[0, 0] = BlockType.Sky;
+            tiles[1, 0] = BlockType.Ground;
+            tiles[2, 0] = BlockType.Rock;
+            tiles[0, 1] = BlockType.Treasure;
+            tiles[1, 1] = BlockType.Empty;  // Emptyは配置されない
             
             var mapData = new MapData(3, 3, tiles, 12345, 1);
 
@@ -278,9 +278,9 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("Emptyタイルが配置されないことを検証")]
         public void PlaceTiles_WithEmptyTiles_DoesNotPlaceEmptyTiles()
         {
-            var tiles = new TileType[2, 2];
-            tiles[0, 0] = TileType.Empty;
-            tiles[1, 1] = TileType.Ground;
+            var tiles = new BlockType[2, 2];
+            tiles[0, 0] = BlockType.Empty;
+            tiles[1, 1] = BlockType.Ground;
             
             var mapData = new MapData(2, 2, tiles, 12345, 1);
 
@@ -294,12 +294,12 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("プレイヤーの通過判定が正しく動作することを検証")]
         public void CanPlayerPassThrough_WithDifferentTileTypes_ReturnsCorrectResults()
         {
-            var tiles = new TileType[3, 3];
-            tiles[0, 0] = TileType.Sky;
-            tiles[1, 0] = TileType.Ground;
-            tiles[2, 0] = TileType.Rock;
-            tiles[0, 1] = TileType.Treasure;
-            tiles[1, 1] = TileType.Empty;
+            var tiles = new BlockType[3, 3];
+            tiles[0, 0] = BlockType.Sky;
+            tiles[1, 0] = BlockType.Ground;
+            tiles[2, 0] = BlockType.Rock;
+            tiles[0, 1] = BlockType.Treasure;
+            tiles[1, 1] = BlockType.Empty;
             
             var mapData = new MapData(3, 3, tiles, 12345, 1);
             _manager.PlaceTiles(mapData);
@@ -318,10 +318,10 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("プレイヤーのタイル衝突処理が正しく動作することを検証")]
         public void OnPlayerHitTile_WithDifferentTileTypes_UpdatesCorrectly()
         {
-            var tiles = new TileType[3, 3];
-            tiles[0, 0] = TileType.Ground;
-            tiles[1, 0] = TileType.Treasure;
-            tiles[2, 0] = TileType.Rock;
+            var tiles = new BlockType[3, 3];
+            tiles[0, 0] = BlockType.Ground;
+            tiles[1, 0] = BlockType.Treasure;
+            tiles[2, 0] = BlockType.Rock;
             
             var mapData = new MapData(3, 3, tiles, 12345, 1);
             _manager.PlaceTiles(mapData);
@@ -333,12 +333,12 @@ namespace MyGame.TilemapSystem.Tests.EditMode
                 
                 if (position == new Vector2Int(0, 0))
                 {
-                    Assert.AreEqual(TileType.Ground, oldType, "Groundタイルの衝突イベントが正しくない");
+                    Assert.AreEqual(BlockType.Ground, oldType, "Groundタイルの衝突イベントが正しくない");
                     Assert.AreEqual(0, scoreGained, "Groundタイルのスコアが正しくない");
                 }
                 else if (position == new Vector2Int(1, 0))
                 {
-                    Assert.AreEqual(TileType.Treasure, oldType, "Treasureタイルの衝突イベントが正しくない");
+                    Assert.AreEqual(BlockType.Treasure, oldType, "Treasureタイルの衝突イベントが正しくない");
                     Assert.AreEqual(100, scoreGained, "Treasureタイルのスコアが正しくない");
                 }
             };
@@ -359,8 +359,8 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("マップ境界外での操作が安全に処理されることを検証")]
         public void TileBehaviorMethods_WithOutOfBoundsCoordinates_HandleSafely()
         {
-            var tiles = new TileType[2, 2];
-            tiles[0, 0] = TileType.Ground;
+            var tiles = new BlockType[2, 2];
+            tiles[0, 0] = BlockType.Ground;
             
             var mapData = new MapData(2, 2, tiles, 12345, 1);
             _manager.PlaceTiles(mapData);

@@ -9,8 +9,8 @@ namespace MyGame.TilemapSystem.Tests
     public class ProceduralGeneratorTests
     {
         private ProceduralGenerator _generator;
-        private const int TEST_WIDTH = 20;
-        private const int TEST_HEIGHT = 30;
+        private const int TEST_WIDTH = 15;
+        private const int TEST_HEIGHT = 20;
         private const int TEST_GROUND_AREA_HEIGHT = 5;
 
         [SetUp]

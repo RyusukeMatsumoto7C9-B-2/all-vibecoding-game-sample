@@ -6,8 +6,8 @@ namespace MyGame.TilemapSystem.Core
     public class TilemapGenerator
     {
         // public定数
-        public static readonly int MAP_WIDTH = 20;
-        public static readonly int MAP_HEIGHT = 30;
+        public static readonly int MAP_WIDTH = 15;
+        public static readonly int MAP_HEIGHT = 20;
         public static readonly int GROUND_AREA_HEIGHT = 5;
 
         // privateフィールド

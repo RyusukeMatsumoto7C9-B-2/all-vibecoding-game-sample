@@ -28,7 +28,7 @@
 ## 技術仕様
 
 ### マップ設計
-- **マップサイズ**: 横20マス × 縦30マス
+- **マップサイズ**: 横15マス × 縦20マス
 - **タイル単位**: Unity 2DSprite GameObjectとして配置
   - **スプライトサイズ**: 64x64ピクセル
   - **スケール設定**: spritePixelsPerUnit: 64
@@ -36,21 +36,21 @@
   - **WallTileの配置ルール**:　1レベル当たり 3 ~ 5個をまでの配置とする
 - **座標系**: Unity標準2D座標系（整数座標でタイル配置）
   - 座標の定義: 
-    - X軸: 横方向（0~19）
-      - 画面左側から右側へ0~19の整数値
-    - Y軸: 縦方向（0~29）
-      - 画面上側から下側へ0~29の整数値
+    - X軸: 横方向（0~14）
+      - 画面左側から右側へ0~14の整数値
+    - Y軸: 縦方向（0~19）
+      - 画面上側から下側へ0~19の整数値
 
 ### レベル定義
 - ✅ **レベル単位**: 1スクロール = 1レベル
-- ✅ **スクロール量**: 30マス分（縦方向）
+- ✅ **スクロール量**: 15ブロック分（縦方向）
 
 ### 地形生成仕様（現在の実装）
 - **初回生成時**: 上5マス分はSkyブロックを配置する
 - ✅ **生成方式**: シードベースのランダム生成
 - ✅ **配置パターン**: Groundベース + 限定的なWall配置
 - ✅ **WallTile配置ルール**: 1レベル当たり3~5個のWallをランダム配置
-- ✅ **隙間なし配置**: 20×30の全600マスにタイルを配置（残りは全てGround）
+- ✅ **隙間なし配置**: 15×20の全300マスにタイルを配置
 - ❌ **将来拡張予定**: 
   - 地上エリア（上端から5マス分をSkyブロックに）
   - 地下エリア（洞窟風のGround,Rock,Treasureの組み合わせ）
@@ -91,36 +91,13 @@ TilemapSystem/
 - TilemapManager: メモリ最適化機能内蔵（範囲外タイル削除）
 - SeedManager: 完全実装済み（レベル別シード生成）
 
-### データ構造
-```csharp
-// タイル種別定義
-public enum TileType
-{
-    Sky,        // 空
-    Empty,      // 空間
-    Ground,     // 地面
-    Rock,       // 岩
-    Treasure,   // お宝
-}
-
-// マップデータ構造
-public struct MapData
-{
-    public int Width;           // 横幅
-    public int Height;          // 縦幅
-    public TileType[,] Tiles;   // タイル配置
-    public int Seed;            // 生成シード
-    public int Level;           // レベル番号
-}
-```
-
 ## 実装仕様
 
 ### 生成処理フロー
 1. ✅ **シード設定**: レベル番号から生成シード決定 
 2. ✅ **基本地形生成**: ProceduralGeneratorによる限定Wall配置地形作成
-   - 全マス（20×30）を隙間なくGroundで配置
-   - 3~5個のWallをランダム位置に配置
+   - 全マス（15×20）を隙間なくGroundで配置
+   - 3~5個のRockをランダム位置に配置
    - シードベースの再現可能なランダム生成
    - ❌ **将来拡張**: セルラーオートマトン、通路確保、接続性チェック
 3. ❌ **詳細配置**: お宝・エネミー配置位置決定
@@ -140,39 +117,11 @@ public struct MapData
 - ✅ **新レベル生成**: スクロール開始時の次レベル準備（GenerateNextLevelAsync実装済み）
 - ✅ **座標変換**: スクロール後の座標系調整（OffsetTilesForLevel実装済み）
 
-## インターフェース設計
-
-### 主要メソッド
-```csharp
-// ✅ タイルマップ生成
-MapData GenerateMap(int level, int seed);
-
-// ✅ タイル配置
-void PlaceTiles(MapData mapData);
-
-// ✅ メモリ最適化
-void OptimizeMemory(int currentLevel);
-
-// ✅ シード管理
-int GetSeedForLevel(int level);
-void SetSeed(int baseSeed);
-```
-
-### イベント通知
-```csharp
-// ✅ マップ生成完了通知
-event Action<MapData> OnMapGenerated;
-
-// ✅ メモリ最適化完了通知
-event Action<int> OnMemoryOptimized;
-```
-
 ## テスト仕様
 
 ### テスト方針
-- **TDD適用**: t-wada流によるテスト駆動開発
-- **ユニットテスト**: PureC#クラスのロジックテスト
-- **統合テスト**: 2DSprite Prefabシステム連携テスト
+テスト実装の方針とルールについては、以下のドキュメントを参照してください：
+- `Documentation/Rules/TestRule.md`
 
 ### 実装済みテストクラス
 
@@ -254,28 +203,6 @@ event Action<int> OnMemoryOptimized;
 - ❌ **生成アルゴリズム**: 複数生成方式の切り替え
 - ❌ **動的サイズ**: 可変マップサイズの対応
 
-## プロジェクト構造
-
-### アセット構成
-```
-Assets/MyGame/
-├── Sprites/                    # 2DSprite画像アセット
-│   ├── WallSprite.png         # 壁用32x32グレースプライト
-│   └── GroundSprite.png       # 地面用32x32茶色スプライト
-├── Prefabs/Tiles/             # GameObject Prefabアセット
-│   ├── WallTile.prefab        # 壁タイル用Prefab (SpriteRenderer付き)
-│   └── GroundTile.prefab      # 地面タイル用Prefab (SpriteRenderer付き)
-├── Scripts/TilemapSystem/     # システム実装
-│   ├── Core/                  # コア機能
-│   ├── Generation/            # 生成ロジック
-│   ├── Management/            # 管理機能（未実装）
-│   ├── Tests/EditMode/        # テストコード
-│   └── TilemapSystemTester.cs # シーンテスト用コンポーネント
-└── Scripts/Editor/            # エディタ拡張
-    ├── TilemapSetupEditor.cs  # セットアップ自動化ツール
-    └── MyGame.Editor.asmdef   # エディタ用Assembly Definition
-```
-
 ### 主要クラス詳細
 - **TilemapGenerator**: ProceduralGeneratorを使用した高度な地形生成
 - **TilemapManager**: GameObject Instantiate/Destroyによるタイル管理
@@ -333,7 +260,7 @@ TilemapSystem (空のGameObject)
 1. **作成済みSprite**
    - Assets/MyGame/Sprites/WallSprite.png (32x32 グレー)
    - Assets/MyGame/Sprites/GroundSprite.png (32x32 茶色)
-   - Pixels Per Unit: 100 (Unity標準設定)
+   - Pixels Per Unit: 64 (Unity標準設定)
    - Filter Mode: Point (ピクセルアート用)
 
 2. **作成済みPrefab**

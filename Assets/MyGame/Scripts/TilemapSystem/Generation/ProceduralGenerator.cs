@@ -9,7 +9,7 @@ namespace MyGame.TilemapSystem.Generation
         private readonly int _mapHeight;
         private readonly int _groundAreaHeight;
         
-        public ProceduralGenerator(int mapWidth = 20, int mapHeight = 30, int groundAreaHeight = 5)
+        public ProceduralGenerator(int mapWidth = 15, int mapHeight = 20, int groundAreaHeight = 5)
         {
             _mapWidth = mapWidth;
             _mapHeight = mapHeight;

@@ -13,11 +13,14 @@
 Assets/MyGame/
 ├── Scripts/           # コアゲームロジック
 ├── Scenes/           # ゲームシーン (Sample)
-├── Documentation/     # プロジェクトドキュメント
+├── Prefabs/          # プレハブ
+├── Sprites/          # スプライト画像
+
+Documentation/        # プロジェクトドキュメント（ルートディレクトリ）
 ```
 
 # 開発ルール
-- Assets/MyGame/Documentation フォルダ以下のタスク用文書を参照し、作業を開始する
+- Documentation フォルダ以下のタスク用文書を参照し、作業を開始する
 - 機能ごとに適切にフォルダを分け、各機能フォルダ内にTestsフォルダを作成しテストを実装する
   - EditModeテストは各機能フォルダ/Tests/EditModeフォルダに構築する
   - PlayModeテストは各機能フォルダ/Tests/PlayModeフォルダに構築する
@@ -34,27 +37,27 @@ Assets/MyGame/
 
 ## コーディングルール
 コーディング規約と実装方針については、以下のドキュメントを参照してください：
-- `Assets/MyGame/Documentation/Rules/CodingRule.md`
+- `Documentation/Rules/CodingRule.md`
 
 ## テストルール
 テスト実装の方針とルールについては、以下のドキュメントを参照してください：
-- `Assets/MyGame/Documentation/Rules/TestRule.md`
+- `Documentation/Rules/TestRule.md`
 
 ## ドキュメント管理
 
 ### ドキュメント構造
 ```
-Assets/MyGame/Documentation/
+Documentation/
 ├── Specifications/    # ゲーム仕様書、機能仕様書
 ├── Tasks/            # タスク管理用ドキュメント（進行中・完了含む）
 ├── Templates/        # ドキュメントテンプレート
 ```
 
 ### ドキュメント参照ルール
-- タスク実行前に必ず Assets/MyGame/Documentation/Specifications/ 配下の関連ドキュメントを確認する
+- タスク実行前に必ず Documentation/Specifications/ 配下の関連ドキュメントを確認する
 - 新機能開発時は該当する仕様書を参照し、仕様に従って実装する
 - 仕様に不明な点があれば作業を中断し、ユーザに確認を求める
-- タスク完了後は Assets/MyGame/Documentation/Tasks/ にタスクの実行結果を記録する
+- タスク完了後は Documentation/Tasks/ にタスクの実行結果を記録する
 
 ### ドキュメントファイル命名規則
 - 仕様書: `{機能名}_spec.md`
@@ -82,4 +85,4 @@ Assets/MyGame/Documentation/
 4. フォールバック: パス未設定の場合のみ標準コマンドを使用
 
 ## Git操作ルール
-- Git操作をする際は必ず`Assets/MyGame/Documentation/Rules/GitRule.md`を参照してから操作をすること
+- Git操作をする際は必ず`Documentation/Rules/GitRule.md`を参照してから操作をすること

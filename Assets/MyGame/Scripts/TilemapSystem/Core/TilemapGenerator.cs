@@ -5,18 +5,23 @@ namespace MyGame.TilemapSystem.Core
 {
     public class TilemapGenerator
     {
-        public const int MAP_WIDTH = 20;
-        public const int MAP_HEIGHT = 30;
-        public const int GROUND_AREA_HEIGHT = 5;
+        // public定数
+        public static readonly int MAP_WIDTH = 20;
+        public static readonly int MAP_HEIGHT = 30;
+        public static readonly int GROUND_AREA_HEIGHT = 5;
 
+        // privateフィールド
         private readonly SeedManager _seedManager;
         private readonly ProceduralGenerator _proceduralGenerator;
 
+
+        // publicメソッド
         public TilemapGenerator(SeedManager seedManager)
         {
             _seedManager = seedManager ?? throw new ArgumentNullException(nameof(seedManager));
             _proceduralGenerator = new ProceduralGenerator(MAP_WIDTH, MAP_HEIGHT, GROUND_AREA_HEIGHT);
         }
+
 
         public MapData GenerateMap(int level, int seed)
         {
@@ -28,6 +33,7 @@ namespace MyGame.TilemapSystem.Core
             
             return new MapData(MAP_WIDTH, MAP_HEIGHT, tiles, seed, level);
         }
+
 
         public int GetSeedForLevel(int level)
         {

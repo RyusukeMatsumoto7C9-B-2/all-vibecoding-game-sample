@@ -2,7 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using MyGame.TilemapSystem.Core;
 
-namespace MyGame.TilemapSystem.Tests.EditMode
+namespace MyGame.TilemapSystem.Tests
 {
     [Description("タイル挙動システムのテスト")]
     public class TileBehaviorTests
@@ -19,7 +19,7 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("Skyタイルがプレイヤーの通過を許可することを検証")]
         public void CanPlayerPassThrough_SkyTile_ReturnsTrue()
         {
-            var result = _tileBehavior.CanPlayerPassThrough(TileType.Sky);
+            var result = _tileBehavior.CanPlayerPassThrough(BlockType.Sky);
             
             Assert.IsTrue(result, "Skyタイルはプレイヤーの通過を許可するべき");
         }
@@ -28,7 +28,7 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("Emptyタイルがプレイヤーの通過を許可することを検証")]
         public void CanPlayerPassThrough_EmptyTile_ReturnsTrue()
         {
-            var result = _tileBehavior.CanPlayerPassThrough(TileType.Empty);
+            var result = _tileBehavior.CanPlayerPassThrough(BlockType.Empty);
             
             Assert.IsTrue(result, "Emptyタイルはプレイヤーの通過を許可するべき");
         }
@@ -37,7 +37,7 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("Groundタイルがプレイヤーの通過を許可することを検証")]
         public void CanPlayerPassThrough_GroundTile_ReturnsTrue()
         {
-            var result = _tileBehavior.CanPlayerPassThrough(TileType.Ground);
+            var result = _tileBehavior.CanPlayerPassThrough(BlockType.Ground);
             
             Assert.IsTrue(result, "Groundタイルはプレイヤーの通過を許可するべき");
         }
@@ -46,7 +46,7 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("Rockタイルがプレイヤーの通過を許可しないことを検証")]
         public void CanPlayerPassThrough_RockTile_ReturnsFalse()
         {
-            var result = _tileBehavior.CanPlayerPassThrough(TileType.Rock);
+            var result = _tileBehavior.CanPlayerPassThrough(BlockType.Rock);
             
             Assert.IsFalse(result, "Rockタイルはプレイヤーの通過を許可しないべき");
         }
@@ -55,7 +55,7 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("Treasureタイルがプレイヤーの通過を許可することを検証")]
         public void CanPlayerPassThrough_TreasureTile_ReturnsTrue()
         {
-            var result = _tileBehavior.CanPlayerPassThrough(TileType.Treasure);
+            var result = _tileBehavior.CanPlayerPassThrough(BlockType.Treasure);
             
             Assert.IsTrue(result, "Treasureタイルはプレイヤーの通過を許可するべき");
         }
@@ -66,9 +66,9 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         {
             var position = new Vector2Int(0, 0);
             
-            var result = _tileBehavior.OnPlayerHit(TileType.Ground, position, out int scoreGained);
+            var result = _tileBehavior.OnPlayerHit(BlockType.Ground, position, out int scoreGained);
             
-            Assert.AreEqual(TileType.Empty, result, "GroundタイルはEmptyタイルに変化するべき");
+            Assert.AreEqual(BlockType.Empty, result, "GroundタイルはEmptyタイルに変化するべき");
             Assert.AreEqual(0, scoreGained, "Groundタイルではスコアが得られないべき");
         }
 
@@ -78,9 +78,9 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         {
             var position = new Vector2Int(0, 0);
             
-            var result = _tileBehavior.OnPlayerHit(TileType.Treasure, position, out int scoreGained);
+            var result = _tileBehavior.OnPlayerHit(BlockType.Treasure, position, out int scoreGained);
             
-            Assert.AreEqual(TileType.Empty, result, "TreasureタイルはEmptyタイルに変化するべき");
+            Assert.AreEqual(BlockType.Empty, result, "TreasureタイルはEmptyタイルに変化するべき");
             Assert.AreEqual(100, scoreGained, "Treasureタイルでは100スコアが得られるべき");
         }
 
@@ -90,9 +90,9 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         {
             var position = new Vector2Int(0, 0);
             
-            var result = _tileBehavior.OnPlayerHit(TileType.Rock, position, out int scoreGained);
+            var result = _tileBehavior.OnPlayerHit(BlockType.Rock, position, out int scoreGained);
             
-            Assert.AreEqual(TileType.Rock, result, "Rockタイルは変化しないべき");
+            Assert.AreEqual(BlockType.Rock, result, "Rockタイルは変化しないべき");
             Assert.AreEqual(0, scoreGained, "Rockタイルではスコアが得られないべき");
         }
 
@@ -102,9 +102,9 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         {
             var position = new Vector2Int(0, 0);
             
-            var result = _tileBehavior.OnPlayerHit(TileType.Sky, position, out int scoreGained);
+            var result = _tileBehavior.OnPlayerHit(BlockType.Sky, position, out int scoreGained);
             
-            Assert.AreEqual(TileType.Sky, result, "Skyタイルは変化しないべき");
+            Assert.AreEqual(BlockType.Sky, result, "Skyタイルは変化しないべき");
             Assert.AreEqual(0, scoreGained, "Skyタイルではスコアが得られないべき");
         }
 
@@ -114,9 +114,9 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         {
             var position = new Vector2Int(0, 0);
             
-            var result = _tileBehavior.OnPlayerHit(TileType.Empty, position, out int scoreGained);
+            var result = _tileBehavior.OnPlayerHit(BlockType.Empty, position, out int scoreGained);
             
-            Assert.AreEqual(TileType.Empty, result, "Emptyタイルは変化しないべき");
+            Assert.AreEqual(BlockType.Empty, result, "Emptyタイルは変化しないべき");
             Assert.AreEqual(0, scoreGained, "Emptyタイルではスコアが得られないべき");
         }
 
@@ -124,10 +124,10 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("Rockタイルの落下処理が正しく実装されていることを検証")]
         public void OnTimeUpdate_RockTile_ProcessesFalling()
         {
-            var tiles = new TileType[3, 3];
-            tiles[1, 2] = TileType.Rock;    // 上部にRock
-            tiles[1, 1] = TileType.Ground;  // 中央にGround
-            tiles[1, 0] = TileType.Empty;   // 下部にEmpty
+            var tiles = new BlockType[3, 3];
+            tiles[1, 2] = BlockType.Rock;    // 上部にRock
+            tiles[1, 1] = BlockType.Ground;  // 中央にGround
+            tiles[1, 0] = BlockType.Empty;   // 下部にEmpty
             
             var position = new Vector2Int(1, 2);
             
@@ -142,8 +142,8 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("非Rockタイルの時間更新で例外が発生しないことを検証")]
         public void OnTimeUpdate_NonRockTile_DoesNotThrow()
         {
-            var tiles = new TileType[3, 3];
-            tiles[1, 1] = TileType.Ground;
+            var tiles = new BlockType[3, 3];
+            tiles[1, 1] = BlockType.Ground;
             
             var position = new Vector2Int(1, 1);
             
@@ -155,11 +155,11 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("Rockタイルの下にGroundブロックがあり、その下にEmptyブロックがある場合の落下処理を検証")]
         public void OnTimeUpdate_RockWithGroundBelow_ProcessesFallingCorrectly()
         {
-            var tiles = new TileType[3, 4];
-            tiles[1, 3] = TileType.Rock;    // 最上部にRock
-            tiles[1, 2] = TileType.Ground;  // その下にGround
-            tiles[1, 1] = TileType.Empty;   // その下にEmpty
-            tiles[1, 0] = TileType.Ground;  // 最下部にGround
+            var tiles = new BlockType[3, 4];
+            tiles[1, 3] = BlockType.Rock;    // 最上部にRock
+            tiles[1, 2] = BlockType.Ground;  // その下にGround
+            tiles[1, 1] = BlockType.Empty;   // その下にEmpty
+            tiles[1, 0] = BlockType.Ground;  // 最下部にGround
             
             var position = new Vector2Int(1, 3);
             
@@ -175,11 +175,11 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("Rockタイルの直下がEmptyブロックの場合の落下処理を検証")]
         public void OnTimeUpdate_RockWithEmptyBelow_ProcessesFallingCorrectly()
         {
-            var tiles = new TileType[3, 4];
-            tiles[1, 3] = TileType.Rock;    // 最上部にRock
-            tiles[1, 2] = TileType.Empty;   // その下にEmpty
-            tiles[1, 1] = TileType.Empty;   // その下にEmpty
-            tiles[1, 0] = TileType.Ground;  // 最下部にGround
+            var tiles = new BlockType[3, 4];
+            tiles[1, 3] = BlockType.Rock;    // 最上部にRock
+            tiles[1, 2] = BlockType.Empty;   // その下にEmpty
+            tiles[1, 1] = BlockType.Empty;   // その下にEmpty
+            tiles[1, 0] = BlockType.Ground;  // 最下部にGround
             
             var position = new Vector2Int(1, 3);
             
@@ -195,10 +195,10 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("Rockタイルの直下がRockブロックの場合に落下処理が開始されないことを検証")]
         public void OnTimeUpdate_RockWithRockBelow_DoesNotFall()
         {
-            var tiles = new TileType[3, 3];
-            tiles[1, 2] = TileType.Rock;    // 上部にRock
-            tiles[1, 1] = TileType.Rock;    // 中央にRock
-            tiles[1, 0] = TileType.Ground;  // 下部にGround
+            var tiles = new BlockType[3, 3];
+            tiles[1, 2] = BlockType.Rock;    // 上部にRock
+            tiles[1, 1] = BlockType.Rock;    // 中央にRock
+            tiles[1, 0] = BlockType.Ground;  // 下部にGround
             
             var position = new Vector2Int(1, 2);
             
@@ -214,8 +214,8 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("マップ境界での時間更新処理が例外を発生させないことを検証")]
         public void OnTimeUpdate_AtMapBoundary_DoesNotThrow()
         {
-            var tiles = new TileType[3, 3];
-            tiles[1, 0] = TileType.Rock;    // 最下部にRock
+            var tiles = new BlockType[3, 3];
+            tiles[1, 0] = BlockType.Rock;    // 最下部にRock
             
             var position = new Vector2Int(1, 0);
             
@@ -231,15 +231,15 @@ namespace MyGame.TilemapSystem.Tests.EditMode
             var position = new Vector2Int(0, 0);
             
             // Treasureタイルで100スコア
-            _tileBehavior.OnPlayerHit(TileType.Treasure, position, out int treasureScore);
+            _tileBehavior.OnPlayerHit(BlockType.Treasure, position, out int treasureScore);
             Assert.AreEqual(100, treasureScore, "Treasureタイルのスコアが正しくない");
             
             // Groundタイルで0スコア
-            _tileBehavior.OnPlayerHit(TileType.Ground, position, out int groundScore);
+            _tileBehavior.OnPlayerHit(BlockType.Ground, position, out int groundScore);
             Assert.AreEqual(0, groundScore, "Groundタイルのスコアが正しくない");
             
             // Rockタイルで0スコア
-            _tileBehavior.OnPlayerHit(TileType.Rock, position, out int rockScore);
+            _tileBehavior.OnPlayerHit(BlockType.Rock, position, out int rockScore);
             Assert.AreEqual(0, rockScore, "Rockタイルのスコアが正しくない");
         }
 
@@ -250,16 +250,16 @@ namespace MyGame.TilemapSystem.Tests.EditMode
             var position = new Vector2Int(0, 0);
             
             // Treasureタイル → Emptyタイル
-            var treasureResult = _tileBehavior.OnPlayerHit(TileType.Treasure, position, out _);
-            Assert.AreEqual(TileType.Empty, treasureResult, "Treasureタイルが正しくEmptyに変化していない");
+            var treasureResult = _tileBehavior.OnPlayerHit(BlockType.Treasure, position, out _);
+            Assert.AreEqual(BlockType.Empty, treasureResult, "Treasureタイルが正しくEmptyに変化していない");
             
             // Groundタイル → Emptyタイル
-            var groundResult = _tileBehavior.OnPlayerHit(TileType.Ground, position, out _);
-            Assert.AreEqual(TileType.Empty, groundResult, "Groundタイルが正しくEmptyに変化していない");
+            var groundResult = _tileBehavior.OnPlayerHit(BlockType.Ground, position, out _);
+            Assert.AreEqual(BlockType.Empty, groundResult, "Groundタイルが正しくEmptyに変化していない");
             
             // Rockタイル → Rockタイル（変化なし）
-            var rockResult = _tileBehavior.OnPlayerHit(TileType.Rock, position, out _);
-            Assert.AreEqual(TileType.Rock, rockResult, "Rockタイルが変化してしまった");
+            var rockResult = _tileBehavior.OnPlayerHit(BlockType.Rock, position, out _);
+            Assert.AreEqual(BlockType.Rock, rockResult, "Rockタイルが変化してしまった");
         }
 
         [Test]
@@ -267,7 +267,7 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         public void CanPlayerPassThrough_MultipleTypes_ReturnCorrectValues()
         {
             // 通過可能なタイルタイプ
-            var passableTypes = new[] { TileType.Sky, TileType.Empty, TileType.Ground, TileType.Treasure };
+            var passableTypes = new[] { BlockType.Sky, BlockType.Empty, BlockType.Ground, BlockType.Treasure };
             foreach (var tileType in passableTypes)
             {
                 Assert.IsTrue(_tileBehavior.CanPlayerPassThrough(tileType), 
@@ -275,7 +275,7 @@ namespace MyGame.TilemapSystem.Tests.EditMode
             }
             
             // 通過不可能なタイルタイプ
-            var impassableTypes = new[] { TileType.Rock };
+            var impassableTypes = new[] { BlockType.Rock };
             foreach (var tileType in impassableTypes)
             {
                 Assert.IsFalse(_tileBehavior.CanPlayerPassThrough(tileType), 
@@ -287,12 +287,12 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("Rockタイルの落下処理で正しい落下位置が計算されることを検証")]
         public void OnTimeUpdate_RockFalling_CalculatesCorrectPosition()
         {
-            var tiles = new TileType[3, 5];
-            tiles[1, 4] = TileType.Rock;    // 最上部にRock
-            tiles[1, 3] = TileType.Empty;   // Empty
-            tiles[1, 2] = TileType.Empty;   // Empty
-            tiles[1, 1] = TileType.Ground;  // Ground（落下先）
-            tiles[1, 0] = TileType.Ground;  // Ground（基盤）
+            var tiles = new BlockType[3, 5];
+            tiles[1, 4] = BlockType.Rock;    // 最上部にRock
+            tiles[1, 3] = BlockType.Empty;   // Empty
+            tiles[1, 2] = BlockType.Empty;   // Empty
+            tiles[1, 1] = BlockType.Ground;  // Ground（落下先）
+            tiles[1, 0] = BlockType.Ground;  // Ground（基盤）
             
             var position = new Vector2Int(1, 4);
             
@@ -308,10 +308,10 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("Rockタイルの落下処理で境界条件が正しく処理されることを検証")]
         public void OnTimeUpdate_RockFalling_HandlesBoundaryConditions()
         {
-            var tiles = new TileType[3, 3];
-            tiles[1, 2] = TileType.Rock;    // 上部にRock
-            tiles[1, 1] = TileType.Empty;   // 中部にEmpty
-            tiles[1, 0] = TileType.Empty;   // 下部にEmpty（底なし）
+            var tiles = new BlockType[3, 3];
+            tiles[1, 2] = BlockType.Rock;    // 上部にRock
+            tiles[1, 1] = BlockType.Empty;   // 中部にEmpty
+            tiles[1, 0] = BlockType.Empty;   // 下部にEmpty（底なし）
             
             var position = new Vector2Int(1, 2);
             
@@ -324,10 +324,10 @@ namespace MyGame.TilemapSystem.Tests.EditMode
         [Description("時間更新処理で異なるdeltaTime値が正しく処理されることを検証")]
         public void OnTimeUpdate_WithDifferentDeltaTime_HandlesCorrectly()
         {
-            var tiles = new TileType[3, 3];
-            tiles[1, 2] = TileType.Rock;
-            tiles[1, 1] = TileType.Empty;
-            tiles[1, 0] = TileType.Ground;
+            var tiles = new BlockType[3, 3];
+            tiles[1, 2] = BlockType.Rock;
+            tiles[1, 1] = BlockType.Empty;
+            tiles[1, 0] = BlockType.Ground;
             
             var position = new Vector2Int(1, 2);
             

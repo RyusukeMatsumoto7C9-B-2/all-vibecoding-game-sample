@@ -3,7 +3,7 @@ using NUnit.Framework;
 using MyGame.TilemapSystem.Core;
 using MyGame.TilemapSystem.Generation;
 
-namespace MyGame.TilemapSystem.Tests.EditMode
+namespace MyGame.TilemapSystem.Tests
 {
     [Description("プロシージャル地形生成システムのテスト")]
     public class ProceduralGeneratorTests
@@ -44,7 +44,7 @@ namespace MyGame.TilemapSystem.Tests.EditMode
             {
                 for (int y = TEST_HEIGHT - TEST_GROUND_AREA_HEIGHT; y < TEST_HEIGHT; y++)
                 {
-                    Assert.AreEqual(TileType.Sky, tiles[x, y], 
+                    Assert.AreEqual(BlockType.Sky, tiles[x, y], 
                         $"座標({x}, {y})はSkyブロックであるべき。実際の値: {tiles[x, y]}");
                 }
             }
@@ -54,7 +54,7 @@ namespace MyGame.TilemapSystem.Tests.EditMode
             {
                 for (int y = 0; y < TEST_HEIGHT - TEST_GROUND_AREA_HEIGHT; y++)
                 {
-                    Assert.IsTrue(tiles[x, y] == TileType.Ground || tiles[x, y] == TileType.Rock, 
+                    Assert.IsTrue(tiles[x, y] == BlockType.Ground || tiles[x, y] == BlockType.Rock, 
                         $"座標({x}, {y})はGroundまたはRockであるべき。実際の値: {tiles[x, y]}");
                 }
             }
@@ -73,7 +73,7 @@ namespace MyGame.TilemapSystem.Tests.EditMode
             {
                 for (int y = 0; y < TEST_HEIGHT; y++)
                 {
-                    Assert.IsTrue(tiles[x, y] == TileType.Ground || tiles[x, y] == TileType.Rock, 
+                    Assert.IsTrue(tiles[x, y] == BlockType.Ground || tiles[x, y] == BlockType.Rock, 
                         $"座標({x}, {y})にタイルが配置されていない。実際の値: {tiles[x, y]}");
                 }
             }
@@ -115,7 +115,7 @@ namespace MyGame.TilemapSystem.Tests.EditMode
             {
                 for (int y = 0; y < TEST_HEIGHT; y++)
                 {
-                    if (tiles[x, y] == TileType.Rock)
+                    if (tiles[x, y] == BlockType.Rock)
                     {
                         rockCount++;
                     }
@@ -148,7 +148,7 @@ namespace MyGame.TilemapSystem.Tests.EditMode
             {
                 for (int y = 0; y < customHeight; y++)
                 {
-                    Assert.IsTrue(tiles[x, y] == TileType.Rock || tiles[x, y] == TileType.Ground, 
+                    Assert.IsTrue(tiles[x, y] == BlockType.Rock || tiles[x, y] == BlockType.Ground, 
                         $"カスタムサイズでの座標({x}, {y})にタイルが配置されていない");
                 }
             }
@@ -169,7 +169,7 @@ namespace MyGame.TilemapSystem.Tests.EditMode
                 {
                     for (int y = 0; y < TEST_HEIGHT; y++)
                     {
-                        if (tiles[x, y] == TileType.Rock)
+                        if (tiles[x, y] == BlockType.Rock)
                         {
                             rockCount++;
                         }
@@ -194,7 +194,7 @@ namespace MyGame.TilemapSystem.Tests.EditMode
             {
                 for (int y = 0; y < TEST_HEIGHT; y++)
                 {
-                    if (tiles[x, y] == TileType.Treasure)
+                    if (tiles[x, y] == BlockType.Treasure)
                     {
                         treasureCount++;
                     }
@@ -218,7 +218,7 @@ namespace MyGame.TilemapSystem.Tests.EditMode
             {
                 for (int y = 0; y < TEST_HEIGHT - TEST_GROUND_AREA_HEIGHT; y++)
                 {
-                    Assert.AreNotEqual(TileType.Sky, tiles[x, y], 
+                    Assert.AreNotEqual(BlockType.Sky, tiles[x, y], 
                         $"座標({x}, {y})でSky領域外にSkyタイルが存在する");
                 }
             }
@@ -238,11 +238,11 @@ namespace MyGame.TilemapSystem.Tests.EditMode
                 {
                     var tileType = tiles[x, y];
                     Assert.IsTrue(
-                        tileType == TileType.Sky || 
-                        tileType == TileType.Empty || 
-                        tileType == TileType.Ground || 
-                        tileType == TileType.Rock || 
-                        tileType == TileType.Treasure,
+                        tileType == BlockType.Sky || 
+                        tileType == BlockType.Empty || 
+                        tileType == BlockType.Ground || 
+                        tileType == BlockType.Rock || 
+                        tileType == BlockType.Treasure,
                         $"座標({x}, {y})で無効なタイルタイプ: {tileType}");
                 }
             }

@@ -1,4 +1,5 @@
 using System;
+using R3;
 
 namespace MyGame.TilemapSystem.Core
 {
@@ -11,18 +12,18 @@ namespace MyGame.TilemapSystem.Core
         /// <summary>
         /// スクロール位置変更時のイベント
         /// </summary>
-        event Action<float> OnScrollPositionChanged;
-        
+        Observable<float> OnScrollPositionChanged { get; }
+
         /// <summary>
         /// スクロール完了時のイベント
         /// </summary>
-        event Action OnScrollCompleted;
-        
+        Observable<Unit> OnScrollCompleted { get; }
+
         /// <summary>
         /// スクロール開始時のイベント
         /// </summary>
-        event Action OnScrollStarted;
-        
+        Observable<Unit> OnScrollStarted { get; }
+
         /// <summary>
         /// 現在のスクロール位置
         /// </summary>

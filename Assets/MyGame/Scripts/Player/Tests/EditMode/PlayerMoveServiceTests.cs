@@ -88,5 +88,21 @@ namespace MyGame.Player.Tests
             // Assert
             Assert.AreEqual(newPosition, _service.CurrentPosition);
         }
+
+        [Test]
+        [Description("初期配置座標（X10, Y15）が正確に設定されることを検証")]
+        public void SetPosition_WithInitialPlayerPosition_ShouldSetCorrectPosition()
+        {
+            // Arrange
+            var initialPlayerPosition = new Vector2Int(10, 15);
+
+            // Act
+            _service.SetPosition(initialPlayerPosition);
+
+            // Assert
+            Assert.AreEqual(initialPlayerPosition, _service.CurrentPosition);
+            Assert.AreEqual(10, _service.CurrentPosition.x, "初期X座標が仕様と異なります");
+            Assert.AreEqual(15, _service.CurrentPosition.y, "初期Y座標が仕様と異なります");
+        }
     }
 }

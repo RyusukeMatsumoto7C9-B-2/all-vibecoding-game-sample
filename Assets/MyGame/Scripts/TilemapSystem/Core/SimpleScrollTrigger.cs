@@ -18,7 +18,7 @@ namespace MyGame.TilemapSystem.Core
         
         // privateフィールド
         [SerializeField] private float _scrollSpeed = 10.0f;
-        [SerializeField] private float _scrollDistance = 25.0f;
+        [SerializeField] private float _scrollDistance = 15.0f;
         [SerializeField] private KeyCode _scrollKey = KeyCode.Space;
         private readonly Subject<float> _onScrollPositionChanged = new Subject<float>();
         private readonly Subject<Unit> _onScrollCompleted = new Subject<Unit>();

@@ -26,7 +26,7 @@ namespace MyGame.TilemapSystem.Core
         private int _currentLevel = 1;
         private bool _isScrolling = false;
         private float _scrollSpeed = 5.0f;
-        private float _scrollDistance = 25.0f; // 25マス分
+        private float _scrollDistance = 15.0f; // 15マス分（マップ高さ20 - 重複エリア5 = 15）
         private IScrollTrigger _scrollTrigger;
         private IDisposable _scrollStartedDisposable = null;
         private IDisposable _scrollPositionChangedDisposable = null;
@@ -124,14 +124,14 @@ namespace MyGame.TilemapSystem.Core
             // 重複エリアの適切な処理
             // スクロール前の配置: 新しいレベルを下側に配置し、スクロール後に正しい位置に来るようにする
             int overlapHeight = 5; // 重複エリア：5マス
-            int levelOffset = TilemapGenerator.MAP_HEIGHT - overlapHeight; // 25マス分
+            int levelOffset = TilemapGenerator.MAP_HEIGHT - overlapHeight; // 15マス分
             
             // 次のレベルのタイルを生成し、重複エリア保護機能を使用
             _manager.PlaceTilesWithOverlapProtection(nextMapData, overlapHeight);
             
             // 次のレベルのタイルを正しい位置に配置
-            // 既存レベルとの重複を完全に回避するため、-30マス分オフセットする
-            float correctOffset = -TilemapGenerator.MAP_HEIGHT; // -30マス分のオフセット（重複回避）
+            // スクロール分だけオフセットするように配置（重複を避けるため）
+            float correctOffset = -TilemapGenerator.MAP_HEIGHT; // -20マス分のオフセット（レベル間の隙間なし配置）
             
             OffsetTilesForLevel(nextLevel, new Vector3(0, correctOffset, 0));
             

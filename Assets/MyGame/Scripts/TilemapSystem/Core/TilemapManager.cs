@@ -128,13 +128,22 @@ namespace MyGame.TilemapSystem.Core
             {
                 foreach (var tile in levelTiles)
                 {
-                    if (tile != null && Vector3.Distance(tile.transform.position, position) < 0.1f)
+                    if (tile != null)
                     {
-                        // タイル名からタイプを判定（Wallブロック系の保護）
-                        var tileName = tile.name.ToLower();
-                        if (tileName.Contains("rock") || tileName.Contains("wall") || tileName.Contains("ground"))
+                        // 座標の完全一致チェック（浮動小数点誤差を考慮）
+                        var tilePos = tile.transform.position;
+                        bool isExactMatch = Mathf.Approximately(tilePos.x, position.x) && 
+                                          Mathf.Approximately(tilePos.y, position.y);
+                        
+                        if (isExactMatch)
                         {
-                            return true;
+                            // タイル名からタイプを判定（Wallブロック系の保護）
+                            var tileName = tile.name.ToLower();
+                            if (tileName.Contains("rock") || tileName.Contains("wall") || tileName.Contains("ground"))
+                            {
+                                Debug.Log($"座標重複を検出して保護: {tileName} at ({position.x}, {position.y})");
+                                return true;
+                            }
                         }
                     }
                 }

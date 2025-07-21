@@ -52,7 +52,7 @@ namespace MyGame.Player
 
         private void SetInitialPosition()
         {
-            var initialPosition = new Vector2Int(0, 4);
+            var initialPosition = new Vector2Int(10, 3);
             _moveService.SetPosition(initialPosition);
             transform.position = new Vector3(initialPosition.x, initialPosition.y, 0);
             _targetPosition = transform.position;

@@ -274,7 +274,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1234567891, guid: e8f5a2b4c7d3e9f1a8b2c4d6e8f0a2b4, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1234567891, guid: e8f5a2b4c7d3e9f1a8b2c4d6e8f0a2b4, type: 3}
       propertyPath: m_LocalPosition.z
@@ -307,6 +307,14 @@ PrefabInstance:
     - target: {fileID: 1234567891, guid: e8f5a2b4c7d3e9f1a8b2c4d6e8f0a2b4, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1234567896, guid: e8f5a2b4c7d3e9f1a8b2c4d6e8f0a2b4, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 38c77367d9e1dfb4fa3d65a77bee123a, type: 3}
+    - target: {fileID: 1234567896, guid: e8f5a2b4c7d3e9f1a8b2c4d6e8f0a2b4, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

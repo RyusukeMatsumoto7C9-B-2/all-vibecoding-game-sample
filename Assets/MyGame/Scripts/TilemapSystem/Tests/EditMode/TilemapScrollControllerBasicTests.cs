@@ -65,14 +65,14 @@ namespace MyGame.TilemapSystem.Tests
         [Description("スクロール距離とマップ高さの関係を検証")]
         public void VerifyScrollDistanceCalculation()
         {
-            var expectedScrollDistance = 25.0f;
-            var expectedMapHeight = 30;
+            var expectedScrollDistance = 15.0f;
+            var expectedMapHeight = 20;
             
-            Assert.AreEqual(25.0f, expectedScrollDistance, "スクロール距離が期待値と異なります");
-            Assert.AreEqual(30, TilemapGenerator.MAP_HEIGHT, "マップ高さが期待値と異なります");
+            Assert.AreEqual(15.0f, expectedScrollDistance, "スクロール距離が期待値と異なります");
+            Assert.AreEqual(20, TilemapGenerator.MAP_HEIGHT, "マップ高さが期待値と異なります");
             
-            float expectedOffset = -expectedMapHeight;
-            Assert.AreEqual(-30.0f, expectedOffset, "オフセット計算が正しくありません");
+            float expectedOffset = -(expectedMapHeight - 5); // マップ高さ20 - 重複エリア5 = 15
+            Assert.AreEqual(-15.0f, expectedOffset, "オフセット計算が正しくありません");
         }
 
         [Test]
@@ -83,10 +83,10 @@ namespace MyGame.TilemapSystem.Tests
             int expectedLevelOffset = TilemapGenerator.MAP_HEIGHT - expectedOverlapHeight;
             
             Assert.AreEqual(5, expectedOverlapHeight, "重複エリア高さが期待値と異なります");
-            Assert.AreEqual(25, expectedLevelOffset, "レベルオフセット計算が期待値と異なります");
+            Assert.AreEqual(15, expectedLevelOffset, "レベルオフセット計算が期待値と異なります");
             
             float actualOffset = -TilemapGenerator.MAP_HEIGHT;
-            Assert.AreEqual(-30.0f, actualOffset, "実際のオフセットが期待値と異なります");
+            Assert.AreEqual(-20.0f, actualOffset, "実際のオフセットが期待値と異なります");
         }
     }
 }

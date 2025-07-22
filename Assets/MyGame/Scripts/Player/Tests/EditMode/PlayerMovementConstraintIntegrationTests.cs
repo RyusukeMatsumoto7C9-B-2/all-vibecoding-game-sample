@@ -159,8 +159,8 @@ namespace MyGame.Player.Tests
         }
 
         [Test]
-        [Description("マップ範囲外への移動が成功することを検証（境界チェック）")]
-        public void Move_OutOfMapBounds_ShouldSucceed()
+        [Description("マップ範囲外への移動が失敗することを検証（境界チェック修正後）")]
+        public void Move_OutOfMapBounds_ShouldFail()
         {
             // Arrange
             _playerMoveService.SetPosition(new Vector2Int(4, 4)); // マップの右上端に配置
@@ -169,8 +169,8 @@ namespace MyGame.Player.Tests
             var result = _playerMoveService.Move(Direction.Right);
 
             // Assert
-            Assert.IsTrue(result, "マップ範囲外への移動は成功すべき（仕様通り）");
-            Assert.AreEqual(new Vector2Int(5, 4), _playerMoveService.CurrentPosition);
+            Assert.IsFalse(result, "マップ範囲外への移動は失敗すべき（修正後の仕様）");
+            Assert.AreEqual(new Vector2Int(4, 4), _playerMoveService.CurrentPosition, "移動失敗時は位置が変更されないべき");
         }
 
         [Test]
@@ -221,6 +221,67 @@ namespace MyGame.Player.Tests
             var move4 = _playerMoveService.Move(Direction.Up);
             Assert.IsTrue(move4, "4回目の移動（Ground→Empty）は成功すべき");
             Assert.AreEqual(new Vector2Int(2, 2), _playerMoveService.CurrentPosition);
+        }
+
+        [Test]
+        [Description("マップの四方向境界での移動制限を検証")]
+        [TestCase(0, 2, Direction.Left, false, TestName = "左境界を越える移動は不可")]
+        [TestCase(4, 2, Direction.Right, false, TestName = "右境界を越える移動は不可")]
+        [TestCase(2, 0, Direction.Down, false, TestName = "下境界を越える移動は不可")]
+        [TestCase(2, 4, Direction.Up, false, TestName = "上境界を越える移動は不可")]
+        public void Move_AtMapBoundaries_ShouldBeRestricted(int startX, int startY, Direction direction, bool expectedResult)
+        {
+            // Arrange
+            _playerMoveService.SetPosition(new Vector2Int(startX, startY));
+
+            // Act
+            var result = _playerMoveService.Move(direction);
+
+            // Assert
+            Assert.AreEqual(expectedResult, result, 
+                $"境界位置({startX}, {startY})から{direction}方向への移動制限が正しく動作していません");
+            Assert.AreEqual(new Vector2Int(startX, startY), _playerMoveService.CurrentPosition, 
+                "境界を越える移動失敗時は位置が変更されないべき");
+        }
+
+        [Test]
+        [Description("TilemapManager未設定時の安全性を検証")]
+        public void Move_WithoutTilemapManager_ShouldFailSafely()
+        {
+            // Arrange
+            var moveServiceWithoutManager = new PlayerMoveService();
+            moveServiceWithoutManager.SetPosition(new Vector2Int(0, 0));
+            // TilemapManagerは意図的に設定しない
+
+            // Act
+            var result = moveServiceWithoutManager.Move(Direction.Right);
+
+            // Assert
+            Assert.IsFalse(result, "TilemapManager未設定時は安全のため移動失敗すべき");
+            Assert.AreEqual(new Vector2Int(0, 0), moveServiceWithoutManager.CurrentPosition, 
+                "TilemapManager未設定時の移動失敗で位置が変更されないべき");
+        }
+
+        [Test]
+        [Description("TilemapManager未設定時のCanMoveメソッドの安全性を検証")]
+        public void CanMove_WithoutTilemapManager_ShouldReturnFalse()
+        {
+            // Arrange
+            var moveServiceWithoutManager = new PlayerMoveService();
+            moveServiceWithoutManager.SetPosition(new Vector2Int(0, 0));
+            // TilemapManagerは意図的に設定しない
+
+            // Act
+            var canMoveRight = moveServiceWithoutManager.CanMove(Direction.Right);
+            var canMoveUp = moveServiceWithoutManager.CanMove(Direction.Up);
+            var canMoveLeft = moveServiceWithoutManager.CanMove(Direction.Left);
+            var canMoveDown = moveServiceWithoutManager.CanMove(Direction.Down);
+
+            // Assert
+            Assert.IsFalse(canMoveRight, "TilemapManager未設定時は右移動不可");
+            Assert.IsFalse(canMoveUp, "TilemapManager未設定時は上移動不可");
+            Assert.IsFalse(canMoveLeft, "TilemapManager未設定時は左移動不可");
+            Assert.IsFalse(canMoveDown, "TilemapManager未設定時は下移動不可");
         }
     }
 }

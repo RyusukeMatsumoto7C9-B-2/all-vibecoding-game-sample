@@ -25,9 +25,9 @@ namespace MyGame.Player
         {
             if (_tilemapManager == null)
             {
-                // TilemapManagerが設定されていない場合は移動可能とする（従来の動作）
-                Debug.LogWarning("[PlayerMoveService] TilemapManagerが未設定のため、移動制約をチェックできません");
-                return true;
+                // TilemapManagerが設定されていない場合は安全のため移動不可とする
+                Debug.LogWarning("[PlayerMoveService] TilemapManagerが未設定のため、移動を制限します");
+                return false;
             }
 
             var targetPosition = GetTargetPosition(direction);

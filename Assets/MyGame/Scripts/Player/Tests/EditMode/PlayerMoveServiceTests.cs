@@ -123,8 +123,8 @@ namespace MyGame.Player.Tests
         }
 
         [Test]
-        [Description("TilemapManagerが設定されていない場合、移動は常に成功することを検証")]
-        public void Move_WithoutTilemapManager_ShouldAlwaysSucceed()
+        [Description("TilemapManagerが設定されていない場合、移動は失敗することを検証（安全性修正後）")]
+        public void Move_WithoutTilemapManager_ShouldFailSafely()
         {
             // Arrange
             var initialPosition = new Vector2Int(0, 0);
@@ -134,8 +134,8 @@ namespace MyGame.Player.Tests
             var result = _service.Move(Direction.Up);
 
             // Assert
-            Assert.IsTrue(result, "TilemapManagerが未設定の場合は移動が成功すべき");
-            Assert.AreEqual(new Vector2Int(0, 1), _service.CurrentPosition);
+            Assert.IsFalse(result, "TilemapManagerが未設定の場合は安全のため移動が失敗すべき");
+            Assert.AreEqual(initialPosition, _service.CurrentPosition, "移動失敗時は位置が変更されないべき");
         }
 
         [Test]

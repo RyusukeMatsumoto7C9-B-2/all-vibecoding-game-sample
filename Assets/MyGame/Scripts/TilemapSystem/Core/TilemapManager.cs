@@ -220,8 +220,8 @@ namespace MyGame.TilemapSystem.Core
             if (position.x < 0 || position.x >= mapData.Width || position.y < 0 || position.y >= mapData.Height)
             {
                 Debug.Log($"[TilemapManager] 座標({position.x}, {position.y})はマップ範囲外 " +
-                         $"(0-{mapData.Width-1}, 0-{mapData.Height-1}) → 移動可能");
-                return true;
+                         $"(0-{mapData.Width-1}, 0-{mapData.Height-1}) → 移動不可");
+                return false;
             }
 
             var tileType = mapData.Tiles[position.x, position.y];

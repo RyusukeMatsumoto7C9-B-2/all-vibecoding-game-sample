@@ -19,6 +19,7 @@ namespace MyGame.TilemapSystem
         [Header("Test Settings")]
         [SerializeField] private int testLevel = 1;
         [SerializeField] private int testSeed = 12345;
+        [Header("Auto Scroll Settings")]
         [SerializeField] private bool autoScrollEnabled = true;
         [SerializeField] private float autoScrollInterval = 3.0f;
 

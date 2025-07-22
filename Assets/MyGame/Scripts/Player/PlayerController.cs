@@ -1,4 +1,5 @@
 using UnityEngine;
+using MyGame.TilemapSystem.Core;
 
 namespace MyGame.Player
 {
@@ -50,6 +51,11 @@ namespace MyGame.Player
             }
         }
 
+        public void SetTilemapManager(TilemapManager tilemapManager, int level = 0)
+        {
+            _moveService.SetTilemapManager(tilemapManager, level);
+        }
+
         private void SetInitialPosition()
         {
             var initialPosition = new Vector2Int(10, 15);
@@ -62,10 +68,13 @@ namespace MyGame.Player
         {
             if (_isMoving) return;
 
-            _moveService.Move(direction);
-            var newPosition = _moveService.CurrentPosition;
-            _targetPosition = new Vector3(newPosition.x, newPosition.y, 0);
-            _isMoving = true;
+            if (_moveService.Move(direction))
+            {
+                var newPosition = _moveService.CurrentPosition;
+                _targetPosition = new Vector3(newPosition.x, newPosition.y, 0);
+                _isMoving = true;
+            }
+            // 移動できない場合は何もしない（移動アニメーションを開始しない）
         }
     }
 }

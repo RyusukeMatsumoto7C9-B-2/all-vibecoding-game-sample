@@ -1,8 +1,25 @@
 using NUnit.Framework;
 using UnityEngine;
+using MyGame.TilemapSystem.Core;
 
 namespace MyGame.Player.Tests
 {
+    // テスト用のTilemapManager実装
+    public class TestTilemapManager : TilemapManager
+    {
+        private readonly bool _allowMovement;
+
+        public TestTilemapManager(bool allowMovement) : base(null, null, null)
+        {
+            _allowMovement = allowMovement;
+        }
+
+        public override bool CanPlayerPassThrough(Vector2Int position, int level)
+        {
+            return _allowMovement;
+        }
+    }
+
     [TestFixture]
     [Description("PlayerMoveServiceクラスの移動ロジックとして、4方向移動と位置設定の正確性をテストする")]
     public class PlayerMoveServiceTests
@@ -103,6 +120,96 @@ namespace MyGame.Player.Tests
             Assert.AreEqual(initialPlayerPosition, _service.CurrentPosition);
             Assert.AreEqual(10, _service.CurrentPosition.x, "初期X座標が仕様と異なります");
             Assert.AreEqual(15, _service.CurrentPosition.y, "初期Y座標が仕様と異なります");
+        }
+
+        [Test]
+        [Description("TilemapManagerが設定されていない場合、移動は常に成功することを検証")]
+        public void Move_WithoutTilemapManager_ShouldAlwaysSucceed()
+        {
+            // Arrange
+            var initialPosition = new Vector2Int(0, 0);
+            _service.SetPosition(initialPosition);
+
+            // Act
+            var result = _service.Move(Direction.Up);
+
+            // Assert
+            Assert.IsTrue(result, "TilemapManagerが未設定の場合は移動が成功すべき");
+            Assert.AreEqual(new Vector2Int(0, 1), _service.CurrentPosition);
+        }
+
+        [Test]
+        [Description("移動先がEmpty/Groundブロックの場合、移動が成功することを検証")]
+        public void Move_ToPassableTile_ShouldSucceed()
+        {
+            // Arrange
+            var initialPosition = new Vector2Int(0, 0);
+            _service.SetPosition(initialPosition);
+
+            var testTilemapManager = new TestTilemapManager(true);
+            _service.SetTilemapManager(testTilemapManager, 0);
+
+            // Act
+            var result = _service.Move(Direction.Up);
+
+            // Assert
+            Assert.IsTrue(result, "移動可能なタイルへの移動は成功すべき");
+            Assert.AreEqual(new Vector2Int(0, 1), _service.CurrentPosition);
+        }
+
+        [Test]
+        [Description("移動先がRock/Skyブロックの場合、移動が失敗することを検証")]
+        public void Move_ToImpassableTile_ShouldFail()
+        {
+            // Arrange
+            var initialPosition = new Vector2Int(0, 0);
+            _service.SetPosition(initialPosition);
+
+            var testTilemapManager = new TestTilemapManager(false);
+            _service.SetTilemapManager(testTilemapManager, 0);
+
+            // Act
+            var result = _service.Move(Direction.Up);
+
+            // Assert
+            Assert.IsFalse(result, "移動不可能なタイルへの移動は失敗すべき");
+            Assert.AreEqual(initialPosition, _service.CurrentPosition, "位置は変更されないべき");
+        }
+
+        [Test]
+        [Description("CanMoveメソッドが正しく動作することを検証")]
+        public void CanMove_WithPassableTile_ShouldReturnTrue()
+        {
+            // Arrange
+            var initialPosition = new Vector2Int(0, 0);
+            _service.SetPosition(initialPosition);
+
+            var testTilemapManager = new TestTilemapManager(true);
+            _service.SetTilemapManager(testTilemapManager, 0);
+
+            // Act
+            var canMove = _service.CanMove(Direction.Right);
+
+            // Assert
+            Assert.IsTrue(canMove, "移動可能なタイルに対してCanMoveはtrueを返すべき");
+        }
+
+        [Test]
+        [Description("CanMoveメソッドがRockブロックに対して移動不可を返すことを検証")]
+        public void CanMove_WithImpassableTile_ShouldReturnFalse()
+        {
+            // Arrange
+            var initialPosition = new Vector2Int(0, 0);
+            _service.SetPosition(initialPosition);
+
+            var testTilemapManager = new TestTilemapManager(false);
+            _service.SetTilemapManager(testTilemapManager, 0);
+
+            // Act
+            var canMove = _service.CanMove(Direction.Right);
+
+            // Assert
+            Assert.IsFalse(canMove, "移動不可能なタイルに対してCanMoveはfalseを返すべき");
         }
     }
 }

@@ -12,8 +12,9 @@
 
 ### 機能要件
 - ✅ **上下左右の4方向移動システム** (完全実装済み - WASD入力、アニメーション対応)
-- ❌ **土ブロック破壊機能** (未実装 - タイルマップとの相互作用なし)
-- ❌ **岩ブロックに対する移動制限** (未実装 - 移動制限機能なし)
+  - ✅ **移動制約** プレイヤーはブロックの上以外は移動できない( EmptyとGroundブロックの上のみ移動可能 )
+- ❌ **Groundブロック破壊機能** (未実装 - タイルマップとの相互作用なし)
+- ✅ **Rockブロックに対する移動制限** (実装済み - 移動制限機能実装済み)
 - ✅ **初期配置システム** (実装済み - X10, Y3座標での固定配置)
 
 ### 非機能要件
@@ -66,18 +67,11 @@ PlayerController (MonoBehaviour)
 └── PlayerAnimationController (MonoBehaviour)
 ```
 
-### 主要メソッド
-- `Move(Direction direction)`: プレイヤー移動処理
-- `CanMoveTo(Vector2Int position)`: 移動可能判定
-- `DestroyBlock(Vector2Int position)`: ブロック破壊処理
-- `SetInitialPosition()`: 初期位置設定
-
 ## テスト仕様
 
-### テスト実装方針
-- t-wada流TDDを適用
-- Unity TestRunnerを使用
-- PureC#クラスの重点的なテスト
+### テスト方針
+テスト実装の方針とルールについては、以下のドキュメントを参照してください：
+- `Documentation/Rules/TestRule.md`
 
 ### テスト項目
 1. **移動システムテスト**
@@ -98,21 +92,6 @@ PlayerController (MonoBehaviour)
    - タイルマップとの正確な衝突判定
    - マップ境界での動作確認
 
-### テストクラス例
-```csharp
-[TestFixture]
-public class PlayerMoveServiceTests
-{
-    [Test]
-    public void Move_WithValidDirection_ShouldUpdatePosition()
-    
-    [Test]
-    public void CanMoveTo_WithRockBlock_ShouldReturnFalse()
-    
-    [Test]
-    public void DestroyBlock_WithDirtBlock_ShouldRemoveBlock()
-}
-```
 
 ## 注意事項
 - TestRunner は EditMode のみを実施する（PlayMode のテストはユーザが手動で実施する）

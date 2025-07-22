@@ -9,7 +9,7 @@ namespace MyGame.TilemapSystem.Core
         {
             return blockType switch
             {
-                BlockType.Sky => true,
+                BlockType.Sky => false,      // Skyブロック上は移動不可（仕様に従い）
                 BlockType.Empty => true,
                 BlockType.Ground => true,
                 BlockType.Rock => false,     // Playerは通過できない

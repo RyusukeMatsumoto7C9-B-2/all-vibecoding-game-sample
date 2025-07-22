@@ -208,7 +208,7 @@ namespace MyGame.TilemapSystem.Core
             return _instantiatedTiles.ContainsKey(level) ? _instantiatedTiles[level] : null;
         }
 
-        public bool CanPlayerPassThrough(Vector2Int position, int level)
+        public virtual bool CanPlayerPassThrough(Vector2Int position, int level)
         {
             if (!_loadedMaps.ContainsKey(level))
                 return true;

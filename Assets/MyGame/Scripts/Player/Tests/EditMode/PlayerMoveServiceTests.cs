@@ -33,12 +33,16 @@ namespace MyGame.Player.Tests
         }
 
         [Test]
-        [Description("上方向への移動時に座標のY値が1増加することを検証")]
+        [Description("上方向への移動時に座標のY値が1増加することを検証（TilemapManager設定済み）")]
         public void Move_WithUpDirection_ShouldUpdatePositionUpward()
         {
             // Arrange
             var initialPosition = new Vector2Int(0, 0);
             _service.SetPosition(initialPosition);
+
+            // TilemapManagerを設定（移動可能とする）
+            var testTilemapManager = new TestTilemapManager(true);
+            _service.SetTilemapManager(testTilemapManager, 0);
 
             // Act
             _service.Move(Direction.Up);
@@ -48,12 +52,16 @@ namespace MyGame.Player.Tests
         }
 
         [Test]
-        [Description("下方向への移動時に座標のY値が1減少することを検証")]
+        [Description("下方向への移動時に座標のY値が1減少することを検証（TilemapManager設定済み）")]
         public void Move_WithDownDirection_ShouldUpdatePositionDownward()
         {
             // Arrange
             var initialPosition = new Vector2Int(0, 1);
             _service.SetPosition(initialPosition);
+
+            // TilemapManagerを設定（移動可能とする）
+            var testTilemapManager = new TestTilemapManager(true);
+            _service.SetTilemapManager(testTilemapManager, 0);
 
             // Act
             _service.Move(Direction.Down);
@@ -63,12 +71,16 @@ namespace MyGame.Player.Tests
         }
 
         [Test]
-        [Description("左方向への移動時に座標のX値が1減少することを検証")]
+        [Description("左方向への移動時に座標のX値が1減少することを検証（TilemapManager設定済み）")]
         public void Move_WithLeftDirection_ShouldUpdatePositionLeft()
         {
             // Arrange
             var initialPosition = new Vector2Int(1, 0);
             _service.SetPosition(initialPosition);
+
+            // TilemapManagerを設定（移動可能とする）
+            var testTilemapManager = new TestTilemapManager(true);
+            _service.SetTilemapManager(testTilemapManager, 0);
 
             // Act
             _service.Move(Direction.Left);
@@ -78,12 +90,16 @@ namespace MyGame.Player.Tests
         }
 
         [Test]
-        [Description("右方向への移動時に座標のX値が1増加することを検証")]
+        [Description("右方向への移動時に座標のX値が1増加することを検証（TilemapManager設定済み）")]
         public void Move_WithRightDirection_ShouldUpdatePositionRight()
         {
             // Arrange
             var initialPosition = new Vector2Int(0, 0);
             _service.SetPosition(initialPosition);
+
+            // TilemapManagerを設定（移動可能とする）
+            var testTilemapManager = new TestTilemapManager(true);
+            _service.SetTilemapManager(testTilemapManager, 0);
 
             // Act
             _service.Move(Direction.Right);

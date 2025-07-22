@@ -16,12 +16,12 @@ namespace MyGame.TilemapSystem.Tests
         }
 
         [Test]
-        [Description("Skyタイルがプレイヤーの通過を許可することを検証")]
-        public void CanPlayerPassThrough_SkyTile_ReturnsTrue()
+        [Description("Skyタイルがプレイヤーの通過を許可しないことを検証")]
+        public void CanPlayerPassThrough_SkyTile_ReturnsFalse()
         {
             var result = _tileBehavior.CanPlayerPassThrough(BlockType.Sky);
             
-            Assert.IsTrue(result, "Skyタイルはプレイヤーの通過を許可するべき");
+            Assert.IsFalse(result, "Skyタイルはプレイヤーの通過を許可しないべき");
         }
 
         [Test]
@@ -267,7 +267,7 @@ namespace MyGame.TilemapSystem.Tests
         public void CanPlayerPassThrough_MultipleTypes_ReturnCorrectValues()
         {
             // 通過可能なタイルタイプ
-            var passableTypes = new[] { BlockType.Sky, BlockType.Empty, BlockType.Ground, BlockType.Treasure };
+            var passableTypes = new[] { BlockType.Empty, BlockType.Ground, BlockType.Treasure };
             foreach (var tileType in passableTypes)
             {
                 Assert.IsTrue(_tileBehavior.CanPlayerPassThrough(tileType), 
@@ -275,7 +275,7 @@ namespace MyGame.TilemapSystem.Tests
             }
             
             // 通過不可能なタイルタイプ
-            var impassableTypes = new[] { BlockType.Rock };
+            var impassableTypes = new[] { BlockType.Sky, BlockType.Rock };
             foreach (var tileType in impassableTypes)
             {
                 Assert.IsFalse(_tileBehavior.CanPlayerPassThrough(tileType), 

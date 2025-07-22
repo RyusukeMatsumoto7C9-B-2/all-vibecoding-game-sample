@@ -5,7 +5,7 @@ using R3;
 
 namespace MyGame.TilemapSystem.Core
 {
-    public class TilemapManager
+    public class TilemapManager : ITilemapManager
     {
         private readonly Transform _parentTransform;
         private readonly Dictionary<BlockType, GameObject> _tilePrefabs;

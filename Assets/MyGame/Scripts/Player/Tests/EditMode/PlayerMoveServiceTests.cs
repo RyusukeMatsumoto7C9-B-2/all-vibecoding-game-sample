@@ -1,24 +1,10 @@
 using NUnit.Framework;
 using UnityEngine;
 using MyGame.TilemapSystem.Core;
+using MyGame.TilemapSystem;
 
 namespace MyGame.Player.Tests
 {
-    // テスト用のTilemapManager実装
-    public class TestTilemapManager : TilemapManager
-    {
-        private readonly bool _allowMovement;
-
-        public TestTilemapManager(bool allowMovement) : base(null, null, null)
-        {
-            _allowMovement = allowMovement;
-        }
-
-        public override bool CanPlayerPassThrough(Vector2Int position, int level)
-        {
-            return _allowMovement;
-        }
-    }
 
     [TestFixture]
     [Description("PlayerMoveServiceクラスの移動ロジックとして、4方向移動と位置設定の正確性をテストする")]
@@ -41,7 +27,7 @@ namespace MyGame.Player.Tests
             _service.SetPosition(initialPosition);
 
             // TilemapManagerを設定（移動可能とする）
-            var testTilemapManager = new TestTilemapManager(true);
+            var testTilemapManager = new MockTilemapManager(true);
             _service.SetTilemapManager(testTilemapManager, 0);
 
             // Act
@@ -60,7 +46,7 @@ namespace MyGame.Player.Tests
             _service.SetPosition(initialPosition);
 
             // TilemapManagerを設定（移動可能とする）
-            var testTilemapManager = new TestTilemapManager(true);
+            var testTilemapManager = new MockTilemapManager(true);
             _service.SetTilemapManager(testTilemapManager, 0);
 
             // Act
@@ -79,7 +65,7 @@ namespace MyGame.Player.Tests
             _service.SetPosition(initialPosition);
 
             // TilemapManagerを設定（移動可能とする）
-            var testTilemapManager = new TestTilemapManager(true);
+            var testTilemapManager = new MockTilemapManager(true);
             _service.SetTilemapManager(testTilemapManager, 0);
 
             // Act
@@ -98,7 +84,7 @@ namespace MyGame.Player.Tests
             _service.SetPosition(initialPosition);
 
             // TilemapManagerを設定（移動可能とする）
-            var testTilemapManager = new TestTilemapManager(true);
+            var testTilemapManager = new MockTilemapManager(true);
             _service.SetTilemapManager(testTilemapManager, 0);
 
             // Act
@@ -162,7 +148,7 @@ namespace MyGame.Player.Tests
             var initialPosition = new Vector2Int(0, 0);
             _service.SetPosition(initialPosition);
 
-            var testTilemapManager = new TestTilemapManager(true);
+            var testTilemapManager = new MockTilemapManager(true);
             _service.SetTilemapManager(testTilemapManager, 0);
 
             // Act
@@ -181,7 +167,7 @@ namespace MyGame.Player.Tests
             var initialPosition = new Vector2Int(0, 0);
             _service.SetPosition(initialPosition);
 
-            var testTilemapManager = new TestTilemapManager(false);
+            var testTilemapManager = new MockTilemapManager(false);
             _service.SetTilemapManager(testTilemapManager, 0);
 
             // Act
@@ -200,7 +186,7 @@ namespace MyGame.Player.Tests
             var initialPosition = new Vector2Int(0, 0);
             _service.SetPosition(initialPosition);
 
-            var testTilemapManager = new TestTilemapManager(true);
+            var testTilemapManager = new MockTilemapManager(true);
             _service.SetTilemapManager(testTilemapManager, 0);
 
             // Act
@@ -218,7 +204,7 @@ namespace MyGame.Player.Tests
             var initialPosition = new Vector2Int(0, 0);
             _service.SetPosition(initialPosition);
 
-            var testTilemapManager = new TestTilemapManager(false);
+            var testTilemapManager = new MockTilemapManager(false);
             _service.SetTilemapManager(testTilemapManager, 0);
 
             // Act

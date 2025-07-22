@@ -26,11 +26,17 @@ namespace MyGame.Player
             if (_tilemapManager == null)
             {
                 // TilemapManagerが設定されていない場合は移動可能とする（従来の動作）
+                Debug.LogWarning("[PlayerMoveService] TilemapManagerが未設定のため、移動制約をチェックできません");
                 return true;
             }
 
             var targetPosition = GetTargetPosition(direction);
-            return _tilemapManager.CanPlayerPassThrough(targetPosition, _currentLevel);
+            var canPass = _tilemapManager.CanPlayerPassThrough(targetPosition, _currentLevel);
+            
+            Debug.Log($"[PlayerMoveService] 移動制約チェック: {direction}方向 → 座標({targetPosition.x}, {targetPosition.y}) " +
+                     $"Level: {_currentLevel} → 結果: {(canPass ? "移動可能" : "移動不可")}");
+            
+            return canPass;
         }
 
         public bool Move(Direction direction)

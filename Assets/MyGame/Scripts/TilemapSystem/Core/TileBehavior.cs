@@ -7,15 +7,18 @@ namespace MyGame.TilemapSystem.Core
         // publicメソッド
         public bool CanPlayerPassThrough(BlockType blockType)
         {
-            return blockType switch
+            var canPass = blockType switch
             {
-                BlockType.Sky => true,
+                BlockType.Sky => false,      // Skyブロック上は移動不可（仕様に従い）
                 BlockType.Empty => true,
                 BlockType.Ground => true,
                 BlockType.Rock => false,     // Playerは通過できない
                 BlockType.Treasure => true,
                 _ => true
             };
+            
+            Debug.Log($"[TileBehavior] {blockType}ブロックの通過判定: {(canPass ? "可能" : "不可")}");
+            return canPass;
         }
 
 

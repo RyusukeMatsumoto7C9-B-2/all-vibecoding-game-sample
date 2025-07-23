@@ -5,7 +5,7 @@ using R3;
 
 namespace MyGame.TilemapSystem.Core
 {
-    public class TilemapManager
+    public class TilemapManager : ITilemapManager
     {
         private readonly Transform _parentTransform;
         private readonly Dictionary<BlockType, GameObject> _tilePrefabs;
@@ -208,17 +208,29 @@ namespace MyGame.TilemapSystem.Core
             return _instantiatedTiles.ContainsKey(level) ? _instantiatedTiles[level] : null;
         }
 
-        public bool CanPlayerPassThrough(Vector2Int position, int level)
+        public virtual bool CanPlayerPassThrough(Vector2Int position, int level)
         {
             if (!_loadedMaps.ContainsKey(level))
+            {
+                Debug.Log($"[TilemapManager] Level {level}のマップが読み込まれていません → 移動可能");
                 return true;
+            }
 
             var mapData = _loadedMaps[level];
             if (position.x < 0 || position.x >= mapData.Width || position.y < 0 || position.y >= mapData.Height)
-                return true;
+            {
+                Debug.Log($"[TilemapManager] 座標({position.x}, {position.y})はマップ範囲外 " +
+                         $"(0-{mapData.Width-1}, 0-{mapData.Height-1}) → 移動不可");
+                return false;
+            }
 
             var tileType = mapData.Tiles[position.x, position.y];
-            return _tileBehavior.CanPlayerPassThrough(tileType);
+            var canPass = _tileBehavior.CanPlayerPassThrough(tileType);
+            
+            Debug.Log($"[TilemapManager] 座標({position.x}, {position.y}) Level{level}: {tileType}ブロック → " +
+                     $"{(canPass ? "移動可能" : "移動不可")}");
+            
+            return canPass;
         }
 
         public void OnPlayerHitTile(Vector2Int position, int level)

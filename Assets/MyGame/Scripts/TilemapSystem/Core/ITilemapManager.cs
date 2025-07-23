@@ -8,5 +8,6 @@ namespace MyGame.TilemapSystem.Core
         void OnPlayerHitTile(Vector2Int position, int level);
         bool IsMapLoaded(int level);
         MapData GetLoadedMap(int level);
+        BlockType GetBlockTypeAt(Vector2Int position, int level);
     }
 }

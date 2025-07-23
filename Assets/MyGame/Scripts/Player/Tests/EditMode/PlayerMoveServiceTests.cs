@@ -213,5 +213,67 @@ namespace MyGame.Player.Tests
             // Assert
             Assert.IsFalse(canMove, "移動不可能なタイルに対してCanMoveはfalseを返すべき");
         }
+
+        [Test]
+        [Description("Groundブロックに移動した場合、OnPlayerHitTileが呼ばれることを検証")]
+        public void Move_ToGroundBlock_ShouldCallOnPlayerHitTile()
+        {
+            // Arrange
+            var initialPosition = new Vector2Int(0, 0);
+            _service.SetPosition(initialPosition);
+
+            var testTilemapManager = new MockTilemapManager(true, BlockType.Ground);
+            _service.SetTilemapManager(testTilemapManager, 0);
+
+            // Act
+            var result = _service.Move(Direction.Right);
+
+            // Assert
+            Assert.IsTrue(result, "Groundブロックへの移動は成功すべき");
+            Assert.AreEqual(new Vector2Int(1, 0), _service.CurrentPosition, "移動位置が正しく更新されるべき");
+            Assert.IsTrue(testTilemapManager.OnPlayerHitTileCalled, "Groundブロック移動時にOnPlayerHitTileが呼ばれるべき");
+            Assert.AreEqual(new Vector2Int(1, 0), testTilemapManager.LastHitPosition, "破壊処理の座標が正しいべき");
+            Assert.AreEqual(0, testTilemapManager.LastHitLevel, "破壊処理のレベルが正しいべき");
+        }
+
+        [Test]
+        [Description("Emptyブロックに移動した場合、OnPlayerHitTileが呼ばれないことを検証")]
+        public void Move_ToEmptyBlock_ShouldNotCallOnPlayerHitTile()
+        {
+            // Arrange
+            var initialPosition = new Vector2Int(0, 0);
+            _service.SetPosition(initialPosition);
+
+            var testTilemapManager = new MockTilemapManager(true, BlockType.Empty);
+            _service.SetTilemapManager(testTilemapManager, 0);
+
+            // Act
+            var result = _service.Move(Direction.Right);
+
+            // Assert
+            Assert.IsTrue(result, "Emptyブロックへの移動は成功すべき");
+            Assert.AreEqual(new Vector2Int(1, 0), _service.CurrentPosition, "移動位置が正しく更新されるべき");
+            Assert.IsFalse(testTilemapManager.OnPlayerHitTileCalled, "Emptyブロック移動時はOnPlayerHitTileが呼ばれないべき");
+        }
+
+        [Test]
+        [Description("Treasureブロックに移動した場合、OnPlayerHitTileが呼ばれないことを検証")]
+        public void Move_ToTreasureBlock_ShouldNotCallOnPlayerHitTile()
+        {
+            // Arrange
+            var initialPosition = new Vector2Int(0, 0);
+            _service.SetPosition(initialPosition);
+
+            var testTilemapManager = new MockTilemapManager(true, BlockType.Treasure);
+            _service.SetTilemapManager(testTilemapManager, 0);
+
+            // Act
+            var result = _service.Move(Direction.Right);
+
+            // Assert
+            Assert.IsTrue(result, "Treasureブロックへの移動は成功すべき");
+            Assert.AreEqual(new Vector2Int(1, 0), _service.CurrentPosition, "移動位置が正しく更新されるべき");
+            Assert.IsFalse(testTilemapManager.OnPlayerHitTileCalled, "Treasureブロック移動時はOnPlayerHitTileが呼ばれないべき");
+        }
     }
 }

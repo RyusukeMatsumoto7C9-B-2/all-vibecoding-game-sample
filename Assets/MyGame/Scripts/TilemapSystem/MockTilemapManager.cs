@@ -6,10 +6,17 @@ namespace MyGame.TilemapSystem
     public class MockTilemapManager : ITilemapManager
     {
         private readonly bool _allowMovement;
+        private readonly BlockType _blockType;
+        
+        // テスト用スパイ機能
+        public bool OnPlayerHitTileCalled { get; private set; }
+        public Vector2Int LastHitPosition { get; private set; }
+        public int LastHitLevel { get; private set; }
 
-        public MockTilemapManager(bool allowMovement)
+        public MockTilemapManager(bool allowMovement, BlockType blockType = BlockType.Empty)
         {
             _allowMovement = allowMovement;
+            _blockType = blockType;
         }
 
         public bool CanPlayerPassThrough(Vector2Int position, int level)
@@ -19,7 +26,10 @@ namespace MyGame.TilemapSystem
 
         public void OnPlayerHitTile(Vector2Int position, int level)
         {
-            // テスト用のため何もしない
+            // テスト用スパイ機能
+            OnPlayerHitTileCalled = true;
+            LastHitPosition = position;
+            LastHitLevel = level;
         }
 
         public bool IsMapLoaded(int level)
@@ -32,8 +42,13 @@ namespace MyGame.TilemapSystem
         {
             // テスト用のダミーMapDataを返す
             var tiles = new BlockType[1, 1];
-            tiles[0, 0] = BlockType.Empty;
+            tiles[0, 0] = _blockType;
             return new MapData(1, 1, tiles, 0, level);
+        }
+
+        public BlockType GetBlockTypeAt(Vector2Int position, int level)
+        {
+            return _blockType;
         }
     }
 }

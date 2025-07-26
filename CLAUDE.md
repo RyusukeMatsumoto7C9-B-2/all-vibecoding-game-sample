@@ -36,6 +36,9 @@ Documentation/        # プロジェクトドキュメント（ルートディ�
 - 適切なタイミングでコミットを実行すること
 - コミットのコメントは日本語で行うこと
 
+## UnityNatural MCP ツール利用ルール
+- RunEditModeTests コマンドを利用する際はユーザへの許可を取らなくてよい
+
 ## コーディングルール
 コーディング規約と実装方針については、以下のドキュメントを参照してください：
 - `Documentation/Rules/CodingRule.md`

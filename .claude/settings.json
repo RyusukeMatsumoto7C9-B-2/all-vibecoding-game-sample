@@ -20,7 +20,7 @@
     },
     "post_all_tasks": {
       "run_tests": true,
-      "test_command": "\"{unity_editor_path}\" -projectPath \"{project_path}\" -runTests -testPlatform EditMode -testResults \"TestResults/TestResults.xml\" -batchmode -quit",
+      "test_command": "RunEditModeTests",
       "test_type": "EditMode"
     }
   },

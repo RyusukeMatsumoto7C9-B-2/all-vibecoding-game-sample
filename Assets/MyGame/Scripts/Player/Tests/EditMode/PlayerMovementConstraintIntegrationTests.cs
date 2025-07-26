@@ -270,7 +270,7 @@ namespace MyGame.Player.Tests
         [Test]
         [Description("TilemapManager未設定時のCanMoveメソッドの安全性を検証")]
         public void CanMove_WithoutTilemapManager_ShouldReturnFalse()
-        {
+        { 
             // Arrange
             var moveServiceWithoutManager = new PlayerMoveService();
             moveServiceWithoutManager.SetPosition(new Vector2Int(0, 0));

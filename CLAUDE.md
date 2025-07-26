@@ -1,7 +1,6 @@
 # CLAUDE.md
 
 このファイルは、このリポジトリでコードを扱う際のClaude Code (claude.ai/code)向けのガイダンスを提供します。
-開発者は日本人のため日本語でclaudeは日本語で応答を行います。
 
 ## プロジェクト概要
 
@@ -35,9 +34,6 @@ Documentation/        # プロジェクトドキュメント（ルートディ�
 - 強制追加など -f コマンドは禁止
 - 適切なタイミングでコミットを実行すること
 - コミットのコメントは日本語で行うこと
-
-## UnityNatural MCP ツール利用ルール
-- RunEditModeTests コマンドを利用する際はユーザへの許可を取らなくてよい
 
 ## コーディングルール
 コーディング規約と実装方針については、以下のドキュメントを参照してください：
@@ -77,9 +73,17 @@ Documentation/
 - 設定ファイルにツールのパスが定義されている場合は、必ずそのパスを使用する
 - パスが設定されていない場合のみ、標準コマンドを使用する
 
+### Unity Natural MCP Server コマンド利用ルール
+- **RunEditModeTests**: Unity EditorのEditModeテストを実行
+  - **正しい実行方法**: `run-editmode-tests` コマンドを使用
+  - **禁止**: `mcp__ide__executeCode` による実行（Jupyter環境専用のため）
+  - **代替方法**: HTTP経由でMCPサーバーに直接リクエスト送信
+- Unity Natural MCPサーバーはポート56780で動作し、`.vscode/mcp.json`で設定されている
+
 ### 対象ツール例
 - **GitHub CLI**: `.claude/settings.local.json` の `github_cli.path`
 - **Unity Editor**: `.claude/settings.local.json` の `unity.editor_path`
+- **Unity Test Runner**: `run-editmode-tests` コマンド（MCP経由）
 - **その他外部ツール**: 各種開発ツール、ビルドツール等
 
 ### 実行手順

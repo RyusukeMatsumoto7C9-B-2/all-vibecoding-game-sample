@@ -95,7 +95,8 @@ namespace MyGame.Player.Tests
             var testObjects = GameObject.FindObjectsByType<GameObject>(FindObjectsSortMode.None);
             foreach (var obj in testObjects)
             {
-                if (obj.name == "TestParent" || obj.name == "TestUniversalTile")
+                // nullチェックを追加してMissingReferenceExceptionを回避
+                if (obj != null && (obj.name == "TestParent" || obj.name == "TestUniversalTile"))
                 {
                     Object.DestroyImmediate(obj);
                 }

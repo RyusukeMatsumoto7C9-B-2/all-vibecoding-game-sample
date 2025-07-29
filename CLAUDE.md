@@ -19,6 +19,16 @@ Assets/MyGame/
 Documentation/        # プロジェクトドキュメント（ルートディレクトリ）
 ```
 
+# コードレビューコマンド  
+1. レビュー対象コードの取得方法が支持されていない場合は、この時点で処理を終了する  
+2. 自分でコードを取得せず、その代わりに次節に記載したサブエージェントを**全て必ず並列で**起動する  
+3. サブエージェントが並列で起動されていることを確認し、もしなされていない場合は起動されていないものを起動する  
+4. 起動したサブエージェントにコード取得方法を伝えて、レビューを依頼する  
+
+## 呼び出し対象のサブエージェント   
+* csharp-class-modeling-reviewer    
+* csharp-naming-reviewer  
+
 # 開発ルール
 - Documentation フォルダ以下のタスク用文書を参照し、作業を開始する
 - 機能ごとに適切にフォルダを分け、各機能フォルダ内にTestsフォルダを作成しテストを実装する
@@ -36,8 +46,7 @@ Documentation/        # プロジェクトドキュメント（ルートディ�
 - コミットのコメントは日本語で行うこと
 
 ## コーディングルール
-コーディング規約と実装方針については、以下のドキュメントを参照してください：
-- `Documentation/Rules/CodingRule.md`
+- コードを新規作成、および変更をした場合は
 
 ## テストルール
 テスト実装の方針とルールについては、以下のドキュメントを参照してください：
@@ -73,9 +82,17 @@ Documentation/
 - 設定ファイルにツールのパスが定義されている場合は、必ずそのパスを使用する
 - パスが設定されていない場合のみ、標準コマンドを使用する
 
+### Unity Natural MCP Server コマンド利用ルール
+- **RunEditModeTests**: Unity EditorのEditModeテストを実行
+  - **正しい実行方法**: `run-editmode-tests` コマンドを使用
+  - **禁止**: `mcp__ide__executeCode` による実行（Jupyter環境専用のため）
+  - **代替方法**: HTTP経由でMCPサーバーに直接リクエスト送信
+- Unity Natural MCPサーバーはポート56780で動作し、`.vscode/mcp.json`で設定されている
+
 ### 対象ツール例
 - **GitHub CLI**: `.claude/settings.local.json` の `github_cli.path`
 - **Unity Editor**: `.claude/settings.local.json` の `unity.editor_path`
+- **Unity Test Runner**: `run-editmode-tests` コマンド（MCP経由）
 - **その他外部ツール**: 各種開発ツール、ビルドツール等
 
 ### 実行手順

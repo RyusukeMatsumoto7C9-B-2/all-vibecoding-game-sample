@@ -1,27 +1,23 @@
+using System;
 using UnityEngine;
 using MyGame.TilemapSystem.Core;
 using MyGame.TilemapSystem.Generation;
 using MyGame.Player;
+using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using R3;
 
 namespace MyGame.TilemapSystem
 {
-    [System.Obsolete("TilemapSystemTesterは廃止予定です。代わりにTilemapSystemControllerを使用してください。", false)]
-    class TilemapSystemTester : MonoBehaviour
+    public class TilemapSystemController : MonoBehaviour
     {
-        [Header("Universal Tile Prefab (新方式)")]
+        [Header("Universal Tile Prefab")]
         [SerializeField] private GameObject universalTilePrefab;
         
-        [Header("Tile Prefabs (廃止予定)")]
-        [SerializeField] private GameObject skyTilePrefab;
-        [SerializeField] private GameObject groundTilePrefab;
-        [SerializeField] private GameObject rockTilePrefab;
-        [SerializeField] private GameObject treasureTilePrefab;
+        [Header("System Settings")]
+        [SerializeField] private int initialLevel = 1;
+        [SerializeField] private int initialSeed = 12345;
         
-        [Header("Test Settings")]
-        [SerializeField] private int testLevel = 1;
-        [SerializeField] private int testSeed = 12345;
         [Header("Auto Scroll Settings")]
         [SerializeField] private bool autoScrollEnabled = true;
         [SerializeField] private float autoScrollInterval = 3.0f;
@@ -31,10 +27,14 @@ namespace MyGame.TilemapSystem
         private SeedManager _seedManager;
         private TilemapScrollController _scrollController;
         
+        public TilemapManager Manager => _manager;
+        public TilemapScrollController ScrollController => _scrollController;
+        public int CurrentLevel => _scrollController?.CurrentLevel ?? initialLevel;
+        
         private void Start()
         {
             InitializeSystem();
-            GenerateTestMap();
+            GenerateInitialMap();
             
             // 自動スクロールを開始
             if (autoScrollEnabled)
@@ -47,14 +47,13 @@ namespace MyGame.TilemapSystem
         {
             if (universalTilePrefab == null)
             {
-                Debug.LogError("[TilemapSystemTester] UniversalTilePrefabが設定されていません。TilemapSystemControllerの使用を推奨します。");
+                Debug.LogError("[TilemapSystemController] UniversalTilePrefabが設定されていません");
                 return;
             }
 
-            _seedManager = new SeedManager(testSeed);
+            _seedManager = new SeedManager(initialSeed);
             _generator = new TilemapGenerator(_seedManager);
 
-            // 新方式: 単一プレハブ使用
             _manager = new TilemapManager(transform, universalTilePrefab);
             _manager.OnMapGenerated.Subscribe(OnMapGenerated).AddTo(this);
             
@@ -68,7 +67,7 @@ namespace MyGame.TilemapSystem
             SetupPlayerController();
         }
 
-        private void GenerateTestMap()
+        private void GenerateInitialMap()
         {
             if (_generator == null)
             {
@@ -76,14 +75,14 @@ namespace MyGame.TilemapSystem
                 return;
             }
 
-            var mapData = _generator.GenerateMap(testLevel, testSeed);
+            var mapData = _generator.GenerateMap(initialLevel, initialSeed);
             
             if (_manager != null)
             {
                 _manager.PlaceTiles(mapData);
             }
 
-            Debug.Log($"マップ生成完了: Level={mapData.Level}, Seed={mapData.Seed}, Size={mapData.Width}x{mapData.Height}");
+            Debug.Log($"初期マップ生成完了: Level={mapData.Level}, Seed={mapData.Seed}, Size={mapData.Width}x{mapData.Height}");
         }
 
         private void OnMapGenerated(MapData mapData)
@@ -92,19 +91,21 @@ namespace MyGame.TilemapSystem
         }
 
         [ContextMenu("新しいマップを生成")]
-        private void GenerateNewMap()
+        public void GenerateNewMap()
         {
-            testLevel++;
-            GenerateTestMap();
+            var newLevel = CurrentLevel + 1;
+            var mapData = _generator.GenerateMap(newLevel, initialSeed);
+            _manager.PlaceTiles(mapData);
+            Debug.Log($"新しいマップ生成: Level {newLevel}");
         }
 
-        [ContextMenu("メモリ最適化テスト")]
-        private void TestMemoryOptimization()
+        [ContextMenu("メモリ最適化実行")]
+        public void OptimizeMemory()
         {
             if (_manager != null)
             {
-                _manager.OptimizeMemory(testLevel);
-                Debug.Log($"メモリ最適化実行: Current Level {testLevel}");
+                _manager.OptimizeMemory(CurrentLevel);
+                Debug.Log($"メモリ最適化実行: Current Level {CurrentLevel}");
             }
         }
 
@@ -138,7 +139,7 @@ namespace MyGame.TilemapSystem
         }
         
         [ContextMenu("手動スクロール実行")]
-        private void ManualScroll()
+        public void StartManualScroll()
         {
             if (_scrollController != null)
             {
@@ -147,14 +148,14 @@ namespace MyGame.TilemapSystem
         }
         
         [ContextMenu("自動スクロール停止")]
-        private void StopAutoScroll()
+        public void StopAutoScroll()
         {
             autoScrollEnabled = false;
             Debug.Log("自動スクロールを停止しました");
         }
         
         [ContextMenu("自動スクロール開始")]
-        private void StartAutoScrollManual()
+        public void StartAutoScrollManual()
         {
             if (!autoScrollEnabled)
             {
@@ -167,24 +168,64 @@ namespace MyGame.TilemapSystem
         private void SetupPlayerController()
         {
             // シーン内のPlayerControllerを検索
-            var playerController = FindObjectOfType<PlayerController>();
+            var playerController = FindFirstObjectByType<PlayerController>();
             
             if (playerController != null)
             {
                 // TilemapManagerをPlayerControllerに設定
-                playerController.SetTilemapManager(_manager, testLevel);
-                Debug.Log($"[TilemapSystemTester] PlayerControllerにTilemapManagerを設定しました - Level: {testLevel}");
+                playerController.SetTilemapManager(_manager, CurrentLevel);
+                Debug.Log($"[TilemapSystemController] PlayerControllerにTilemapManagerを設定しました - Level: {CurrentLevel}");
             }
             else
             {
-                Debug.LogWarning("[TilemapSystemTester] PlayerControllerが見つかりません。プレイヤーの移動制約が機能しない可能性があります。");
+                Debug.LogWarning("[TilemapSystemController] PlayerControllerが見つかりません。プレイヤーの移動制約が機能しない可能性があります。");
             }
         }
         
         [ContextMenu("PlayerController再設定")]
-        private void ResetupPlayerController()
+        public void ResetupPlayerController()
         {
             SetupPlayerController();
+        }
+        
+        // 公開メソッド - 他のシステムから利用可能
+        public void SetAutoScrollEnabled(bool autoScrollState)
+        {
+            autoScrollEnabled = autoScrollState;
+            if (autoScrollState)
+            {
+                StartAutoScrollManual();
+            }
+        }
+        
+        public void SetAutoScrollInterval(float interval)
+        {
+            autoScrollInterval = interval;
+        }
+        
+        public bool IsMapLoaded(int level)
+        {
+            return _manager?.IsMapLoaded(level) ?? false;
+        }
+        
+        public MapData GetLoadedMap(int level)
+        {
+            return _manager?.GetLoadedMap(level) ?? default;
+        }
+        
+        public BlockType GetBlockTypeAt(Vector2Int position, int level)
+        {
+            return _manager?.GetBlockTypeAt(position, level) ?? BlockType.Empty;
+        }
+        
+        public bool CanPlayerPassThrough(Vector2Int position, int level)
+        {
+            return _manager?.CanPlayerPassThrough(position, level) ?? true;
+        }
+        
+        public void OnPlayerHitTile(Vector2Int position, int level)
+        {
+            _manager?.OnPlayerHitTile(position, level);
         }
     }
 }

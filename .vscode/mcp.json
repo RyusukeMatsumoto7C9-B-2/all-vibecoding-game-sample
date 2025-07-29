@@ -1,0 +1,7 @@
+{
+  "servers": {
+    "unity-natural-mcp": {
+      "url": "http://localhost:56780/mcp"
+    }
+  }
+}

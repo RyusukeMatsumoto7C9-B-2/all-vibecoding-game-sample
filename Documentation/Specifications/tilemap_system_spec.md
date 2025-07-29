@@ -18,6 +18,8 @@
 - ✅ **タイルマップのスクロール機能**
 - ✅ **メモリ効率的なタイル破棄**
 - ⚠️ **60FPSでの安定動作**（測定・検証未実装）
+- ✅ **スプライトの切り替え** BlockTypeを切り替えたら適切なスプライトに切り替わる
+  - ブロック用のプレハブは一つだけとなり、属性の値により表示するスプライトを切り替える
 
 ## 動作仕様
 
@@ -61,6 +63,81 @@
 - プロシージャル生成の乱数シードは保存・復元可能に設計
 - スクロールシステムとの密な連携が必要
 
+## ブロック作成手順
+
+### 新方式（単一プレハブ + スプライト切り替え）
+
+#### 1. 基本構成
+- **UniversalTile.prefab**: 共通タイルプレハブ
+- **TileController**: BlockType管理とスプライト切り替え
+- **SpriteManager**: BlockType→Spriteマッピング管理
+
+#### 2. ブロック設定手順
+
+**Step 1: SpriteManagerの初期化**
+```csharp
+// スプライトマップを作成
+var spriteMap = new Dictionary<BlockType, Sprite>
+{
+    { BlockType.Sky, skySprite },
+    { BlockType.Ground, groundSprite },
+    { BlockType.Rock, rockSprite },
+    { BlockType.Treasure, treasureSprite }
+};
+
+// SpriteManagerを初期化
+SpriteManager.Initialize(spriteMap);
+```
+
+**Step 2: UniversalTileの使用**
+```csharp
+// UniversalTileプレハブをインスタンス化
+var tileInstance = Instantiate(universalTilePrefab, position, Quaternion.identity);
+
+// TileControllerでBlockTypeを設定（自動的にスプライトが切り替わる）
+var tileController = tileInstance.GetComponent<TileController>();
+tileController.Initialize(BlockType.Ground);
+
+// または、プロパティで直接設定
+tileController.BlockType = BlockType.Rock;
+```
+
+**Step 3: 動的なスプライト変更**
+```csharp
+// ブロックタイプを変更（スプライトも自動更新）
+tileController.BlockType = BlockType.Empty; // 非表示になる
+tileController.BlockType = BlockType.Treasure; // 宝物スプライトに切り替わる
+```
+
+#### 3. 従来方式からの移行
+
+**従来方式の問題点:**
+- 各BlockTypeごとに個別プレハブが必要
+- Dictionary<BlockType, GameObject>でプレハブ管理
+- タイル変更時のDestroy→Instantiateオーバーヘッド
+
+**新方式の利点:**
+- 単一プレハブの再利用によるメモリ効率向上
+- スプライト切り替えによるパフォーマンス向上
+- 新BlockType追加時の作業軽減
+- プレハブ管理の簡素化
+
+#### 4. ファイル構成
+```
+Assets/MyGame/
+├── Scripts/TilemapSystem/Core/
+│   ├── TileController.cs          # タイル個別管理
+│   ├── SpriteManager.cs           # スプライトマッピング
+│   └── BlockType.cs               # ブロック種別定義
+└── Prefabs/Tiles/
+    └── UniversalTile.prefab       # 共通タイルプレハブ
+```
+
+#### 5. 注意事項
+- SpriteManagerは使用前に必ず Initialize() で初期化する
+- EmptyブロックはSpriteRendererが非アクティブになる
+- 既存のITileBehavior、TileBehaviorとの互換性を維持
+
 ## 更新履歴
 | 日付 | 変更内容 | 担当者 |
 |------|----------|--------|
@@ -79,3 +156,5 @@
 | 2025-07-14 | WallTile配置ルールを3~5個制限に変更、仕様書を最新実装に更新 | Claude |
 | 2025-07-14 | 実装状況分析、機能要件に実装状況マーキング（✅/⚠️/❌）追加 | Claude |
 | 2025-07-22 | 仕様書をシンプル化、技術詳細・実装詳細を削除 | Claude |
+| 2025-07-24 | 単一プレハブ+スプライト切り替え方式のブロック作成手順を追加 | Claude |
+| 2025-07-29 | スプライト切り替え機能実装完了、包括的テストケース追加、パフォーマンステスト実装 | Claude |

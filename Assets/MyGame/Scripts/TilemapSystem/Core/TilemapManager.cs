@@ -8,7 +8,7 @@ namespace MyGame.TilemapSystem.Core
     public class TilemapManager : ITilemapManager
     {
         private readonly Transform _parentTransform;
-        private readonly Dictionary<BlockType, GameObject> _tilePrefabs;
+        private readonly GameObject _universalTilePrefab;
         private readonly Dictionary<int, MapData> _loadedMaps;
         private readonly Dictionary<int, List<GameObject>> _instantiatedTiles;
         private readonly ITileBehavior _tileBehavior;
@@ -22,10 +22,10 @@ namespace MyGame.TilemapSystem.Core
         private readonly Subject<(Vector2Int, BlockType, int)> _onTileHit = new Subject<(Vector2Int, BlockType, int)>();
         
         
-        public TilemapManager(Transform parentTransform, Dictionary<BlockType, GameObject> tilePrefabs, ITileBehavior tileBehavior = null)
+        public TilemapManager(Transform parentTransform, GameObject universalTilePrefab, ITileBehavior tileBehavior = null)
         {
             _parentTransform = parentTransform ?? throw new ArgumentNullException(nameof(parentTransform));
-            _tilePrefabs = tilePrefabs ?? throw new ArgumentNullException(nameof(tilePrefabs));
+            _universalTilePrefab = universalTilePrefab ?? throw new ArgumentNullException(nameof(universalTilePrefab));
             _tileBehavior = tileBehavior ?? new TileBehavior();
             _loadedMaps = new Dictionary<int, MapData>();
             _instantiatedTiles = new Dictionary<int, List<GameObject>>();
@@ -53,17 +53,21 @@ namespace MyGame.TilemapSystem.Core
                 {
                     var tileType = mapData.Tiles[x, y];
                     
-                    if (tileType != BlockType.Empty && _tilePrefabs.ContainsKey(tileType))
+                    // 2DSprite座標系: スプライト中心が原点、隙間なく並べる
+                    var position = new Vector3(x, y, 0);
+                    var tileInstance = UnityEngine.Object.Instantiate(_universalTilePrefab, position, Quaternion.identity, _parentTransform);
+                    
+                    // TileControllerでBlockTypeを設定
+                    var tileController = tileInstance.GetComponent<TileController>();
+                    if (tileController != null)
                     {
-                        // 2DSprite座標系: スプライト中心が原点、隙間なく並べる
-                        var position = new Vector3(x, y, 0);
-                        var tileInstance = UnityEngine.Object.Instantiate(_tilePrefabs[tileType], position, Quaternion.identity, _parentTransform);
-                        
-                        // タイルにレベル情報を設定（デバッグ用）
-                        tileInstance.name = $"{tileType}_Level{mapData.Level}_{x}_{y}";
-                        
-                        tileInstances.Add(tileInstance);
+                        tileController.BlockType = tileType;
                     }
+                    
+                    // タイルにレベル情報を設定（デバッグ用）
+                    tileInstance.name = $"{tileType}_Level{mapData.Level}_{x}_{y}";
+                    
+                    tileInstances.Add(tileInstance);
                 }
             }
 
@@ -94,25 +98,29 @@ namespace MyGame.TilemapSystem.Core
                 {
                     var tileType = mapData.Tiles[x, y];
                     
-                    if (tileType != BlockType.Empty && _tilePrefabs.ContainsKey(tileType))
+                    // 重複エリア（下5マス）での既存ブロック保護チェック
+                    var position = new Vector3(x, y, 0);
+                    
+                    // 重複エリアで既存のWallブロックとの衝突チェック
+                    if (y < overlapHeight && IsExistingWallBlockAtPosition(position))
                     {
-                        // 重複エリア（下5マス）での既存ブロック保護チェック
-                        var position = new Vector3(x, y, 0);
-                        
-                        // 重複エリアで既存のWallブロックとの衝突チェック
-                        if (y < overlapHeight && IsExistingWallBlockAtPosition(position))
-                        {
-                            Debug.Log($"重複エリアで既存Wallブロックを保護: Level{mapData.Level} 位置({x}, {y})");
-                            continue; // 既存Wallブロックを保護するため、新しいタイルを生成しない
-                        }
-                        
-                        var tileInstance = UnityEngine.Object.Instantiate(_tilePrefabs[tileType], position, Quaternion.identity, _parentTransform);
-                        
-                        // タイルにレベル情報を設定（デバッグ用）
-                        tileInstance.name = $"{tileType}_Level{mapData.Level}_{x}_{y}";
-                        
-                        tileInstances.Add(tileInstance);
+                        Debug.Log($"重複エリアで既存Wallブロックを保護: Level{mapData.Level} 位置({x}, {y})");
+                        continue; // 既存Wallブロックを保護するため、新しいタイルを生成しない
                     }
+                    
+                    var tileInstance = UnityEngine.Object.Instantiate(_universalTilePrefab, position, Quaternion.identity, _parentTransform);
+                    
+                    // TileControllerでBlockTypeを設定
+                    var tileController = tileInstance.GetComponent<TileController>();
+                    if (tileController != null)
+                    {
+                        tileController.BlockType = tileType;
+                    }
+                    
+                    // タイルにレベル情報を設定（デバッグ用）
+                    tileInstance.name = $"{tileType}_Level{mapData.Level}_{x}_{y}";
+                    
+                    tileInstances.Add(tileInstance);
                 }
             }
 
@@ -267,25 +275,20 @@ namespace MyGame.TilemapSystem.Core
 
             var tileInstances = _instantiatedTiles[level];
             
-            // 既存のタイルを削除
-            for (int i = tileInstances.Count - 1; i >= 0; i--)
+            // 該当するタイルを検索してTileControllerでBlockTypeを更新
+            for (int i = 0; i < tileInstances.Count; i++)
             {
                 var tileInstance = tileInstances[i];
                 if (tileInstance != null && tileInstance.name.Contains($"_{position.x}_{position.y}"))
                 {
-                    UnityEngine.Object.DestroyImmediate(tileInstance);
-                    tileInstances.RemoveAt(i);
+                    var tileController = tileInstance.GetComponent<TileController>();
+                    if (tileController != null)
+                    {
+                        tileController.BlockType = newBlockType;
+                        tileInstance.name = $"{newBlockType}_Level{level}_{position.x}_{position.y}";
+                    }
                     break;
                 }
-            }
-
-            // 新しいタイルを生成（Emptyの場合は生成しない）
-            if (newBlockType != BlockType.Empty && _tilePrefabs.ContainsKey(newBlockType))
-            {
-                var worldPosition = new Vector3(position.x, position.y, 0);
-                var tileInstance = UnityEngine.Object.Instantiate(_tilePrefabs[newBlockType], worldPosition, Quaternion.identity, _parentTransform);
-                tileInstance.name = $"{newBlockType}_Level{level}_{position.x}_{position.y}";
-                tileInstances.Add(tileInstance);
             }
         }
 
@@ -305,6 +308,28 @@ namespace MyGame.TilemapSystem.Core
                     _tileBehavior.OnTimeUpdate(position, mapData.Tiles, deltaTime);
                 }
             }
+        }
+
+        public BlockType GetBlockTypeAt(Vector2Int position, int level)
+        {
+            if (!_loadedMaps.ContainsKey(level))
+            {
+                Debug.Log($"[TilemapManager] Level {level}のマップが読み込まれていません → Emptyを返却");
+                return BlockType.Empty;
+            }
+
+            var mapData = _loadedMaps[level];
+            if (position.x < 0 || position.x >= mapData.Width || position.y < 0 || position.y >= mapData.Height)
+            {
+                Debug.Log($"[TilemapManager] 座標({position.x}, {position.y})はマップ範囲外 " +
+                         $"(0-{mapData.Width-1}, 0-{mapData.Height-1}) → Emptyを返却");
+                return BlockType.Empty;
+            }
+
+            var blockType = mapData.Tiles[position.x, position.y];
+            Debug.Log($"[TilemapManager] 座標({position.x}, {position.y}) Level{level}: {blockType}ブロック");
+            
+            return blockType;
         }
     }
 }

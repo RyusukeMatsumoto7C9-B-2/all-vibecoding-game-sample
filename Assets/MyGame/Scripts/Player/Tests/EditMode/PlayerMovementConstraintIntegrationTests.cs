@@ -1,7 +1,6 @@
 using NUnit.Framework;
 using UnityEngine;
 using MyGame.TilemapSystem.Core;
-using System.Collections.Generic;
 
 namespace MyGame.Player.Tests
 {
@@ -46,10 +45,15 @@ namespace MyGame.Player.Tests
         {
             // テスト用のオブジェクトを作成
             var parentTransform = new GameObject("TestParent").transform;
-            var tilePrefabs = new Dictionary<BlockType, GameObject>();
+            
+            // テスト用のUniversalTilePrefabを作成
+            var universalTilePrefab = new GameObject("TestUniversalTile");
+            universalTilePrefab.AddComponent<SpriteRenderer>();
+            universalTilePrefab.AddComponent<TileController>();
+            
             _mockTileBehavior = new MockTileBehavior();
             
-            _tilemapManager = new TilemapManager(parentTransform, tilePrefabs, _mockTileBehavior);
+            _tilemapManager = new TilemapManager(parentTransform, universalTilePrefab, _mockTileBehavior);
             _playerMoveService = new PlayerMoveService();
             _playerMoveService.SetTilemapManager(_tilemapManager, 0);
 
@@ -88,10 +92,11 @@ namespace MyGame.Player.Tests
         public void TearDown()
         {
             // テスト用に作成されたGameObjectを削除
-            var testObjects = GameObject.FindObjectsOfType<GameObject>();
+            var testObjects = GameObject.FindObjectsByType<GameObject>(FindObjectsSortMode.None);
             foreach (var obj in testObjects)
             {
-                if (obj.name == "TestParent")
+                // nullチェックを追加してMissingReferenceExceptionを回避
+                if (obj != null && (obj.name == "TestParent" || obj.name == "TestUniversalTile"))
                 {
                     Object.DestroyImmediate(obj);
                 }
@@ -265,7 +270,7 @@ namespace MyGame.Player.Tests
         [Test]
         [Description("TilemapManager未設定時のCanMoveメソッドの安全性を検証")]
         public void CanMove_WithoutTilemapManager_ShouldReturnFalse()
-        {
+        { 
             // Arrange
             var moveServiceWithoutManager = new PlayerMoveService();
             moveServiceWithoutManager.SetPosition(new Vector2Int(0, 0));

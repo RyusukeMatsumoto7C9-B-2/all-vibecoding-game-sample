@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 3186642491570654467}
   - component: {fileID: 3186642491570654466}
+  - component: {fileID: 3186642491570654465}
   m_Layer: 0
-  m_Name: EmptyBlock
+  m_Name: UniversalTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -76,14 +77,31 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 4102e00e2d592ef46ab166112f0f3ee1, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.41025642, y: 0.41025642}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &3186642491570654465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3186642491570654464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 22329f2138aa15f4989e76efa1c43d3c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _blockType: 1
+  _spriteRenderer: {fileID: 3186642491570654466}
+  _spriteManager: {fileID: 11400000, guid: f9e8d7c6b5a4938291807654321098ba, type: 2}
+  _enableDebugLog: 0
+  _showDebugInfo: 0

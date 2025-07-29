@@ -165,6 +165,14 @@ namespace MyGame.Editor
                 Debug.Log("Existing TilemapSystem deleted");
             }
             
+            // 既存のTilemapSystemTesterオブジェクトを削除
+            GameObject existingTester = GameObject.Find("TilemapSystemTester");
+            if (existingTester != null)
+            {
+                DestroyImmediate(existingTester);
+                Debug.Log("Existing TilemapSystemTester deleted");
+            }
+            
             // Grid関連オブジェクトも削除
             GameObject existingGrid = GameObject.Find("Grid");
             if (existingGrid != null)
@@ -173,30 +181,26 @@ namespace MyGame.Editor
                 Debug.Log("Existing Grid deleted");
             }
             
-            // 新しいTilemapSystemTesterオブジェクトを作成
-            GameObject tilemapTester = new GameObject("TilemapSystemTester");
-            var testerComponent = tilemapTester.AddComponent<MyGame.TilemapSystem.TilemapSystemTester>();
+            // 新しいTilemapSystemControllerオブジェクトを作成
+            GameObject tilemapController = new GameObject("TilemapSystemController");
+            var controllerComponent = tilemapController.AddComponent<MyGame.TilemapSystem.TilemapSystemController>();
             
-            // Prefabを参照設定
-            GameObject wallPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/MyGame/Prefabs/Tiles/WallTile.prefab");
-            GameObject groundPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/MyGame/Prefabs/Tiles/GroundTile.prefab");
+            // UniversalTile Prefabを参照設定
+            GameObject universalTilePrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/MyGame/Prefabs/Tiles/UniversalTile.prefab");
             
-            if (wallPrefab != null && groundPrefab != null)
+            if (universalTilePrefab != null)
             {
                 // リフレクションを使用してprivateフィールドを設定
-                var wallField = typeof(MyGame.TilemapSystem.TilemapSystemTester).GetField("wallTilePrefab", 
-                    System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-                var groundField = typeof(MyGame.TilemapSystem.TilemapSystemTester).GetField("groundTilePrefab", 
+                var universalTileField = typeof(MyGame.TilemapSystem.TilemapSystemController).GetField("universalTilePrefab", 
                     System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
                 
-                wallField?.SetValue(testerComponent, wallPrefab);
-                groundField?.SetValue(testerComponent, groundPrefab);
+                universalTileField?.SetValue(controllerComponent, universalTilePrefab);
                 
-                Debug.Log("TilemapSystemTester configured with prefabs!");
+                Debug.Log("TilemapSystemController configured with UniversalTile prefab!");
             }
             else
             {
-                Debug.LogWarning("Could not find tile prefabs. Please create them first.");
+                Debug.LogWarning("Could not find UniversalTile.prefab. Please ensure it exists at Assets/MyGame/Prefabs/Tiles/UniversalTile.prefab");
             }
             
             // シーンを保存

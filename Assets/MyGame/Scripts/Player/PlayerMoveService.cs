@@ -47,7 +47,20 @@ namespace MyGame.Player
             }
 
             var targetPosition = GetTargetPosition(direction);
+            
+            // 移動先のブロックタイプを取得
+            var blockType = _tilemapManager?.GetBlockTypeAt(targetPosition, _currentLevel) ?? BlockType.Empty;
+            
+            // 移動実行
             CurrentPosition = targetPosition;
+            
+            // Groundブロックの場合、破壊処理を実行
+            if (blockType == BlockType.Ground)
+            {
+                Debug.Log($"[PlayerMoveService] Groundブロック破壊: 座標({targetPosition.x}, {targetPosition.y})");
+                _tilemapManager?.OnPlayerHitTile(targetPosition, _currentLevel);
+            }
+            
             return true; // 移動成功
         }
 

@@ -62,10 +62,10 @@ tilemap_system_specに追加された「スプライトの切り替え」機能�
   - [x] パフォーマンス最適化
   - [x] エラーハンドリング強化
 
-- [ ] **複数プレハブの統合・削除**
-  - [ ] 従来の複数プレハブ（EmptyBlock/GroundBlock等）の段階的削除
-  - [ ] UniversalTile.prefabへの統一
-  - [ ] プレハブ参照の整合性確認
+- [x] **複数プレハブの統合・削除**
+  - [x] 従来の複数プレハブ（EmptyBlock/GroundBlock等）の段階的削除
+  - [x] UniversalTile.prefabへの統一
+  - [x] プレハブ参照の整合性確認
 
 - [ ] **テストケースの更新と追加**
   - [ ] MockTilemapManagerの新方式対応

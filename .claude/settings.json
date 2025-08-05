@@ -78,20 +78,6 @@
       "description": "64x64のスプライト画像を作成します。引数: (R,G,B,A)",
       "working_directory": ".",
       "enabled": true
-    },
-    "run-editmode-tests": {
-      "path": "curl",
-      "args": [
-        "-s",
-        "http://localhost:56780/mcp",
-        "-H",
-        "Content-Type: application/json",
-        "-d",
-        "{\"jsonrpc\":\"2.0\",\"method\":\"tools/call\",\"params\":{\"name\":\"RunEditModeTests\",\"arguments\":{}},\"id\":1}"
-      ],
-      "description": "Unity EditModeテストをMCPサーバー経由で実行します",
-      "working_directory": ".",
-      "enabled": true
     }
   }
 }

@@ -83,14 +83,13 @@ Documentation/
 - パスが設定されていない場合のみ、標準コマンドを使用する
 
 ### Unity Natural MCP Server コマンド利用ルール
-- **RunEditModeTests**: Unity EditorのEditModeテストを実行
-  - **正しい実行方法**: `run-editmode-tests` コマンドを使用
+- **RunEditModeTests**: Unity EditorのEditModeテストをUnityNaturalMCPサーバー経由で実行
 - Unity Natural MCPサーバーはポート56780で動作し、`.vscode/mcp.json`で設定されている
 
 ### 対象ツール例
 - **GitHub CLI**: `.claude/settings.local.json` の `github_cli.path`
 - **Unity Editor**: `.claude/settings.local.json` の `unity.editor_path`
-- **Unity Test Runner**: `run-editmode-tests` コマンド（MCP経由）
+- **Unity Test Runner**: `RunEditModeTests` コマンド（MCP経由）
 - **その他外部ツール**: 各種開発ツール、ビルドツール等
 
 ### 実行手順

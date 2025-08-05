@@ -36,12 +36,12 @@
     ]
   },
   "workflow": {
-    "auto_git_operations": true,
+    "auto_git_operations": false,
     "test_on_completion": true,
     "notification_language": "ja",
     "structure_monitoring": true,
     "claude_md_auto_update": true,
-    "commit_on_milestone": true,
+    "commit_on_milestone": false,
     "milestone_triggers": [
       "feature_complete",
       "refactor_complete",
@@ -51,9 +51,9 @@
   "git_settings": {
     "commit_format": "作業完了: {description}",
     "milestone_commit_format": "進捗保存: {description}",
-    "auto_stage": true,
+    "auto_stage": false,
     "force_commands_disabled": true,
-    "commit_frequency": "milestone_based"
+    "commit_frequency": "manual"
   },
   "documentation": {
     "claude_md_path": "CLAUDE.md",

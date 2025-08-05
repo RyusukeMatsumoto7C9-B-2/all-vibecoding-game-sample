@@ -1,17 +1,6 @@
 
 {
   "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "git -c user.name=\"RyusukeMatsumoto\" -c user.email=\"matsumotokakadevelop1102@gmail.com\" add . && git -c user.name=\"RyusukeMatsumoto\" -c user.email=\"matsumotokakadevelop1102@gmail.com\" commit -m \"作業完了: タスク実行後の自動コミット\n\nGenerated with [Claude Code](https://claude.ai/code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\""
-          }
-        ]
-      }
-    ],
     "PreToolUse": [
       {
         "matcher": "Edit*",
@@ -73,12 +62,6 @@
     "backup_before_update": true
   },
   "commands": {
-    "sprite-create-tool": {
-      "path": "ClaudeCodeTools/sprite-create-tool.bat",
-      "description": "64x64のスプライト画像を作成します。引数: (R,G,B,A)",
-      "working_directory": ".",
-      "enabled": true
-    },
     "run-editmode-tests": {
       "path": "curl",
       "args": [

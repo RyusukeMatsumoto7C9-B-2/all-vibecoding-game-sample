@@ -2,9 +2,8 @@
 
 このファイルは、このリポジトリでコードを扱う際のClaude Code (claude.ai/code)向けのガイダンスを提供します。
 
-## 主要なアーキテクチャコンポーネント
 
-### Unityプロジェクト構造
+# Unityプロジェクト構造
 ```
 Assets/MyGame/
 ├── Scripts/           # コアゲームロジック
@@ -13,6 +12,8 @@ Assets/MyGame/
 ├── Sprites/          # スプライト画像
 
 Documentation/        # プロジェクトドキュメント（ルートディレクトリ）
+
+ClaudeCodeTools/      # ClaudeCodeが利用するツール配置ディレクトリ
 ```
 
 # コードレビューコマンド  
@@ -26,9 +27,10 @@ Documentation/        # プロジェクトドキュメント（ルートディ�
 * csharp-class-modeling-reviewer    
 * csharp-naming-reviewer  
 * csharp-comment-reviewer  
+* file-structure-checker  
 
 # 開発ルール
-- Documentation フォルダ以下のタスク用文書を参照し、作業を開始する
+- `Documentation` ディレクトリ以下のタスク用文書を参照し、作業を開始する
 - 作業を開始する際は適切なブランチを作成し、作業を行い作業完了後プルリクエストを作成する
 - 日本語で受け答えをする
 - 絵文字は使用禁止
@@ -45,9 +47,9 @@ Documentation/        # プロジェクトドキュメント（ルートディ�
 テスト実装の方針とルールについては、以下のドキュメントを参照
 - `Documentation/Rules/TestRule.md`
 
-## ドキュメント管理
+# ドキュメント管理
 
-### ドキュメント構造
+## ドキュメント構造
 ```
 Documentation/
 ├── Rules/            # 各種コーディングルールなど
@@ -56,40 +58,40 @@ Documentation/
 ├── Templates/        # ドキュメントテンプレート
 ```
 
-### ドキュメント参照ルール
+## ドキュメント参照ルール
 - タスク実行前に必ず Documentation/Specifications/ 配下の関連ドキュメントを確認する
 - 新機能開発時は該当する仕様書を参照し、仕様に従って実装する
 - 仕様に不明な点があれば作業を中断し、ユーザに確認を求める
 - タスク完了後は Documentation/Tasks/ にタスクの実行結果を記録する
 
-### ドキュメントファイル命名規則
+## ドキュメントファイル命名規則
 - 仕様書: `{機能名}_spec.md`
 - タスク記録: `{YYYY-MM-DD}_{タスク名}.md`
 - テンプレート: `{種類}_template.md`
 
-## ツール・コマンド実行ルール
+# ツール・コマンド実行ルール
 
-### 設定ファイル確認の必須化
+## 設定ファイル確認の必須化
 - **重要**: 外部ツールのコマンドを実行する前に、必ず以下の設定ファイルを確認する
   1. `.claude/settings.json` (共通設定)
   2. `.claude/settings.local.json` (ローカル環境設定)
 - 設定ファイルにツールのパスが定義されている場合は、必ずそのパスを使用する
 - パスが設定されていない場合のみ、標準コマンドを使用する
 
-### Unity Natural MCP Server コマンド利用ルール
+## Unity Natural MCP Server コマンド利用ルール
 - **RunEditModeTests**: Unity EditorのEditModeテストをUnityNaturalMCPサーバー経由で実行
 - Unity Natural MCPサーバーはポート56780で動作し、`.vscode/mcp.json`で設定されている
 
-### 対象ツール例
+## 対象ツール例
 - **GitHub CLI**: `.claude/settings.local.json` の `github_cli.path`
 - **Unity Test Runner**: `RunEditModeTests` コマンド（MCP経由）
 - **その他外部ツール**: 各種開発ツール、ビルドツール等
 
-### 実行手順
+## 実行手順
 1. 設定ファイル確認: `Read .claude/settings.local.json` を実行
 2. パス設定の存在確認: 該当ツールのパス設定を確認
 3. パス使用: 設定されたフルパスでコマンド実行
 4. フォールバック: パス未設定の場合のみ標準コマンドを使用
 
-## Git操作ルール
+# Git操作ルール
 - Git操作をする際は必ず`Documentation/Rules/GitRule.md`を参照してから操作をすること

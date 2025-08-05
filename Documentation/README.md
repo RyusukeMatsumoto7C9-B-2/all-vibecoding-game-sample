@@ -9,6 +9,7 @@ Documentation/
 ├── README.md           # このファイル
 ├── Specifications/     # ゲーム仕様書、機能仕様書
 ├── Tasks/             # タスク実行記録
+├── Rules/             # 作業を行うにあたってのルール
 └── Templates/         # ドキュメントテンプレート
     ├── spec_template.md    # 仕様書テンプレート
     └── task_template.md    # タスク記録テンプレート

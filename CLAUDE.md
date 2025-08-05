@@ -88,7 +88,6 @@ Documentation/
 
 ### 対象ツール例
 - **GitHub CLI**: `.claude/settings.local.json` の `github_cli.path`
-- **Unity Editor**: `.claude/settings.local.json` の `unity.editor_path`
 - **Unity Test Runner**: `RunEditModeTests` コマンド（MCP経由）
 - **その他外部ツール**: 各種開発ツール、ビルドツール等
 

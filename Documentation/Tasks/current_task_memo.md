@@ -27,6 +27,12 @@ enemy_spec.mdの機能要件「上下左右移動システム」を実装する�
 - [x] `EnemyMovementConstraintTests.cs` 制約テスト
 - [x] 移動制約の統合テスト
 
+### 4.5. コンパイルエラー修正
+- [x] PlayerMovementConstraintIntegrationTests.csにMyGame.Common.Directionのusing追加
+- [x] EnemyテストクラスでMockTilemapManagerの参照エラー修正
+- [x] PlayerController.csのFindObjectsOfType非推奨警告修正
+- [x] MockTilemapManagerのusing修正
+
 ### 5. Prefab作成
 - [x] 64x64スプライト.png作成ツールをClaudeCodeToolsディレクトリに実装
 - [ ] Enemy.prefab 作成
@@ -51,8 +57,21 @@ enemy_spec.mdの機能要件「上下左右移動システム」を実装する�
 - 単体テスト実装完了
 - コミット完了: 07c8b66
 
+✅ スプライト作成ツール実装完了 (2025-01-22)
+- 64x64スプライト.png作成ツール実装完了
+- ClaudeCodeToolsディレクトリに配置
+- コミット完了: b52b475
+
+🔧 コンパイルエラー修正作業中 (2025-01-22)
+- using文の修正
+- FindObjectsOfType非推奨警告の修正
+- MockTilemapManagerの参照エラー修正
+- 現在のブランチ: enemy-movement-system
+- 修正対象ファイル: 7ファイル
+
 ## 次のステップ
+- [ ] コンパイルエラー修正作業完了後のコミット
+- [ ] Enemy.prefab作成
 - [ ] AI追跡システム実装
 - [ ] ランダム移動AI実装  
 - [ ] レベルベース出現管理実装
-- [ ] Enemy.prefab作成

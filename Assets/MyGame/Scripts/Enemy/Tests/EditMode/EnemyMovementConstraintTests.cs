@@ -2,6 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using MyGame.Enemy;
 using MyGame.TilemapSystem.Core;
+using MyGame.TilemapSystem;
 using MyGame.Common;
 
 namespace MyGame.Enemy.Tests
@@ -15,7 +16,7 @@ namespace MyGame.Enemy.Tests
         [SetUp]
         public void SetUp()
         {
-            _mockTilemapManager = new MockTilemapManager();
+            _mockTilemapManager = new MockTilemapManager(true, BlockType.Empty);
             _constraint = new EnemyMovementConstraint(_mockTilemapManager, 0);
         }
 

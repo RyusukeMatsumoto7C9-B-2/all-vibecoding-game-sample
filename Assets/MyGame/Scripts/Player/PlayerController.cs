@@ -63,7 +63,7 @@ namespace MyGame.Player
         private void AutoDetectTilemapManager()
         {
             // シーン内でTilemapManagerを使用しているコンポーネントを検索
-            var tilemapControllers = FindObjectsOfType<MonoBehaviour>()
+            var tilemapControllers = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
                 .Where(mb => mb.GetType().GetFields(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)
                     .Any(field => field.FieldType == typeof(TilemapManager)))
                 .ToList();

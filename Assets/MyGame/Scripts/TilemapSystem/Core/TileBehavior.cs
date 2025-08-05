@@ -17,7 +17,6 @@ namespace MyGame.TilemapSystem.Core
                 _ => true
             };
             
-            Debug.Log($"[TileBehavior] {blockType}ブロックの通過判定: {(canPass ? "可能" : "不可")}");
             return canPass;
         }
 

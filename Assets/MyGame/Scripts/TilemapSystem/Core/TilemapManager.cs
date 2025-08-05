@@ -220,24 +220,17 @@ namespace MyGame.TilemapSystem.Core
         {
             if (!_loadedMaps.ContainsKey(level))
             {
-                Debug.Log($"[TilemapManager] Level {level}のマップが読み込まれていません → 移動可能");
                 return true;
             }
 
             var mapData = _loadedMaps[level];
             if (position.x < 0 || position.x >= mapData.Width || position.y < 0 || position.y >= mapData.Height)
             {
-                Debug.Log($"[TilemapManager] 座標({position.x}, {position.y})はマップ範囲外 " +
-                         $"(0-{mapData.Width-1}, 0-{mapData.Height-1}) → 移動不可");
                 return false;
             }
 
             var tileType = mapData.Tiles[position.x, position.y];
             var canPass = _tileBehavior.CanPlayerPassThrough(tileType);
-            
-            Debug.Log($"[TilemapManager] 座標({position.x}, {position.y}) Level{level}: {tileType}ブロック → " +
-                     $"{(canPass ? "移動可能" : "移動不可")}");
-            
             return canPass;
         }
 
@@ -314,21 +307,16 @@ namespace MyGame.TilemapSystem.Core
         {
             if (!_loadedMaps.ContainsKey(level))
             {
-                Debug.Log($"[TilemapManager] Level {level}のマップが読み込まれていません → Emptyを返却");
                 return BlockType.Empty;
             }
 
             var mapData = _loadedMaps[level];
             if (position.x < 0 || position.x >= mapData.Width || position.y < 0 || position.y >= mapData.Height)
             {
-                Debug.Log($"[TilemapManager] 座標({position.x}, {position.y})はマップ範囲外 " +
-                         $"(0-{mapData.Width-1}, 0-{mapData.Height-1}) → Emptyを返却");
                 return BlockType.Empty;
             }
 
             var blockType = mapData.Tiles[position.x, position.y];
-            Debug.Log($"[TilemapManager] 座標({position.x}, {position.y}) Level{level}: {blockType}ブロック");
-            
             return blockType;
         }
     }

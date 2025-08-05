@@ -85,8 +85,6 @@ Documentation/
 ### Unity Natural MCP Server コマンド利用ルール
 - **RunEditModeTests**: Unity EditorのEditModeテストを実行
   - **正しい実行方法**: `run-editmode-tests` コマンドを使用
-  - **禁止**: `mcp__ide__executeCode` による実行（Jupyter環境専用のため）
-  - **代替方法**: HTTP経由でMCPサーバーに直接リクエスト送信
 - Unity Natural MCPサーバーはポート56780で動作し、`.vscode/mcp.json`で設定されている
 
 ### 対象ツール例

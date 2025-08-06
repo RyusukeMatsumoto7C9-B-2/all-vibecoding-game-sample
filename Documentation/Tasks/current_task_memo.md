@@ -35,9 +35,10 @@ enemy_spec.mdの機能要件「上下左右移動システム」を実装する�
 
 ### 5. Prefab作成
 - [x] 64x64スプライト.png作成ツールをClaudeCodeToolsディレクトリに実装
-- [ ] Enemy.prefab 作成
-- [ ] 基本スプライト設定
-- [ ] コンポーネント設定
+- [x] Enemy.prefab 作成
+- [x] 基本スプライト設定（Unity側で自動調整）
+- [x] コンポーネント設定（EnemyController、BoxCollider2D、Rigidbody2D）
+- [x] EnemyControllerスクリプト参照修正
 
 ## 仕様詳細
 - **移動方向**: 上下左右の4方向のみ（斜め移動は不可）
@@ -51,27 +52,35 @@ enemy_spec.mdの機能要件「上下左右移動システム」を実装する�
 - `Documentation/Rules/TestRule.md`
 
 ## 実装状況
-✅ 基本移動システム実装完了 (2025-01-22)
+
+### ✅ フェーズ1: エネミー上下左右移動システム実装完了 (2025-01-22)
+
+#### 基本移動システム実装完了
 - EnemyController, EnemyMoveService, EnemyMovementConstraint実装完了
 - Direction.csをCommonディレクトリに共通化完了
 - 単体テスト実装完了
 - コミット完了: 07c8b66
 
-✅ スプライト作成ツール実装完了 (2025-01-22)
+#### スプライト作成ツール実装完了
 - 64x64スプライト.png作成ツール実装完了
 - ClaudeCodeToolsディレクトリに配置
 - コミット完了: b52b475
 
-🔧 コンパイルエラー修正作業中 (2025-01-22)
-- using文の修正
-- FindObjectsOfType非推奨警告の修正
-- MockTilemapManagerの参照エラー修正
-- 現在のブランチ: enemy-movement-system
-- 修正対象ファイル: 7ファイル
+#### コンパイルエラー修正完了
+- using文の修正完了
+- FindObjectsOfType非推奨警告の修正完了
+- MockTilemapManagerの参照エラー修正完了
+- コミット完了: 41c8b8f
+
+#### Enemy.prefab作成完了
+- Enemy.prefab作成完了
+- EnemyControllerスクリプト参照修正完了
+- BoxCollider2D、Rigidbody2D設定完了
+- スプライト設定完了（Unity側で自動設定）
 
 ## 次のステップ
-- [ ] コンパイルエラー修正作業完了後のコミット
-- [ ] Enemy.prefab作成
+- [x] Enemy.prefab作成完了（2025-01-22）
+- [x] Enemy.prefabのスクリプト参照修正完了
 - [ ] AI追跡システム実装
 - [ ] ランダム移動AI実装  
 - [ ] レベルベース出現管理実装

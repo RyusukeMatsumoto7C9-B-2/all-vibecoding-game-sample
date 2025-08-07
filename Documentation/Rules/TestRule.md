@@ -70,7 +70,7 @@ Assets/MyGame/Scripts/[機能名]/
 - PureC#ロジックのテストを実装する
 - Unityのライフサイクルに依存しない処理のテスト
 - **重要**: EditModeテストではGameObject、Transform、その他UnityEngineオブジェクトの使用を禁止する
-- GameObjectを利用するテストは不安定で実行タイミングによって成功したりしなかったりするため
+- GameObjectを利用するテストは不安定で実行タイミングによって成否にブレが生じるので禁止する
 - GameObjectが必要なテストはPlayModeテストとして実装する
 
 ### PlayModeテスト
@@ -103,9 +103,7 @@ Assets/MyGame/Scripts/[機能名]/
 ## テスト実行
 
 ### 実行責任
-- テストの実行はユーザが行う
-- Unity Test Runnerを使用してテストを実行
-- CI/CDパイプラインでの自動実行も可能
+- テストの実行はMCPサーバを通じてRunEditModeTestsで実行する
 
 ### 実行タイミング
 - 機能実装後

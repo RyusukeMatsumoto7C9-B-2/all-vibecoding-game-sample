@@ -163,43 +163,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 008c8f19b48d4ff2becf2633d9ba787c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 8234567890, guid: e1234567890abcdef123456789012345, type: 3}
-  spawnConfig: {fileID: 11400000, guid: ed01986e23ba510408f39801fa21b354, type: 2}
-  enemyContainer: {fileID: 1504532889}
---- !u!1 &1504532888
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1504532889}
-  m_Layer: 0
-  m_Name: EnemyContainer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1504532889
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1504532888}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  _enemyPrefab: {fileID: 8234567890, guid: e1234567890abcdef123456789012345, type: 3}
+  _spawnConfig: {fileID: 11400000, guid: ed01986e23ba510408f39801fa21b354, type: 2}
+  _enemyContainer: {fileID: 759609173}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 759609173}
-  - {fileID: 1504532889}

@@ -20,6 +20,7 @@ enemy_spec.mdの機能要件を段階的に実装する。現在は基本移動�
 メモ : 次作業開始時、PlanModeで各コアシステムに必要なふるまいについてPlanModeで壁打ちしながら肉付け
 
 ### 2.1 テストケース作成 ( ユーザ側作業 )
+**進捗**: EnemySpawnConfigテスト完了、EnemySpawnerテスト待ち
 - [ ] **EnemySpawnerTest.cs** - エネミー出現統合管理クラステスト
   - [ ] クラス基本構造
     - [ ] MonoBehaviourベースクラス
@@ -61,8 +62,8 @@ enemy_spec.mdの機能要件を段階的に実装する。現在は基本移動�
       - [ ] 有効な位置でtrueを返すことを確認
       - [ ] プレイヤーに近すぎる位置でfalseを返すことを確認
       - [ ] マップ外の位置でfalseを返すことを確認
-- [ ] **EnemySpawnConfigTest.cs** - 出現設定データクラステスト
-  - [] ScriptableObject実装
+- [x] **EnemySpawnConfigTest.cs** - 出現設定データクラステスト（2025-01-09完了）
+  - [x] ScriptableObject実装
     - [x] 名前空間: MyGame.Enemy.Spawn
     - [x] CreateAssetMenu属性の追加
       - [x] エディタメニューから作成可能であることを確認
@@ -77,8 +78,10 @@ enemy_spec.mdの機能要件を段階的に実装する。現在は基本移動�
       - [x] レベル26以上で10（上限）を返すことを確認
       - [x] 0以下のレベルで最小値（BaseEnemyCount）を返すことを確認
       - [x] カスタム設定値での計算が正しいことを確認
+  - [x] **コミット**: 1c78090, e7ed479
 
 #### 2.2 コアシステム設計・実装
+**進捗**: EnemySpawnConfig実装完了、EnemySpawner実装待ち
 - [ ] **EnemySpawner.cs** - エネミー出現統合管理クラス
   - [ ] クラス基本構造
     - [ ] MonoBehaviourベースクラス
@@ -102,19 +105,20 @@ enemy_spec.mdの機能要件を段階的に実装する。現在は基本移動�
   - [ ] ヘルパーメソッド
     - [ ] `RemoveDestroyedEnemies()` - 破棄済みエネミーをリストから削除
     - [ ] `ValidateSpawnPosition(Vector3 position)` - 出現位置の妥当性検証
-- [ ] **EnemySpawnConfig.cs** - 出現設定データクラス作成
-  - [ ] ScriptableObject実装
-    - [ ] 名前空間: MyGame.Enemy.Spawn
-    - [ ] CreateAssetMenu属性の追加
-  - [ ] 設定パラメータ定義
-    - [ ] `BaseEnemyCount` - レベル1基本出現数（5匹）
-    - [ ] `EnemyIncreaseInterval` - 増加間隔（5レベル毎）
-    - [ ] `EnemyIncreaseAmount` - 増加数（+1匹）
-    - [ ] `MaxEnemyCount` - 最大出現数（10匹）
-    - [ ] `SpawnAreaMargin` - 画面境界外余白距離
-    - [ ] `MinSpawnDistanceFromPlayer` - 生成時プレイヤーとの最小距離
-  - [ ] パブリックメソッドの実装
-    - [ ] `GetEnemyCountForLevel(int level)` - レベル別出現数計算
+- [x] **EnemySpawnConfig.cs** - 出現設定データクラス作成（2025-01-09完了）
+  - [x] ScriptableObject実装
+    - [x] 名前空間: MyGame.Enemy.Spawn
+    - [x] CreateAssetMenu属性の追加
+  - [x] 設定パラメータ定義
+    - [x] `BaseEnemyCount` - レベル1基本出現数（5匹）
+    - [x] `EnemyIncreaseInterval` - 増加間隔（5レベル毎）
+    - [x] `EnemyIncreaseAmount` - 増加数（+1匹）
+    - [x] `MaxEnemyCount` - 最大出現数（10匹）
+    - [x] `SpawnAreaMargin` - 画面境界外余白距離
+    - [x] `MinSpawnDistanceFromPlayer` - 生成時プレイヤーとの最小距離
+  - [x] パブリックメソッドの実装
+    - [x] `GetEnemyCountForLevel(int level)` - レベル別出現数計算
+  - [x] インターフェース実装（IEnemySpawnConfig）
 
 #### 2.3 出現位置・タイミング制御
 - [ ] **出現位置計算システム** - 画面境界外座標生成機能実装

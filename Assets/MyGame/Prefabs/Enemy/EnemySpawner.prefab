@@ -44,6 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 008c8f19b48d4ff2becf2633d9ba787c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemyPrefab: {fileID: 8234567890, guid: e1234567890abcdef123456789012345, type: 3}
-  spawnConfig: {fileID: 11400000, guid: ed01986e23ba510408f39801fa21b354, type: 2}
-  enemyContainer: {fileID: 7310648792153625735}
+  _enemyPrefab: {fileID: 8234567890, guid: e1234567890abcdef123456789012345, type: 3}
+  _spawnConfig: {fileID: 11400000, guid: ed01986e23ba510408f39801fa21b354, type: 2}
+  _enemyContainer: {fileID: 7310648792153625735}

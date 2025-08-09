@@ -1,12 +1,14 @@
 using UnityEngine;
 using MyGame.TilemapSystem.Core;
+using System.Collections.Generic;
 
 namespace MyGame.TilemapSystem
 {
     public class MockTilemapManager : ITilemapManager
     {
         private readonly bool _allowMovement;
-        private readonly BlockType _blockType;
+        private BlockType _blockType;
+        private readonly Dictionary<Vector2Int, BlockType> _blockTypes = new Dictionary<Vector2Int, BlockType>();
         
         // テスト用スパイ機能
         public bool OnPlayerHitTileCalled { get; private set; }
@@ -21,6 +23,11 @@ namespace MyGame.TilemapSystem
 
         public bool CanPlayerPassThrough(Vector2Int position, int level)
         {
+            if (_blockTypes.ContainsKey(position))
+            {
+                var blockType = _blockTypes[position];
+                return blockType != BlockType.Rock;
+            }
             return _allowMovement;
         }
 
@@ -48,7 +55,17 @@ namespace MyGame.TilemapSystem
 
         public BlockType GetBlockTypeAt(Vector2Int position, int level)
         {
+            if (_blockTypes.ContainsKey(position))
+            {
+                return _blockTypes[position];
+            }
             return _blockType;
+        }
+
+        // テスト用メソッド
+        public void SetBlockType(Vector2Int position, BlockType blockType)
+        {
+            _blockTypes[position] = blockType;
         }
     }
 }

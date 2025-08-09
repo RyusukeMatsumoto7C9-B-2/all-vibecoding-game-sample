@@ -10,6 +10,7 @@ Documentation/
 ├── Specifications/     # ゲーム仕様書、機能仕様書
 ├── Tasks/             # タスク実行記録
 ├── Rules/             # 作業を行うにあたってのルール
+├── UserMemo/          # ユーザが確認するメモ置き場
 └── Templates/         # ドキュメントテンプレート
     ├── spec_template.md    # 仕様書テンプレート
     └── task_template.md    # タスク記録テンプレート

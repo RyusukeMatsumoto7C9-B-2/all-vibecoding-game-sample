@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
 using MyGame.TilemapSystem.Core;
+using MyGame.Common;
 using MyGame.TilemapSystem;
 
 namespace MyGame.Player.Tests

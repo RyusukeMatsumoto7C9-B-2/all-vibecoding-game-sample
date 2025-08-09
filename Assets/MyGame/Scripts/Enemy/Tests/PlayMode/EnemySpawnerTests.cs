@@ -7,23 +7,26 @@ using UnityEngine.SceneManagement;
 
 namespace MyGame.Enemy.Spawn.Tests
 {
+    [Description("エネミースポーナーの動作をテストする")]
     public class EnemySpawnerTests
     {
 
         [UnityTest]
-        public IEnumerator Test_1()
+        [Description("初期化時にアクティブな敵の数がゼロであることを検証")]
+        public IEnumerator Test_ActiveEnemyCount_WhenInitialized_ReturnsZero()
         {
             yield return LoadScene();
             yield return new WaitForSeconds(1f);
             
             var spawner = GetComponent();
-            
+
             Assert.Zero(spawner.ActiveEnemyCount);
         }
         
         
         [UnityTest]
-        public IEnumerator Test_2()
+        [Description("有効なレベルでスポーン実行時にアクティブな敵の数が増加することを検証")]
+        public IEnumerator Test_SpawnEnemiesForLevel_WithValidLevel_IncreasesActiveEnemyCount()
         {
             yield return LoadScene();
             yield return new WaitForSeconds(1f);
@@ -37,7 +40,8 @@ namespace MyGame.Enemy.Spawn.Tests
 
         
         [UnityTest]
-        public IEnumerator Test_3()
+        [Description("敵クリア実行後にアクティブな敵の数がゼロにリセットされることを検証")]
+        public IEnumerator Test_ClearAllEnemies_AfterSpawning_ResetsActiveEnemyCountToZero()
         {
             yield return LoadScene();
             yield return new WaitForSeconds(1f);
@@ -53,23 +57,63 @@ namespace MyGame.Enemy.Spawn.Tests
 
         
         [UnityTest]
-        [TestCase(1, 5)]
-        [TestCase(5, 5)]
-        [TestCase(6, 6)]
-        [TestCase(26, 10)]
-        public IEnumerator Test_4(int level, int expectedEnemyCount)
+        [Description("レベル1で5体の敵がスポーンされることを検証")]
+        public IEnumerator Test_SpawnEnemiesForLevel_WithLevel1_Spawns5Enemies()
         {
             yield return LoadScene();
             yield return new WaitForSeconds(1f);
 
             var spawner = GetComponent();
 
-            spawner.SpawnEnemiesForLevel(level);
-            Assert.AreEqual(expectedEnemyCount, spawner.ActiveEnemyCount);
+            spawner.SpawnEnemiesForLevel(1);
+            Assert.AreEqual(5, spawner.ActiveEnemyCount);
+        }
+
+        
+        [UnityTest]
+        [Description("レベル5で5体の敵がスポーンされることを検証")]
+        public IEnumerator Test_SpawnEnemiesForLevel_WithLevel5_Spawns5Enemies()
+        {
+            yield return LoadScene();
+            yield return new WaitForSeconds(1f);
+
+            var spawner = GetComponent();
+
+            spawner.SpawnEnemiesForLevel(5);
+            Assert.AreEqual(5, spawner.ActiveEnemyCount);
+        }
+
+        
+        [UnityTest]
+        [Description("レベル6で6体の敵がスポーンされることを検証")]
+        public IEnumerator Test_SpawnEnemiesForLevel_WithLevel6_Spawns6Enemies()
+        {
+            yield return LoadScene();
+            yield return new WaitForSeconds(1f);
+
+            var spawner = GetComponent();
+
+            spawner.SpawnEnemiesForLevel(6);
+            Assert.AreEqual(6, spawner.ActiveEnemyCount);
+        }
+
+        
+        [UnityTest]
+        [Description("レベル26で10体（上限）の敵がスポーンされることを検証")]
+        public IEnumerator Test_SpawnEnemiesForLevel_WithLevel26_Spawns10Enemies()
+        {
+            yield return LoadScene();
+            yield return new WaitForSeconds(1f);
+
+            var spawner = GetComponent();
+
+            spawner.SpawnEnemiesForLevel(26);
+            Assert.AreEqual(10, spawner.ActiveEnemyCount);
         }
 
         [UnityTest]
-        public IEnumerator Test_5()
+        [Description("負のレベル値でエラーログが出力され敵がスポーンされないことを検証")]
+        public IEnumerator Test_SpawnEnemiesForLevel_WithNegativeLevel_LogsErrorAndDoesNotSpawn()
         {
             yield return LoadScene();
             yield return new WaitForSeconds(1f);
@@ -84,7 +128,8 @@ namespace MyGame.Enemy.Spawn.Tests
 
 
         [UnityTest]
-        public IEnumerator Test_6()
+        [Description("敵が存在しない状態での敵クリア実行が安全に動作することを検証")]
+        public IEnumerator Test_ClearAllEnemies_WhenNoEnemiesExist_ExecutesSafely()
         {
             yield return LoadScene();
             yield return new WaitForSeconds(1f);

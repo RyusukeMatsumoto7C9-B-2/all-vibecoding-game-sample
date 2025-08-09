@@ -10,6 +10,7 @@ Assets/MyGame/
 ├── Scenes/           # ゲームシーン (Sample)
 ├── Prefabs/          # プレハブ
 ├── Sprites/          # スプライト画像
+├── Data/             # ScriptableObjectアセット
 
 Documentation/        # プロジェクトドキュメント（ルートディレクトリ）
 

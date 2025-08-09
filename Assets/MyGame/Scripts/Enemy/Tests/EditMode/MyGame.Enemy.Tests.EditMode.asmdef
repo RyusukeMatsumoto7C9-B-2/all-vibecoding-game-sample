@@ -1,5 +1,5 @@
 {
-    "name": "MyGame.Enemy.Tests",
+    "name": "MyGame.Enemy.Tests.EditMode",
     "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",

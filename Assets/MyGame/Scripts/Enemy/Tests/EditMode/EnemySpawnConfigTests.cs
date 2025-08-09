@@ -24,7 +24,7 @@ namespace MyGame.Enemy.Spawn.Tests
             
             
             Debug.Log("hogehoge fugafuga");
-            var config = EnemySpawnConfig.Create(5, 1, 1, 10);
+            var config = EnemySpawnConfig.Create(5, 5, 1, 10);
             int actualEnemyCount = config.GetEnemyCountForLevel(level);
             Debug.Log("hogehoge");
             Assert.AreEqual(expectedEnemyCount, actualEnemyCount);

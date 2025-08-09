@@ -5,7 +5,7 @@ using UnityEngine.TestTools;
 using UnityEditor.SceneManagement;
 using UnityEngine.SceneManagement;
 
-namespace MyGame.Enemy.PlayModeTests
+namespace MyGame.Enemy.Spawn
 {
     [Description("エネミースポーナーの動作をテストする")]
     public class EnemySpawnerTests

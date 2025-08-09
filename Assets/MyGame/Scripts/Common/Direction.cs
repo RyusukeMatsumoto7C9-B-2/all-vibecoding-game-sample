@@ -1,4 +1,4 @@
-namespace MyGame.Player
+namespace MyGame.Common
 {
     public enum Direction
     {

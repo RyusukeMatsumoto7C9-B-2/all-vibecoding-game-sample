@@ -10,6 +10,7 @@ Assets/MyGame/
 ├── Scenes/           # ゲームシーン (Sample)
 ├── Prefabs/          # プレハブ
 ├── Sprites/          # スプライト画像
+├── Data/             # ScriptableObjectアセット
 
 Documentation/        # プロジェクトドキュメント（ルートディレクトリ）
 
@@ -41,11 +42,15 @@ ClaudeCodeTools/      # ClaudeCodeが利用するツール配置ディレクト�
 
 ## コーディングルール
 コーディングルールは以下のドキュメントを参照
-- `Documentation/Rules/CSharpCodingRule.md`
 
-## テストルール
-テスト実装の方針とルールについては、以下のドキュメントを参照
-- `Documentation/Rules/TestRule.md`
+### 実装時のルール
+- `Documentation/Rules/CSharpDesignRule.md` - 設計規約（クラス構造、設計パターン、依存性注入等）
+- `Documentation/Rules/CSharpNamingRule.md` - 命名規則（クラス、メソッド、変数等の命名）
+
+### テスト実装時のルール
+- `Documentation/Rules/CSharpTestDesignRule.md` - テスト設計規約（テスト構造、AAパターン、Mock使用等）
+- `Documentation/Rules/CSharpTestNamingRule.md` - テスト命名規則（テストクラス、メソッドの命名）
+- `Documentation/Rules/TestRule.md` - テスト実装の基本方針
 
 # ドキュメント管理
 

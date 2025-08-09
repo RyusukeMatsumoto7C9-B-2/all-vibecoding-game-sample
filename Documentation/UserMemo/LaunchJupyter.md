@@ -10,7 +10,7 @@ Windows 環境
 - `jupyter notebook` で jupyter notebook を起動
 
 
-# タスク
+# 初回以降の起動　
 - ターミナルで Unity Project のディレクトリまで移動
 - `venv\Scripts\activate` で仮想環境を有効化
 - `jupyter notebook` で jupyter notebook を起動

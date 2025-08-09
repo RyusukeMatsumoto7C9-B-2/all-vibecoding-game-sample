@@ -1,5 +1,8 @@
 # テストルール
 
+## テストのコーディングルール
+`Documentation/Rules/CSharpTestCodingRule.md` を参照
+
 ## テスト実装の基本方針（t-wada流）
 
 ### TDDサイクル
@@ -14,42 +17,6 @@
 - 明白な実装が分かる場合は直接実装してもOK
 - テストリストを常に更新する
 - 不安なところからテストを書く
-
-## テスト記述ルール
-
-### 必須属性
-- 全てのテストメソッドには`[Description("")]`属性を付与し、日本語でテストの概要を記述する
-- テストクラス自体にも`[Description("")]`属性を付与し、そのクラスがテストする対象と目的を記述する
-- テストの意図と期待結果が日本語で明確に理解できるようにする
-
-### 名前空間規則
-- EditModeテストクラスの名前空間は `MyGame.機能名.Tests` の形式で統一する
-- 例: `MyGame.TilemapSystem.Tests`、`MyGame.Player.Tests`
-- PlayModeテストクラスの名前空間も同様の形式を使用する
-
-### 記述例
-```csharp
-namespace MyGame.Player.Tests
-{
-    [Description("プレイヤーの移動機能をテストするクラス")]
-    public class PlayerMovementTests
-    {
-    [Test]
-    [Description("上方向への移動時に座標のY値が1増加することを検証")]
-    public void MoveUp_WhenCalled_IncreasesYCoordinateByOne()
-    {
-        // Arrange
-        var player = new Player(new Vector2(0, 0));
-        
-        // Act
-        player.MoveUp();
-        
-        // Assert
-        Assert.AreEqual(1, player.Position.y);
-    }
-    }
-}
-```
 
 ## テストファイル構成
 
@@ -70,7 +37,7 @@ Assets/MyGame/Scripts/[機能名]/
 - PureC#ロジックのテストを実装する
 - Unityのライフサイクルに依存しない処理のテスト
 - **重要**: EditModeテストではGameObject、Transform、その他UnityEngineオブジェクトの使用を禁止する
-- GameObjectを利用するテストは不安定で実行タイミングによって成功したりしなかったりするため
+- GameObjectを利用するテストは不安定で実行タイミングによって成否にブレが生じるので禁止する
 - GameObjectが必要なテストはPlayModeテストとして実装する
 
 ### PlayModeテスト
@@ -103,9 +70,7 @@ Assets/MyGame/Scripts/[機能名]/
 ## テスト実行
 
 ### 実行責任
-- テストの実行はユーザが行う
-- Unity Test Runnerを使用してテストを実行
-- CI/CDパイプラインでの自動実行も可能
+- テストの実行はMCPサーバを通じてRunEditModeTestsで実行する
 
 ### 実行タイミング
 - 機能実装後

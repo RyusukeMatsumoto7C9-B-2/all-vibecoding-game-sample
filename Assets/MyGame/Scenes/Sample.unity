@@ -330,7 +330,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1562230938}
-  - component: {fileID: 1562230937}
   - component: {fileID: 1562230939}
   m_Layer: 0
   m_Name: TilemapSystemTester
@@ -339,27 +338,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1562230937
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1562230936}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5753010b6f37eaa48b98fe2006aac76b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  universalTilePrefab: {fileID: 0}
-  skyTilePrefab: {fileID: 3186642491570654464, guid: f269e846428970b4189c7248b7fd6d7e, type: 3}
-  groundTilePrefab: {fileID: 3186642491570654464, guid: d4e5f6789012345678901234abcdef01, type: 3}
-  rockTilePrefab: {fileID: 3186642491570654464, guid: c3d4e5f6789012345678901234abcdef, type: 3}
-  treasureTilePrefab: {fileID: 3186642491570654464, guid: f269e846428970b4189c7248b7fd6d7e, type: 3}
-  testLevel: 1
-  testSeed: 12345
-  autoScrollEnabled: 0
-  autoScrollInterval: 3
 --- !u!4 &1562230938
 Transform:
   m_ObjectHideFlags: 0
@@ -392,6 +370,63 @@ MonoBehaviour:
   initialSeed: 12345
   autoScrollEnabled: 0
   autoScrollInterval: 3
+--- !u!1001 &2954238993313518842
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 4932221911055399162, guid: 5749c3c8087a655418e5381a6fdfb447, type: 3}
+      propertyPath: m_Name
+      value: EnemySpawner
+      objectReference: {fileID: 0}
+    - target: {fileID: 7310648792153625735, guid: 5749c3c8087a655418e5381a6fdfb447, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7310648792153625735, guid: 5749c3c8087a655418e5381a6fdfb447, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7310648792153625735, guid: 5749c3c8087a655418e5381a6fdfb447, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7310648792153625735, guid: 5749c3c8087a655418e5381a6fdfb447, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7310648792153625735, guid: 5749c3c8087a655418e5381a6fdfb447, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7310648792153625735, guid: 5749c3c8087a655418e5381a6fdfb447, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7310648792153625735, guid: 5749c3c8087a655418e5381a6fdfb447, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7310648792153625735, guid: 5749c3c8087a655418e5381a6fdfb447, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7310648792153625735, guid: 5749c3c8087a655418e5381a6fdfb447, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7310648792153625735, guid: 5749c3c8087a655418e5381a6fdfb447, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 5749c3c8087a655418e5381a6fdfb447, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -399,3 +434,4 @@ SceneRoots:
   - {fileID: 963194228}
   - {fileID: 1234567899}
   - {fileID: 1562230938}
+  - {fileID: 2954238993313518842}

@@ -1,10 +1,4 @@
-﻿using System.Collections;
-using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
-using UnityEngine.SceneManagement;
-using UnityEditor.SceneManagement;
-
+﻿using NUnit.Framework;
 
 namespace MyGame.Enemy.Spawn.Tests
 {
@@ -19,14 +13,12 @@ namespace MyGame.Enemy.Spawn.Tests
         [TestCase(11, 7)]
         [TestCase(26, 10)]
         [TestCase(27, 10)]
-        public void Test_(int level , int expectedEnemyCount)
+        public void Test_GetEnemyCountForLevel_ReturnsCorrectEnemyCount(int level, int expectedEnemyCount)
         {
-            
-            
-            Debug.Log("hogehoge fugafuga");
             var config = EnemySpawnConfig.Create(5, 5, 1, 10);
+            
             int actualEnemyCount = config.GetEnemyCountForLevel(level);
-            Debug.Log("hogehoge");
+            
             Assert.AreEqual(expectedEnemyCount, actualEnemyCount);
         }
     }

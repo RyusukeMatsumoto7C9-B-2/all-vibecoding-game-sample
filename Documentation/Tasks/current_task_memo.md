@@ -22,46 +22,24 @@ enemy_spec.mdの機能要件を段階的に実装する。現在は基本移動�
 ### 2.1 テストケース作成 ( ユーザ側作業 )
 **進捗**: EnemySpawnConfigテスト完了、EnemySpawnerテスト待ち
 - [ ] **EnemySpawnerTest.cs** - エネミー出現統合管理クラステスト
-  - [ ] クラス基本構造
-    - [ ] MonoBehaviourベースクラス
-    - [ ] 名前空間: MyGame.Enemy.Spawn
-  - [ ] プロパティ
-    - [ ] `ActiveEnemyCount` - 現在生きているエネミー数
-      - [ ] 初期値が0であることを確認
-      - [ ] エネミー生成後にカウントが増加することを確認
-      - [ ] エネミー削除後にカウントが減少することを確認
-      - [ ] 破棄されたエネミーが自動的にカウントから除外されることを確認
-  - [ ] 出現管理メソッド
-    - [ ] `SpawnEnemiesForLevel(int level)` - レベル別エネミー一括生成
-      - [ ] レベル1で5体生成されることを確認
-      - [ ] レベル6で6体生成されることを確認
-      - [ ] レベル11で7体生成されることを確認
-      - [ ] レベル26以上で10体（上限）生成されることを確認
-      - [ ] 負のレベル値でエラーが発生しないことを確認
-      - [ ] 既存エネミーがある状態での生成動作を確認
-    - [ ] `SpawnEnemy(Vector3 position)` - 個別エネミー生成
-      - [ ] 指定位置にエネミーが生成されることを確認
-      - [ ] 生成されたエネミーがActiveEnemyCountに反映されることを確認
-      - [ ] enemyPrefabがnullの場合のエラーハンドリングを確認
-      - [ ] OnEnemySpawnedイベントが発火することを確認
-    - [ ] `ClearAllEnemies()` - 全エネミー削除
-      - [ ] 全てのエネミーが削除されることを確認
-      - [ ] ActiveEnemyCountが0になることを確認
-      - [ ] エネミーが存在しない状態での実行が安全であることを確認
-  - [ ] イベント
-    - [ ] `UnityEvent<GameObject> OnEnemySpawned` - エネミー生成時
-      - [ ] エネミー生成時に正しく発火することを確認
-      - [ ] イベント引数に生成されたGameObjectが渡されることを確認
-      - [ ] 複数のリスナーが正しく呼ばれることを確認
-  - [ ] ヘルパーメソッド
-    - [ ] `RemoveDestroyedEnemies()` - 破棄済みエネミーをリストから削除
-      - [ ] null参照が正しく削除されることを確認
-      - [ ] 有効なエネミーは削除されないことを確認
-      - [ ] ActiveEnemyCountが正しく更新されることを確認
-    - [ ] `ValidateSpawnPosition(Vector3 position)` - 出現位置の妥当性検証
-      - [ ] 有効な位置でtrueを返すことを確認
-      - [ ] プレイヤーに近すぎる位置でfalseを返すことを確認
-      - [ ] マップ外の位置でfalseを返すことを確認
+  - [X] クラス基本構造
+    - [X] MonoBehaviourベースクラス
+    - [X] 名前空間: MyGame.Enemy.Spawn
+  - [X] プロパティ
+    - [X] `ActiveEnemyCount` - 現在生きているエネミー数
+      - [X] 初期値が0であることを確認
+      - [x] エネミー生成後にカウントが増加することを確認
+      - [X] エネミー削除後にカウントが減少することを確認
+      - [X] 破棄されたエネミーが自動的にカウントから除外されることを確認
+  - [X] 出現管理メソッド
+    - [X] `SpawnEnemiesForLevel(int level)` - レベル別エネミー一括生成
+      - [X] レベル1で5体生成されることを確認
+      - [x] レベル5で5体生成されることを確認
+      - [X] レベル6で6体生成されることを確認
+      - [X] レベル26以上で10体（上限）生成されることを確認
+      - [X] 負のレベル値でエラーを発出し、エネミーの生成を行わないことを確認する
+    - [X] `ClearAllEnemies()` - 全エネミー削除
+      - [X] エネミーが存在しない状態での実行が安全であることを確認
 - [x] **EnemySpawnConfigTest.cs** - 出現設定データクラステスト（2025-01-09完了）
   - [x] ScriptableObject実装
     - [x] 名前空間: MyGame.Enemy.Spawn
@@ -81,30 +59,24 @@ enemy_spec.mdの機能要件を段階的に実装する。現在は基本移動�
   - [x] **コミット**: 1c78090, e7ed479
 
 #### 2.2 コアシステム設計・実装
-**進捗**: EnemySpawnConfig実装完了、EnemySpawner実装待ち
-- [ ] **EnemySpawner.cs** - エネミー出現統合管理クラス
-  - [ ] クラス基本構造
-    - [ ] MonoBehaviourベースクラス
-    - [ ] 名前空間: MyGame.Enemy.Spawn
-  - [ ] プロパティ
-    - [ ] `ActiveEnemyCount` - 現在生きているエネミー数
-  - [ ] コンポーネント参照
-    - [ ] `[SerializeField] GameObject enemyPrefab` - エネミーPrefab
-    - [ ] `[SerializeField] EnemySpawnConfig spawnConfig` - 出現設定
-    - [ ] `[SerializeField] Transform enemyContainer` - エネミー格納親オブジェクト ( 将来的にEnemyManager クラスにに引き渡す形にする )
-  - [ ] 出現管理メソッド
-    - [ ] `SpawnEnemiesForLevel(int level)` - レベル別エネミー一括生成
-    - [ ] `SpawnEnemy(Vector3 position)` - 個別エネミー生成
-    - [ ] `ClearAllEnemies()` - 全エネミー削除
-  - [ ] 出現計算メソッド : private 要素
-    - [ ] `CalculateEnemyCount(int level)` - 出現数計算（L1:5匹、5L毎+1、上限10匹）
-    - [ ] `GetSpawnPositions(int count)` - 出現位置座標リスト生成
-    - [ ] `GetRandomSpawnPosition()` - ランダム出現位置取得
-  - [ ] イベント
-    - [ ] `UnityEvent<GameObject> OnEnemySpawned` - エネミー生成時
-  - [ ] ヘルパーメソッド
-    - [ ] `RemoveDestroyedEnemies()` - 破棄済みエネミーをリストから削除
-    - [ ] `ValidateSpawnPosition(Vector3 position)` - 出現位置の妥当性検証
+**進捗**: EnemySpawnConfig・EnemySpawner実装完了（2025-01-09完了）
+- [x] **EnemySpawner.cs** - エネミー出現統合管理クラス
+  - [x] クラス基本構造
+    - [x] MonoBehaviourベースクラス
+    - [x] 名前空間: MyGame.Enemy.Spawn
+  - [x] プロパティ
+    - [x] `ActiveEnemyCount` - 現在生きているエネミー数（nullチェック対応）
+  - [x] コンポーネント参照
+    - [x] `[SerializeField] private GameObject enemyPrefab` - エネミーPrefab
+    - [x] `[SerializeField] private EnemySpawnConfig spawnConfig` - 出現設定
+    - [x] `[SerializeField] private Transform enemyContainer` - エネミー格納親オブジェクト
+  - [x] 出現管理メソッド
+    - [x] `SpawnEnemiesForLevel(int level)` - レベル別エネミー一括生成（エラーハンドリング対応）
+    - [x] `ClearAllEnemies()` - 全エネミー削除
+  - [x] 追加実装機能
+    - [x] `CalculateSpawnPosition()` - 画面左右境界外への出現位置計算
+    - [x] `activeEnemies` - アクティブエネミーリスト管理
+    - [x] エラーハンドリング（負のレベル値、null参照チェック）
 - [x] **EnemySpawnConfig.cs** - 出現設定データクラス作成（2025-01-09完了）
   - [x] ScriptableObject実装
     - [x] 名前空間: MyGame.Enemy.Spawn
@@ -121,9 +93,9 @@ enemy_spec.mdの機能要件を段階的に実装する。現在は基本移動�
   - [x] インターフェース実装（IEnemySpawnConfig）
 
 #### 2.3 出現位置・タイミング制御
-- [ ] **出現位置計算システム** - 画面境界外座標生成機能実装
+- [x] **出現位置計算システム** - 画面境界外座標生成機能実装（EnemySpawner.CalculateSpawnPositionで実装済み）
 - [ ] **出現タイミング制御** - レベル開始時の出現トリガー実装
-- [ ] **エネミー生成処理** - Prefabインスタンス化・初期化機能実装
+- [x] **エネミー生成処理** - Prefabインスタンス化・初期化機能実装（EnemySpawner.SpawnEnemiesForLevelで実装済み）
 
 #### 2.4 画面外処理・テスト
 - [ ] **画面外デス処理** - 強制スクロール連携・削除処理実装

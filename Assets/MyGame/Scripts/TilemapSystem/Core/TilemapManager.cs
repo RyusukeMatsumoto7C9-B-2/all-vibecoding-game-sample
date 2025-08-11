@@ -354,7 +354,8 @@ namespace MyGame.TilemapSystem.Core
 
             var tileType = mapData.Tiles[position.x, position.y];
             
-            return tileType != BlockType.Rock && tileType != BlockType.Ground;
+            // 新仕様: Sky=不可, Empty=可, Ground=可, Rock=不可, Treasure=可
+            return tileType == BlockType.Empty || tileType == BlockType.Ground || tileType == BlockType.Treasure;
         }
     }
 }

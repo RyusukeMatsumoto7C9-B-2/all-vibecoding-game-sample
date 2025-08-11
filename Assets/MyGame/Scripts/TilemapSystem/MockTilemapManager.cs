@@ -7,7 +7,7 @@ namespace MyGame.TilemapSystem
     public class MockTilemapManager : ITilemapManager
     {
         private readonly bool _allowMovement;
-        private BlockType _blockType;
+        private readonly BlockType _blockType;
         private readonly Dictionary<Vector2Int, BlockType> _blockTypes = new Dictionary<Vector2Int, BlockType>();
         
         // テスト用スパイ機能
@@ -92,7 +92,8 @@ namespace MyGame.TilemapSystem
             if (_blockTypes.ContainsKey(position))
             {
                 var blockType = _blockTypes[position];
-                return blockType != BlockType.Rock && blockType != BlockType.Ground;
+                // 新仕様: Sky=不可, Empty=可, Ground=可, Rock=不可, Treasure=可
+                return blockType == BlockType.Empty || blockType == BlockType.Ground || blockType == BlockType.Treasure;
             }
             return _allowMovement;
         }

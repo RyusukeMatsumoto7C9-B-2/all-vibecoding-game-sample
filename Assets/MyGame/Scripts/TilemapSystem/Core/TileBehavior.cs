@@ -12,7 +12,7 @@ namespace MyGame.TilemapSystem.Core
                 BlockType.Sky => false,      // Skyブロック上は移動不可（仕様に従い）
                 BlockType.Empty => true,
                 BlockType.Ground => true,
-                BlockType.Rock => false,     // Playerは通過できない
+                BlockType.Rock => false,     // PlayerおよびEnemyは通過できない
                 BlockType.Treasure => true,
                 _ => true
             };

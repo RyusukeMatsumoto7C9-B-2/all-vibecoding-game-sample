@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using UnityEngine;
 using MyGame.TilemapSystem.Core;
+using MyGame.TilemapSystem;
 using MyGame.Common;
 
 namespace MyGame.Player.Tests
@@ -55,19 +56,18 @@ namespace MyGame.Player.Tests
             _mockTileBehavior = new MockTileBehavior();
             
             _tilemapManager = new TilemapManager(parentTransform, universalTilePrefab, _mockTileBehavior);
-            _playerMoveService = new PlayerMoveService();
-            _playerMoveService.SetTilemapManager(_tilemapManager, 0);
+            _playerMoveService = new PlayerMoveService(_tilemapManager, 0);
 
             // テスト用のマップデータを作成（5x5の小さなマップ）
             var tiles = new BlockType[5, 5];
             
             // マップの配置
-            // 0,0: Empty, 1,0: Ground, 2,0: Rock, 3,0: Empty, 4,0: Treasure
+            // 0,0: Empty, 1,0: Ground, 2,0: Rock, 3,0: Sky, 4,0: Treasure
             // 0,1: Ground, 1,1: Empty, 2,1: Ground, 3,1: Rock, 4,1: Empty
             tiles[0, 0] = BlockType.Empty;
             tiles[1, 0] = BlockType.Ground;
             tiles[2, 0] = BlockType.Rock;
-            tiles[3, 0] = BlockType.Empty;
+            tiles[3, 0] = BlockType.Sky;
             tiles[4, 0] = BlockType.Treasure;
             
             tiles[0, 1] = BlockType.Ground;
@@ -150,18 +150,40 @@ namespace MyGame.Player.Tests
         }
 
         [Test]
+        [Description("Skyブロック上への移動が失敗することを検証")]
+        public void Move_ToSkyBlock_ShouldFail()
+        {
+            // Arrange
+            _playerMoveService.SetPosition(new Vector2Int(2, 0)); // Rock位置に配置
+
+            // Act - 右方向（Sky位置）への移動を試行
+            var result = _playerMoveService.Move(Direction.Right);
+
+            // Assert
+            Assert.IsFalse(result, "Skyブロックへの移動は失敗すべき");
+            Assert.AreEqual(new Vector2Int(2, 0), _playerMoveService.CurrentPosition, "移動失敗時は位置が変更されないべき");
+        }
+
+        [Test]
         [Description("Treasureブロック上への移動が成功することを検証")]
         public void Move_ToTreasureBlock_ShouldSucceed()
         {
             // Arrange
-            _playerMoveService.SetPosition(new Vector2Int(3, 0)); // Empty位置に配置
+            _playerMoveService.SetPosition(new Vector2Int(3, 0)); // Sky位置に配置（移動は既にSkyで失敗するため、Emptyからのテスト）
+            // 実際にはEmptyブロックから開始
+            _playerMoveService.SetPosition(new Vector2Int(0, 2)); // Empty位置（上の方）に配置してTreasureへのパスを確保
+
+            // Treasureブロックを別の位置に設定してテスト
+            var treasureManager = new MockTilemapManager(true, BlockType.Treasure);
+            var serviceWithTreasure = new PlayerMoveService(treasureManager, 0);
+            serviceWithTreasure.SetPosition(new Vector2Int(0, 0));
 
             // Act - 右方向（Treasure位置）への移動
-            var result = _playerMoveService.Move(Direction.Right);
+            var result = serviceWithTreasure.Move(Direction.Right);
 
             // Assert
             Assert.IsTrue(result, "Treasureブロックへの移動は成功すべき");
-            Assert.AreEqual(new Vector2Int(4, 0), _playerMoveService.CurrentPosition);
+            Assert.AreEqual(new Vector2Int(1, 0), serviceWithTreasure.CurrentPosition);
         }
 
         [Test]
@@ -183,7 +205,8 @@ namespace MyGame.Player.Tests
         [Description("CanMoveメソッドが各ブロックタイプに対して正しい結果を返すことを検証")]
         [TestCase(0, 0, Direction.Right, true, TestName = "Empty→Ground移動可能")]
         [TestCase(1, 0, Direction.Right, false, TestName = "Ground→Rock移動不可")]
-        [TestCase(3, 0, Direction.Right, true, TestName = "Empty→Treasure移動可能")]
+        [TestCase(2, 0, Direction.Right, false, TestName = "Rock→Sky移動不可")]
+        [TestCase(3, 0, Direction.Right, true, TestName = "Sky→Treasure移動可能")]
         [TestCase(0, 1, Direction.Right, true, TestName = "Ground→Empty移動可能")]
         [TestCase(2, 1, Direction.Right, false, TestName = "Ground→Rock移動不可")]
         public void CanMove_VariousBlockTypes_ShouldReturnCorrectResult(int startX, int startY, Direction direction, bool expectedResult)
@@ -251,43 +274,43 @@ namespace MyGame.Player.Tests
         }
 
         [Test]
-        [Description("TilemapManager未設定時の安全性を検証")]
-        public void Move_WithoutTilemapManager_ShouldFailSafely()
+        [Description("移動不可設定TilemapManagerでの安全性を検証")]
+        public void Move_WithImpassableTilemapManager_ShouldFailSafely()
         {
             // Arrange
-            var moveServiceWithoutManager = new PlayerMoveService();
-            moveServiceWithoutManager.SetPosition(new Vector2Int(0, 0));
-            // TilemapManagerは意図的に設定しない
+            var mockImpassableManager = new MockTilemapManager(false); // 移動不可設定
+            var moveServiceWithImpassableManager = new PlayerMoveService(mockImpassableManager, 0);
+            moveServiceWithImpassableManager.SetPosition(new Vector2Int(0, 0));
 
             // Act
-            var result = moveServiceWithoutManager.Move(Direction.Right);
+            var result = moveServiceWithImpassableManager.Move(Direction.Right);
 
             // Assert
-            Assert.IsFalse(result, "TilemapManager未設定時は安全のため移動失敗すべき");
-            Assert.AreEqual(new Vector2Int(0, 0), moveServiceWithoutManager.CurrentPosition, 
-                "TilemapManager未設定時の移動失敗で位置が変更されないべき");
+            Assert.IsFalse(result, "移動不可設定のTilemapManagerでは移動失敗すべき");
+            Assert.AreEqual(new Vector2Int(0, 0), moveServiceWithImpassableManager.CurrentPosition, 
+                "移動失敗時は位置が変更されないべき");
         }
 
         [Test]
-        [Description("TilemapManager未設定時のCanMoveメソッドの安全性を検証")]
-        public void CanMove_WithoutTilemapManager_ShouldReturnFalse()
+        [Description("移動不可設定TilemapManagerでのCanMoveメソッドの安全性を検証")]
+        public void CanMove_WithImpassableTilemapManager_ShouldReturnFalse()
         { 
             // Arrange
-            var moveServiceWithoutManager = new PlayerMoveService();
-            moveServiceWithoutManager.SetPosition(new Vector2Int(0, 0));
-            // TilemapManagerは意図的に設定しない
+            var mockImpassableManager = new MockTilemapManager(false); // 移動不可設定
+            var moveServiceWithImpassableManager = new PlayerMoveService(mockImpassableManager, 0);
+            moveServiceWithImpassableManager.SetPosition(new Vector2Int(0, 0));
 
             // Act
-            var canMoveRight = moveServiceWithoutManager.CanMove(Direction.Right);
-            var canMoveUp = moveServiceWithoutManager.CanMove(Direction.Up);
-            var canMoveLeft = moveServiceWithoutManager.CanMove(Direction.Left);
-            var canMoveDown = moveServiceWithoutManager.CanMove(Direction.Down);
+            var canMoveRight = moveServiceWithImpassableManager.CanMove(Direction.Right);
+            var canMoveUp = moveServiceWithImpassableManager.CanMove(Direction.Up);
+            var canMoveLeft = moveServiceWithImpassableManager.CanMove(Direction.Left);
+            var canMoveDown = moveServiceWithImpassableManager.CanMove(Direction.Down);
 
             // Assert
-            Assert.IsFalse(canMoveRight, "TilemapManager未設定時は右移動不可");
-            Assert.IsFalse(canMoveUp, "TilemapManager未設定時は上移動不可");
-            Assert.IsFalse(canMoveLeft, "TilemapManager未設定時は左移動不可");
-            Assert.IsFalse(canMoveDown, "TilemapManager未設定時は下移動不可");
+            Assert.IsFalse(canMoveRight, "移動不可設定時は右移動不可");
+            Assert.IsFalse(canMoveUp, "移動不可設定時は上移動不可");
+            Assert.IsFalse(canMoveLeft, "移動不可設定時は左移動不可");
+            Assert.IsFalse(canMoveDown, "移動不可設定時は下移動不可");
         }
     }
 }

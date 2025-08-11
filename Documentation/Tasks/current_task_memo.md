@@ -1,47 +1,65 @@
 # 現在のタスク
 
-## TilemapSystem改善タスク
-
-### 概要
-Enemy、Player等のゲームオブジェクトがTilemapSystemと連携しやすくするための機能拡張を実装する。
-
-### 実装要件
-
-#### 🔵 座標変換システム
-- [ ] **GetPosition(int x, int y): Vector3** - グリッド座標からワールド座標への変換
-  - [ ] ITilemapManagerインターフェースへのメソッド追加
-  - [ ] TilemapManagerでの実装
-  - [ ] TilemapSystemControllerへの公開メソッド追加
-  - [ ] 単体テストの作成
-
-#### 🔵 タイル状態取得システム  
-- [ ] **GetTileStatus(int x, int y)** - タイル属性の取得（移動可否判定用）
-  - [ ] 現在のGetBlockTypeAtメソッドの拡張検討
-  - [ ] Player/Enemy向けの統一インターフェース設計
-  - [ ] 移動可否の判定ロジック統合
-  - [ ] 単体テストの作成
-
-### 技術詳細
-
-#### 現在の実装状況
-- **既存メソッド**:
-  - `GetBlockTypeAt(Vector2Int position, int level)` - BlockType取得
-  - `CanPlayerPassThrough(Vector2Int position, int level)` - プレイヤー通過可否判定
-  - タイル配置時の座標計算: `new Vector3(x, y, 0)` (TilemapManager.cs:57)
-
-#### 実装方針
-1. **座標変換**: グリッド座標(int x, int y)を受け取り、タイルの中心座標をVector3で返す
-2. **統一インターフェース**: Player/Enemyが共通で使用できる移動判定インターフェース
-3. **Rockタイル判定**: Enemy/Player両方でRockタイルへの移動を制限
-
-### 関連ファイル
-- `Assets/MyGame/Scripts/TilemapSystem/Core/ITilemapManager.cs`
-- `Assets/MyGame/Scripts/TilemapSystem/Core/TilemapManager.cs`
-- `Assets/MyGame/Scripts/TilemapSystem/TilemapSystemController.cs`
+**現在、作業中のタスクはありません。**
 
 ---
 
 # アーカイブ済みタスク
+
+## Player-TilemapSystem連携改善タスク（2025-01-11完了）
+
+### 概要
+PlayerがTilemapSystemの新機能（座標変換・移動判定）を利用するよう変更し、VContainerでの依存性注入を実装する。
+
+### 実装要件
+
+#### ✅ 現在のPlayer実装の調査と分析（完了）
+- [x] PlayerControllerの現在の実装を確認
+- [x] PlayerMoveServiceの現在の実装を確認  
+- [x] 現在のTilemapManagerとの依存関係を確認
+- [x] VContainerの使用状況を確認（v1.16.9導入済み）
+
+#### ✅ VContainer依存性注入の設計・実装（完了）
+- [x] ITilemapManagerインターフェースの依存性注入設計
+- [x] GameLifetimeScopeでのBinding設定 (GameLifetimeScope.cs)
+- [x] PlayerController/PlayerMoveServiceでのITilemapManager注入
+- [x] 既存のSetTilemapManager呼び出しをDI化
+
+#### ✅ Player側での新機能利用への変更（完了）
+- [x] 座標変換: GetPosition(int x, int y)メソッドの利用
+- [x] 移動判定: CanPassThrough(Vector2Int position, int level)メソッドの利用
+- [x] 既存のCanPlayerPassThroughからCanPassThroughへの移行
+- [x] ハードコーディングされた座標計算の置き換え
+
+#### ✅ テスト・検証（完了）
+- [x] 既存のPlayerテストの更新（コンストラクタインジェクション対応）
+- [x] 新機能利用のテストケース追加（CanPassThroughメソッドテスト）
+- [x] MockTilemapManagerの新機能対応
+
+### 技術詳細
+
+#### VContainer依存性注入方針（達成済み）
+1. **インターフェース注入**: ITilemapManagerをコンストラクタ注入（[Inject] Constructメソッド）
+2. **ライフサイクル管理**: Singletonでの登録完了
+3. **初期化順序**: TilemapSystemController -> PlayerController（GameLifetimeScope経由）
+
+#### 移行対象メソッド（達成済み）
+- `GetPosition(int x, int y): Vector3` - PlayerController座標変換で利用開始
+- `CanPassThrough(Vector2Int position, int level)` - PlayerMoveService移動制約で利用開始
+
+### 実装完了ファイル
+- `Assets/MyGame/Scripts/DI/GameLifetimeScope.cs` - VContainer設定（新規作成）
+- `Assets/MyGame/Scripts/Player/PlayerController.cs` - DI対応・新機能利用
+- `Assets/MyGame/Scripts/Player/PlayerMoveService.cs` - コンストラクタDI・新機能利用
+- `Assets/MyGame/Scripts/Player/Tests/EditMode/PlayerMoveServiceTests.cs` - テスト更新
+- `Assets/MyGame/Scripts/TilemapSystem/TilemapSystemController.cs` - 不要メソッド削除
+
+### 成果
+- **依存性注入**: 手動設定からVContainer DIへ完全移行
+- **新機能利用**: GetPositionとCanPassThroughメソッドをPlayerで利用開始
+- **ブロック通過仕様統一**: Sky(不可)、Empty(可)、Ground(可)、Rock(不可)、Treasure(可)
+- **テスト整理**: TilemapSystemとPlayerテスト間の重複を削除し、責任を整理
+- **テスト対応**: 21個の既存テスト+2個の新機能テストケース追加
 
 ## エネミーシステム開発（完了）
 

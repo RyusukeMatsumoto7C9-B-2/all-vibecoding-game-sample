@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using MyGame.TilemapSystem.Core;
 using MyGame.TilemapSystem.Generation;
-using MyGame.Player;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using R3;
@@ -62,9 +61,6 @@ namespace MyGame.TilemapSystem
             _scrollController.OnScrollStarted?.Subscribe(OnScrollStarted).AddTo(this);
             _scrollController.OnScrollCompleted?.Subscribe(OnScrollCompleted).AddTo(this);
             _scrollController.OnNewLevelGenerated?.Subscribe(OnNewLevelGenerated).AddTo(this);
-            
-            // PlayerControllerを検索して設定
-            SetupPlayerController();
         }
 
         private void GenerateInitialMap()
@@ -165,28 +161,6 @@ namespace MyGame.TilemapSystem
             }
         }
         
-        private void SetupPlayerController()
-        {
-            // シーン内のPlayerControllerを検索
-            var playerController = FindFirstObjectByType<PlayerController>();
-            
-            if (playerController != null)
-            {
-                // TilemapManagerをPlayerControllerに設定
-                playerController.SetTilemapManager(_manager, CurrentLevel);
-                Debug.Log($"[TilemapSystemController] PlayerControllerにTilemapManagerを設定しました - Level: {CurrentLevel}");
-            }
-            else
-            {
-                Debug.LogWarning("[TilemapSystemController] PlayerControllerが見つかりません。プレイヤーの移動制約が機能しない可能性があります。");
-            }
-        }
-        
-        [ContextMenu("PlayerController再設定")]
-        public void ResetupPlayerController()
-        {
-            SetupPlayerController();
-        }
         
         // 公開メソッド - 他のシステムから利用可能
         public void SetAutoScrollEnabled(bool autoScrollState)

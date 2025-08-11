@@ -67,5 +67,34 @@ namespace MyGame.TilemapSystem
         {
             _blockTypes[position] = blockType;
         }
+
+
+        /// <summary>
+        /// グリッド座標をワールド座標に変換します
+        /// </summary>
+        /// <param name="x">グリッドX座標</param>
+        /// <param name="y">グリッドY座標</param>
+        /// <returns>ワールド座標</returns>
+        public Vector3 GetPosition(int x, int y)
+        {
+            return new Vector3(x, y, 0);
+        }
+
+
+        /// <summary>
+        /// 指定位置が通過可能かを判定します（Player/Enemy共通）
+        /// </summary>
+        /// <param name="position">グリッド座標</param>
+        /// <param name="level">レベル</param>
+        /// <returns>通過可能な場合はtrue</returns>
+        public bool CanPassThrough(Vector2Int position, int level)
+        {
+            if (_blockTypes.ContainsKey(position))
+            {
+                var blockType = _blockTypes[position];
+                return blockType != BlockType.Rock && blockType != BlockType.Ground;
+            }
+            return _allowMovement;
+        }
     }
 }

@@ -319,5 +319,43 @@ namespace MyGame.TilemapSystem.Core
             var blockType = mapData.Tiles[position.x, position.y];
             return blockType;
         }
+
+
+        /// <summary>
+        /// グリッド座標をワールド座標に変換します
+        /// </summary>
+        /// <param name="x">グリッドX座標</param>
+        /// <param name="y">グリッドY座標</param>
+        /// <returns>ワールド座標</returns>
+        public Vector3 GetPosition(int x, int y)
+        {
+            return new Vector3(x, y, 0);
+        }
+
+
+        /// <summary>
+        /// 指定位置が通過可能かを判定します（Player/Enemy共通）
+        /// </summary>
+        /// <param name="position">グリッド座標</param>
+        /// <param name="level">レベル</param>
+        /// <returns>通過可能な場合はtrue</returns>
+        public bool CanPassThrough(Vector2Int position, int level)
+        {
+            if (!_loadedMaps.ContainsKey(level))
+            {
+                return true;
+            }
+
+            var mapData = _loadedMaps[level];
+            if (position.x < 0 || position.x >= mapData.Width || position.y < 0 || position.y >= mapData.Height)
+            {
+                return false;
+            }
+
+            var tileType = mapData.Tiles[position.x, position.y];
+            
+            // 新仕様: Sky=不可, Empty=可, Ground=可, Rock=不可, Treasure=可
+            return tileType == BlockType.Empty || tileType == BlockType.Ground || tileType == BlockType.Treasure;
+        }
     }
 }

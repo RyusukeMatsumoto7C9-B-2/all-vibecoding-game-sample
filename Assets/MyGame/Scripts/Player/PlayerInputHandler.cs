@@ -2,16 +2,18 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using MyGame.Common;
+using R3;
 
 namespace MyGame.Player
 {
     public class PlayerInputHandler : MonoBehaviour
     {
-        public event Action<Direction> OnMoveInput;
+        private readonly Subject<Direction> _onMoveInputSubject = new Subject<Direction>();
+        public Observable<Direction> OnMoveInput => _onMoveInputSubject.AsObservable();
 
-        private InputAction _moveAction;
+        private readonly InputAction _moveAction;
 
-        private void Awake()
+        public PlayerInputHandler()
         {
             _moveAction = new InputAction();
             _moveAction.AddBinding("<Keyboard>/w").WithInteraction("press");
@@ -45,12 +47,13 @@ namespace MyGame.Player
                 _ => throw new ArgumentException($"Unexpected input key: {inputKey}")
             };
 
-            OnMoveInput?.Invoke(direction);
+            _onMoveInputSubject.OnNext(direction);
         }
 
         private void OnDestroy()
         {
             _moveAction?.Dispose();
+            _onMoveInputSubject?.Dispose();
         }
     }
 }

@@ -2,22 +2,32 @@ using UnityEngine;
 using MyGame.TilemapSystem.Core;
 using MyGame.Common;
 using System.Linq;
+using VContainer;
+using R3;
+using System;
 
 namespace MyGame.Player
 {
     public class PlayerController : MonoBehaviour
     {
-        [SerializeField] private PlayerInputHandler _inputHandler;
-        [SerializeField] private float _moveSpeed = 5f;
+        private readonly float MoveSpeed = 5f;
 
-        private PlayerMoveService _moveService;
+        private PlayerInputHandler _inputHandler;
+        private  PlayerMoveService _moveService;
         private Vector3 _targetPosition;
         private bool _isMoving;
+        private  ITilemapManager _tilemapManager;
+        private IDisposable _inputSubscription;
+
+        [Inject]
+        public void Construct(ITilemapManager tilemapManager, PlayerMoveService moveService)
+        {
+            _tilemapManager = tilemapManager;
+            _moveService = moveService;
+        }
 
         private void Awake()
         {
-            _moveService = new PlayerMoveService();
-            
             if (_inputHandler == null)
                 _inputHandler = GetComponent<PlayerInputHandler>();
         }
@@ -25,26 +35,26 @@ namespace MyGame.Player
         private void Start()
         {
             SetInitialPosition();
-            AutoDetectTilemapManager();
         }
 
         private void OnEnable()
         {
             if (_inputHandler != null)
-                _inputHandler.OnMoveInput += HandleMoveInput;
+            {
+                _inputSubscription = _inputHandler.OnMoveInput.Subscribe(HandleMoveInput);
+            }
         }
 
         private void OnDisable()
         {
-            if (_inputHandler != null)
-                _inputHandler.OnMoveInput -= HandleMoveInput;
+            _inputSubscription?.Dispose();
         }
 
         private void Update()
         {
             if (_isMoving)
             {
-                transform.position = Vector3.MoveTowards(transform.position, _targetPosition, _moveSpeed * Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position, _targetPosition, MoveSpeed * Time.deltaTime);
                 
                 if (Vector3.Distance(transform.position, _targetPosition) < 0.01f)
                 {
@@ -54,35 +64,15 @@ namespace MyGame.Player
             }
         }
 
-        public void SetTilemapManager(TilemapManager tilemapManager, int level = 0)
-        {
-            _moveService.SetTilemapManager(tilemapManager, level);
-            Debug.Log($"[PlayerController] TilemapManager設定完了 - Level: {level}");
-        }
-
-        private void AutoDetectTilemapManager()
-        {
-            // シーン内でTilemapManagerを使用しているコンポーネントを検索
-            var tilemapControllers = FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None)
-                .Where(mb => mb.GetType().GetFields(System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)
-                    .Any(field => field.FieldType == typeof(TilemapManager)))
-                .ToList();
-
-            Debug.Log($"[PlayerController] TilemapManagerを持つコンポーネントを{tilemapControllers.Count}個発見");
-
-            if (tilemapControllers.Count == 0)
-            {
-                Debug.LogWarning("[PlayerController] TilemapManagerが見つかりません。移動制約が機能しない可能性があります。");
-                Debug.LogWarning("[PlayerController] シーン内のGameObjectでSetTilemapManager()を呼び出してください。");
-            }
-        }
 
         private void SetInitialPosition()
         {
             var initialPosition = new Vector2Int(10, 15);
             _moveService.SetPosition(initialPosition);
-            transform.position = new Vector3(initialPosition.x, initialPosition.y, 0);
-            _targetPosition = transform.position;
+            
+            var worldPosition = _tilemapManager?.GetPosition(initialPosition.x, initialPosition.y) ?? new Vector3(initialPosition.x, initialPosition.y, 0);
+            transform.position = worldPosition;
+            _targetPosition = worldPosition;
         }
 
         private void HandleMoveInput(Direction direction)
@@ -95,7 +85,7 @@ namespace MyGame.Player
             if (_moveService.Move(direction))
             {
                 var newPosition = _moveService.CurrentPosition;
-                _targetPosition = new Vector3(newPosition.x, newPosition.y, 0);
+                _targetPosition = _tilemapManager?.GetPosition(newPosition.x, newPosition.y) ?? new Vector3(newPosition.x, newPosition.y, 0);
                 _isMoving = true;
                 Debug.Log($"[PlayerController] 移動成功: ({newPosition.x}, {newPosition.y})");
             }

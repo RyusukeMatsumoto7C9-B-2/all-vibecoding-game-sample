@@ -2,7 +2,6 @@ using System;
 using UnityEngine;
 using MyGame.TilemapSystem.Core;
 using MyGame.TilemapSystem.Generation;
-using MyGame.Player;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using R3;
@@ -62,9 +61,6 @@ namespace MyGame.TilemapSystem
             _scrollController.OnScrollStarted?.Subscribe(OnScrollStarted).AddTo(this);
             _scrollController.OnScrollCompleted?.Subscribe(OnScrollCompleted).AddTo(this);
             _scrollController.OnNewLevelGenerated?.Subscribe(OnNewLevelGenerated).AddTo(this);
-            
-            // PlayerControllerを検索して設定
-            SetupPlayerController();
         }
 
         private void GenerateInitialMap()
@@ -165,28 +161,6 @@ namespace MyGame.TilemapSystem
             }
         }
         
-        private void SetupPlayerController()
-        {
-            // シーン内のPlayerControllerを検索
-            var playerController = FindFirstObjectByType<PlayerController>();
-            
-            if (playerController != null)
-            {
-                // TilemapManagerをPlayerControllerに設定
-                playerController.SetTilemapManager(_manager, CurrentLevel);
-                Debug.Log($"[TilemapSystemController] PlayerControllerにTilemapManagerを設定しました - Level: {CurrentLevel}");
-            }
-            else
-            {
-                Debug.LogWarning("[TilemapSystemController] PlayerControllerが見つかりません。プレイヤーの移動制約が機能しない可能性があります。");
-            }
-        }
-        
-        [ContextMenu("PlayerController再設定")]
-        public void ResetupPlayerController()
-        {
-            SetupPlayerController();
-        }
         
         // 公開メソッド - 他のシステムから利用可能
         public void SetAutoScrollEnabled(bool autoScrollState)
@@ -226,6 +200,30 @@ namespace MyGame.TilemapSystem
         public void OnPlayerHitTile(Vector2Int position, int level)
         {
             _manager?.OnPlayerHitTile(position, level);
+        }
+        
+        
+        /// <summary>
+        /// グリッド座標をワールド座標に変換します
+        /// </summary>
+        /// <param name="x">グリッドX座標</param>
+        /// <param name="y">グリッドY座標</param>
+        /// <returns>ワールド座標</returns>
+        public Vector3 GetPosition(int x, int y)
+        {
+            return _manager?.GetPosition(x, y) ?? new Vector3(x, y, 0);
+        }
+        
+        
+        /// <summary>
+        /// 指定位置が通過可能かを判定します（Player/Enemy共通）
+        /// </summary>
+        /// <param name="position">グリッド座標</param>
+        /// <param name="level">レベル</param>
+        /// <returns>通過可能な場合はtrue</returns>
+        public bool CanPassThrough(Vector2Int position, int level)
+        {
+            return _manager?.CanPassThrough(position, level) ?? true;
         }
     }
 }

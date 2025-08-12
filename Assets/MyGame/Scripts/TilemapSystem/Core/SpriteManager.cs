@@ -70,7 +70,6 @@ namespace MyGame.TilemapSystem.Core
         #if UNITY_EDITOR
         private void OnValidate()
         {
-            // エディタでの変更時にデバッグログを出力
             int spriteCount = 0;
             foreach (var blockTypeSprite in _blockTypeSprites)
             {

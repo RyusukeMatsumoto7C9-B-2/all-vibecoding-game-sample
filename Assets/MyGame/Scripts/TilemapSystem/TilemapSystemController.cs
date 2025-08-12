@@ -1,14 +1,12 @@
-using System;
 using UnityEngine;
 using MyGame.TilemapSystem.Core;
 using MyGame.TilemapSystem.Generation;
-using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using R3;
 
 namespace MyGame.TilemapSystem
 {
-    public class TilemapSystemController : MonoBehaviour
+    public class TilemapSystemController : MonoBehaviour, ITilemapManager
     {
         [Header("Universal Tile Prefab")]
         [SerializeField] private GameObject universalTilePrefab;

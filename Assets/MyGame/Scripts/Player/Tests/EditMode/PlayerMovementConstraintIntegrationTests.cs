@@ -10,7 +10,7 @@ namespace MyGame.Player.Tests
     [Description("プレイヤー移動制約の統合テスト：実際のブロックタイプとTilemapManagerを使用した動作検証")]
     public class PlayerMovementConstraintIntegrationTests
     {
-        private PlayerMoveService _playerMoveService;
+        private PlayerMover _playerMover;
         private TilemapManager _tilemapManager;
         private MockTileBehavior _mockTileBehavior;
 
@@ -56,7 +56,7 @@ namespace MyGame.Player.Tests
             _mockTileBehavior = new MockTileBehavior();
             
             _tilemapManager = new TilemapManager(parentTransform, universalTilePrefab, _mockTileBehavior);
-            _playerMoveService = new PlayerMoveService(_tilemapManager, 0);
+            _playerMover = new PlayerMover(_tilemapManager, 0);
 
             // テスト用のマップデータを作成（5x5の小さなマップ）
             var tiles = new BlockType[5, 5];
@@ -109,14 +109,14 @@ namespace MyGame.Player.Tests
         public void Move_ToEmptyBlock_ShouldSucceed()
         {
             // Arrange
-            _playerMoveService.SetPosition(new Vector2Int(0, 0)); // Empty位置に配置
+            _playerMover.SetPosition(new Vector2Int(0, 0)); // Empty位置に配置
 
             // Act - 右方向（Ground位置）への移動
-            var result = _playerMoveService.Move(Direction.Right);
+            var result = _playerMover.Move(Direction.Right);
 
             // Assert
             Assert.IsTrue(result, "Emptyブロックから隣接するGroundブロックへの移動は成功すべき");
-            Assert.AreEqual(new Vector2Int(1, 0), _playerMoveService.CurrentPosition);
+            Assert.AreEqual(new Vector2Int(1, 0), _playerMover.CurrentPosition);
         }
 
         [Test]
@@ -124,14 +124,14 @@ namespace MyGame.Player.Tests
         public void Move_ToGroundBlock_ShouldSucceed()
         {
             // Arrange
-            _playerMoveService.SetPosition(new Vector2Int(1, 0)); // Ground位置に配置
+            _playerMover.SetPosition(new Vector2Int(1, 0)); // Ground位置に配置
 
             // Act - 左方向（Empty位置）への移動
-            var result = _playerMoveService.Move(Direction.Left);
+            var result = _playerMover.Move(Direction.Left);
 
             // Assert
             Assert.IsTrue(result, "GroundブロックからEmptyブロックへの移動は成功すべき");
-            Assert.AreEqual(new Vector2Int(0, 0), _playerMoveService.CurrentPosition);
+            Assert.AreEqual(new Vector2Int(0, 0), _playerMover.CurrentPosition);
         }
 
         [Test]
@@ -139,14 +139,14 @@ namespace MyGame.Player.Tests
         public void Move_ToRockBlock_ShouldFail()
         {
             // Arrange
-            _playerMoveService.SetPosition(new Vector2Int(1, 0)); // Ground位置に配置
+            _playerMover.SetPosition(new Vector2Int(1, 0)); // Ground位置に配置
 
             // Act - 右方向（Rock位置）への移動を試行
-            var result = _playerMoveService.Move(Direction.Right);
+            var result = _playerMover.Move(Direction.Right);
 
             // Assert
             Assert.IsFalse(result, "Rockブロックへの移動は失敗すべき");
-            Assert.AreEqual(new Vector2Int(1, 0), _playerMoveService.CurrentPosition, "移動失敗時は位置が変更されないべき");
+            Assert.AreEqual(new Vector2Int(1, 0), _playerMover.CurrentPosition, "移動失敗時は位置が変更されないべき");
         }
 
         [Test]
@@ -154,14 +154,14 @@ namespace MyGame.Player.Tests
         public void Move_ToSkyBlock_ShouldFail()
         {
             // Arrange
-            _playerMoveService.SetPosition(new Vector2Int(2, 0)); // Rock位置に配置
+            _playerMover.SetPosition(new Vector2Int(2, 0)); // Rock位置に配置
 
             // Act - 右方向（Sky位置）への移動を試行
-            var result = _playerMoveService.Move(Direction.Right);
+            var result = _playerMover.Move(Direction.Right);
 
             // Assert
             Assert.IsFalse(result, "Skyブロックへの移動は失敗すべき");
-            Assert.AreEqual(new Vector2Int(2, 0), _playerMoveService.CurrentPosition, "移動失敗時は位置が変更されないべき");
+            Assert.AreEqual(new Vector2Int(2, 0), _playerMover.CurrentPosition, "移動失敗時は位置が変更されないべき");
         }
 
         [Test]
@@ -169,13 +169,13 @@ namespace MyGame.Player.Tests
         public void Move_ToTreasureBlock_ShouldSucceed()
         {
             // Arrange
-            _playerMoveService.SetPosition(new Vector2Int(3, 0)); // Sky位置に配置（移動は既にSkyで失敗するため、Emptyからのテスト）
+            _playerMover.SetPosition(new Vector2Int(3, 0)); // Sky位置に配置（移動は既にSkyで失敗するため、Emptyからのテスト）
             // 実際にはEmptyブロックから開始
-            _playerMoveService.SetPosition(new Vector2Int(0, 2)); // Empty位置（上の方）に配置してTreasureへのパスを確保
+            _playerMover.SetPosition(new Vector2Int(0, 2)); // Empty位置（上の方）に配置してTreasureへのパスを確保
 
             // Treasureブロックを別の位置に設定してテスト
             var treasureManager = new MockTilemapManager(true, BlockType.Treasure);
-            var serviceWithTreasure = new PlayerMoveService(treasureManager, 0);
+            var serviceWithTreasure = new PlayerMover(treasureManager, 0);
             serviceWithTreasure.SetPosition(new Vector2Int(0, 0));
 
             // Act - 右方向（Treasure位置）への移動
@@ -191,14 +191,14 @@ namespace MyGame.Player.Tests
         public void Move_OutOfMapBounds_ShouldFail()
         {
             // Arrange
-            _playerMoveService.SetPosition(new Vector2Int(4, 4)); // マップの右上端に配置
+            _playerMover.SetPosition(new Vector2Int(4, 4)); // マップの右上端に配置
 
             // Act - 右方向（範囲外）への移動
-            var result = _playerMoveService.Move(Direction.Right);
+            var result = _playerMover.Move(Direction.Right);
 
             // Assert
             Assert.IsFalse(result, "マップ範囲外への移動は失敗すべき（修正後の仕様）");
-            Assert.AreEqual(new Vector2Int(4, 4), _playerMoveService.CurrentPosition, "移動失敗時は位置が変更されないべき");
+            Assert.AreEqual(new Vector2Int(4, 4), _playerMover.CurrentPosition, "移動失敗時は位置が変更されないべき");
         }
 
         [Test]
@@ -212,10 +212,10 @@ namespace MyGame.Player.Tests
         public void CanMove_VariousBlockTypes_ShouldReturnCorrectResult(int startX, int startY, Direction direction, bool expectedResult)
         {
             // Arrange
-            _playerMoveService.SetPosition(new Vector2Int(startX, startY));
+            _playerMover.SetPosition(new Vector2Int(startX, startY));
 
             // Act
-            var canMove = _playerMoveService.CanMove(direction);
+            var canMove = _playerMover.CanMove(direction);
 
             // Assert
             Assert.AreEqual(expectedResult, canMove, 
@@ -227,29 +227,29 @@ namespace MyGame.Player.Tests
         public void ConsecutiveMovements_WithMixedConstraints_ShouldWorkCorrectly()
         {
             // Arrange
-            _playerMoveService.SetPosition(new Vector2Int(0, 1)); // Ground位置に配置
+            _playerMover.SetPosition(new Vector2Int(0, 1)); // Ground位置に配置
 
             // Act & Assert - 段階的に移動してテスト
             
             // 1. 右へ移動（Ground→Empty）- 成功するはず
-            var move1 = _playerMoveService.Move(Direction.Right);
+            var move1 = _playerMover.Move(Direction.Right);
             Assert.IsTrue(move1, "1回目の移動（Ground→Empty）は成功すべき");
-            Assert.AreEqual(new Vector2Int(1, 1), _playerMoveService.CurrentPosition);
+            Assert.AreEqual(new Vector2Int(1, 1), _playerMover.CurrentPosition);
 
             // 2. 右へ移動（Empty→Ground）- 成功するはず
-            var move2 = _playerMoveService.Move(Direction.Right);
+            var move2 = _playerMover.Move(Direction.Right);
             Assert.IsTrue(move2, "2回目の移動（Empty→Ground）は成功すべき");
-            Assert.AreEqual(new Vector2Int(2, 1), _playerMoveService.CurrentPosition);
+            Assert.AreEqual(new Vector2Int(2, 1), _playerMover.CurrentPosition);
 
             // 3. 右へ移動（Ground→Rock）- 失敗するはず
-            var move3 = _playerMoveService.Move(Direction.Right);
+            var move3 = _playerMover.Move(Direction.Right);
             Assert.IsFalse(move3, "3回目の移動（Ground→Rock）は失敗すべき");
-            Assert.AreEqual(new Vector2Int(2, 1), _playerMoveService.CurrentPosition, "移動失敗時は位置が変更されないべき");
+            Assert.AreEqual(new Vector2Int(2, 1), _playerMover.CurrentPosition, "移動失敗時は位置が変更されないべき");
 
             // 4. 上へ移動（Ground→Empty）- 成功するはず
-            var move4 = _playerMoveService.Move(Direction.Up);
+            var move4 = _playerMover.Move(Direction.Up);
             Assert.IsTrue(move4, "4回目の移動（Ground→Empty）は成功すべき");
-            Assert.AreEqual(new Vector2Int(2, 2), _playerMoveService.CurrentPosition);
+            Assert.AreEqual(new Vector2Int(2, 2), _playerMover.CurrentPosition);
         }
 
         [Test]
@@ -261,15 +261,15 @@ namespace MyGame.Player.Tests
         public void Move_AtMapBoundaries_ShouldBeRestricted(int startX, int startY, Direction direction, bool expectedResult)
         {
             // Arrange
-            _playerMoveService.SetPosition(new Vector2Int(startX, startY));
+            _playerMover.SetPosition(new Vector2Int(startX, startY));
 
             // Act
-            var result = _playerMoveService.Move(direction);
+            var result = _playerMover.Move(direction);
 
             // Assert
             Assert.AreEqual(expectedResult, result, 
                 $"境界位置({startX}, {startY})から{direction}方向への移動制限が正しく動作していません");
-            Assert.AreEqual(new Vector2Int(startX, startY), _playerMoveService.CurrentPosition, 
+            Assert.AreEqual(new Vector2Int(startX, startY), _playerMover.CurrentPosition, 
                 "境界を越える移動失敗時は位置が変更されないべき");
         }
 
@@ -279,7 +279,7 @@ namespace MyGame.Player.Tests
         {
             // Arrange
             var mockImpassableManager = new MockTilemapManager(false); // 移動不可設定
-            var moveServiceWithImpassableManager = new PlayerMoveService(mockImpassableManager, 0);
+            var moveServiceWithImpassableManager = new PlayerMover(mockImpassableManager, 0);
             moveServiceWithImpassableManager.SetPosition(new Vector2Int(0, 0));
 
             // Act
@@ -297,7 +297,7 @@ namespace MyGame.Player.Tests
         { 
             // Arrange
             var mockImpassableManager = new MockTilemapManager(false); // 移動不可設定
-            var moveServiceWithImpassableManager = new PlayerMoveService(mockImpassableManager, 0);
+            var moveServiceWithImpassableManager = new PlayerMover(mockImpassableManager, 0);
             moveServiceWithImpassableManager.SetPosition(new Vector2Int(0, 0));
 
             // Act

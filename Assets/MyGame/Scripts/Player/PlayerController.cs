@@ -1,7 +1,6 @@
 using UnityEngine;
 using MyGame.TilemapSystem.Core;
 using MyGame.Common;
-using System.Linq;
 using VContainer;
 using R3;
 using System;
@@ -10,26 +9,26 @@ namespace MyGame.Player
 {
     public class PlayerController : MonoBehaviour
     {
-        private readonly float MoveSpeed = 5f;
+        private readonly float _moveSpeed = 5f;
 
         private PlayerInputHandler _inputHandler;
-        private  PlayerMoveService _moveService;
+        private PlayerMover _mover;
         private Vector3 _targetPosition;
         private bool _isMoving;
         private  ITilemapManager _tilemapManager;
         private IDisposable _inputSubscription;
 
         [Inject]
-        public void Construct(ITilemapManager tilemapManager, PlayerMoveService moveService)
+        public void Construct(ITilemapManager tilemapManager)
         {
             _tilemapManager = tilemapManager;
-            _moveService = moveService;
         }
 
         private void Awake()
         {
             if (_inputHandler == null)
                 _inputHandler = GetComponent<PlayerInputHandler>();
+            _mover = new PlayerMover(_tilemapManager);
         }
 
         private void Start()
@@ -54,7 +53,7 @@ namespace MyGame.Player
         {
             if (_isMoving)
             {
-                transform.position = Vector3.MoveTowards(transform.position, _targetPosition, MoveSpeed * Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position, _targetPosition, _moveSpeed * Time.deltaTime);
                 
                 if (Vector3.Distance(transform.position, _targetPosition) < 0.01f)
                 {
@@ -68,7 +67,7 @@ namespace MyGame.Player
         private void SetInitialPosition()
         {
             var initialPosition = new Vector2Int(10, 15);
-            _moveService.SetPosition(initialPosition);
+            _mover.SetPosition(initialPosition);
             
             var worldPosition = _tilemapManager?.GetPosition(initialPosition.x, initialPosition.y) ?? new Vector3(initialPosition.x, initialPosition.y, 0);
             transform.position = worldPosition;
@@ -79,12 +78,12 @@ namespace MyGame.Player
         {
             if (_isMoving) return;
 
-            var currentPos = _moveService.CurrentPosition;
+            var currentPos = _mover.CurrentPosition;
             Debug.Log($"[PlayerController] 移動入力: {direction}, 現在位置: ({currentPos.x}, {currentPos.y})");
 
-            if (_moveService.Move(direction))
+            if (_mover.Move(direction))
             {
-                var newPosition = _moveService.CurrentPosition;
+                var newPosition = _mover.CurrentPosition;
                 _targetPosition = _tilemapManager?.GetPosition(newPosition.x, newPosition.y) ?? new Vector3(newPosition.x, newPosition.y, 0);
                 _isMoving = true;
                 Debug.Log($"[PlayerController] 移動成功: ({newPosition.x}, {newPosition.y})");

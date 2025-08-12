@@ -4,14 +4,14 @@ using MyGame.Common;
 
 namespace MyGame.Player
 {
-    public class PlayerMoveService
+    public class PlayerMover
     {
         public Vector2Int CurrentPosition { get; private set; }
         
         private readonly ITilemapManager _tilemapManager;
         private int _currentLevel = 0;
 
-        public PlayerMoveService(ITilemapManager tilemapManager, int currentLevel = 0)
+        public PlayerMover(ITilemapManager tilemapManager, int currentLevel = 0)
         {
             _tilemapManager = tilemapManager ?? throw new System.ArgumentNullException(nameof(tilemapManager));
             _currentLevel = currentLevel;

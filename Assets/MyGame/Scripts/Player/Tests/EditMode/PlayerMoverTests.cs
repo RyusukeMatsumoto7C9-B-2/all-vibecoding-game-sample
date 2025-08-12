@@ -9,16 +9,16 @@ namespace MyGame.Player.Tests
 
     [TestFixture]
     [Description("PlayerMoveServiceクラスの移動ロジックとして、4方向移動と位置設定の正確性をテストする")]
-    public class PlayerMoveServiceTests
+    public class PlayerMoverTests
     {
-        private PlayerMoveService _service;
+        private PlayerMover _service;
         private MockTilemapManager _mockTilemapManager;
 
         [SetUp]
         public void SetUp()
         {
             _mockTilemapManager = new MockTilemapManager(true);
-            _service = new PlayerMoveService(_mockTilemapManager);
+            _service = new PlayerMover(_mockTilemapManager);
         }
 
         [Test]
@@ -125,7 +125,7 @@ namespace MyGame.Player.Tests
         {
             // Arrange
             var impassableManager = new MockTilemapManager(false);
-            var serviceWithImpassableManager = new PlayerMoveService(impassableManager);
+            var serviceWithImpassableManager = new PlayerMover(impassableManager);
             
             var initialPosition = new Vector2Int(0, 0);
             serviceWithImpassableManager.SetPosition(initialPosition);
@@ -163,7 +163,7 @@ namespace MyGame.Player.Tests
             // Arrange
             var initialPosition = new Vector2Int(0, 0);
             var impassableManager = new MockTilemapManager(false);
-            var serviceWithImpassable = new PlayerMoveService(impassableManager);
+            var serviceWithImpassable = new PlayerMover(impassableManager);
             serviceWithImpassable.SetPosition(initialPosition);
 
             // Act
@@ -198,7 +198,7 @@ namespace MyGame.Player.Tests
             // Arrange
             var initialPosition = new Vector2Int(0, 0);
             var impassableManager = new MockTilemapManager(false);
-            var serviceWithImpassable = new PlayerMoveService(impassableManager);
+            var serviceWithImpassable = new PlayerMover(impassableManager);
             serviceWithImpassable.SetPosition(initialPosition);
 
             // Act
@@ -215,7 +215,7 @@ namespace MyGame.Player.Tests
             // Arrange
             var initialPosition = new Vector2Int(0, 0);
             var groundManager = new MockTilemapManager(true, BlockType.Ground);
-            var serviceWithGround = new PlayerMoveService(groundManager);
+            var serviceWithGround = new PlayerMover(groundManager);
             serviceWithGround.SetPosition(initialPosition);
 
             // Act
@@ -238,7 +238,7 @@ namespace MyGame.Player.Tests
             var mockManager = new MockTilemapManager(true);
             mockManager.SetBlockType(new Vector2Int(1, 0), BlockType.Rock); // 右側にRockブロック設定
             
-            var service = new PlayerMoveService(mockManager);
+            var service = new PlayerMover(mockManager);
             service.SetPosition(initialPosition);
 
             // Act
@@ -259,7 +259,7 @@ namespace MyGame.Player.Tests
             var mockManager = new MockTilemapManager(true);
             mockManager.SetBlockType(new Vector2Int(0, 1), BlockType.Sky); // 上側にSkyブロック設定
             
-            var service = new PlayerMoveService(mockManager);
+            var service = new PlayerMover(mockManager);
             service.SetPosition(initialPosition);
 
             // Act

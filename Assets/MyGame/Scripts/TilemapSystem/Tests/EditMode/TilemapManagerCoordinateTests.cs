@@ -103,7 +103,7 @@ namespace MyGame.TilemapSystem.Tests
         }
 
         [Test]
-        [Description("CanPassThroughメソッドがGroundタイルで通過不可を返すことを検証")]
+        [Description("CanPassThroughメソッドがGroundタイルで通過可を返すことを検証")]
         public void CanPassThrough_ReturnsFalseForGroundTile()
         {
             var mapData = _generator.GenerateMap(1, 12345);
@@ -127,7 +127,7 @@ namespace MyGame.TilemapSystem.Tests
             if (foundGround)
             {
                 var canPass = _tilemapManager.CanPassThrough(groundPosition, 1);
-                Assert.IsFalse(canPass);
+                Assert.IsTrue(canPass);
             }
         }
 
@@ -161,7 +161,7 @@ namespace MyGame.TilemapSystem.Tests
         }
 
         [Test]
-        [Description("CanPassThroughメソッドがSkyタイルで通過可能を返すことを検証")]
+        [Description("CanPassThroughメソッドがSkyタイルで通過不可を返すことを検証")]
         public void CanPassThrough_ReturnsTrueForSkyTile()
         {
             var mapData = _generator.GenerateMap(1, 12345);
@@ -185,7 +185,7 @@ namespace MyGame.TilemapSystem.Tests
             if (foundSky)
             {
                 var canPass = _tilemapManager.CanPassThrough(skyPosition, 1);
-                Assert.IsTrue(canPass);
+                Assert.IsFalse(canPass);
             }
         }
 

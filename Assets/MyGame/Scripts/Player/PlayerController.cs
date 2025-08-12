@@ -10,13 +10,13 @@ namespace MyGame.Player
 {
     public class PlayerController : MonoBehaviour
     {
-        [SerializeField] private readonly PlayerInputHandler _inputHandler;
-        [SerializeField] private readonly float _moveSpeed = 5f;
+        private readonly float MoveSpeed = 5f;
 
-        private readonly PlayerMoveService _moveService;
+        private PlayerInputHandler _inputHandler;
+        private  PlayerMoveService _moveService;
         private Vector3 _targetPosition;
         private bool _isMoving;
-        private readonly ITilemapManager _tilemapManager;
+        private  ITilemapManager _tilemapManager;
         private IDisposable _inputSubscription;
 
         [Inject]
@@ -54,7 +54,7 @@ namespace MyGame.Player
         {
             if (_isMoving)
             {
-                transform.position = Vector3.MoveTowards(transform.position, _targetPosition, _moveSpeed * Time.deltaTime);
+                transform.position = Vector3.MoveTowards(transform.position, _targetPosition, MoveSpeed * Time.deltaTime);
                 
                 if (Vector3.Distance(transform.position, _targetPosition) < 0.01f)
                 {

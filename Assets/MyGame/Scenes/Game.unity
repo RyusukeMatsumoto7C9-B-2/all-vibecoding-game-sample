@@ -308,6 +308,7 @@ MonoBehaviour:
   autoInjectGameObjects:
   - {fileID: 607813869}
   _tilemapSystemController: {fileID: 1485290828}
+  _universalTilePrefab: {fileID: 3186642491570654464, guid: f2b5b5c4d8a444a49a1f9b8c7e3f2d1a, type: 3}
 --- !u!4 &834750786
 Transform:
   m_ObjectHideFlags: 0

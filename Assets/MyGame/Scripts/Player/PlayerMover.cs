@@ -8,10 +8,10 @@ namespace MyGame.Player
     {
         public Vector2Int CurrentPosition { get; private set; }
         
-        private readonly ITilemapManager _tilemapManager;
+        private readonly ITilemapService _tilemapManager;
         private int _currentLevel = 0;
 
-        public PlayerMover(ITilemapManager tilemapManager, int currentLevel = 0)
+        public PlayerMover(ITilemapService tilemapManager, int currentLevel = 0)
         {
             _tilemapManager = tilemapManager ?? throw new System.ArgumentNullException(nameof(tilemapManager));
             _currentLevel = currentLevel;

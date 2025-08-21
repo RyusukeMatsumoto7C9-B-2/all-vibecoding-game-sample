@@ -8,7 +8,7 @@ namespace MyGame.Enemy
     {
         public Vector2Int CurrentPosition { get; private set; }
         
-        private ITilemapManager _tilemapManager;
+        private ITilemapService _tilemapManager;
         private int _currentLevel = 0;
 
         public void SetPosition(Vector2Int position)
@@ -16,7 +16,7 @@ namespace MyGame.Enemy
             CurrentPosition = position;
         }
 
-        public void SetTilemapManager(ITilemapManager tilemapManager, int level = 0)
+        public void SetTilemapManager(ITilemapService tilemapManager, int level = 0)
         {
             _tilemapManager = tilemapManager;
             _currentLevel = level;

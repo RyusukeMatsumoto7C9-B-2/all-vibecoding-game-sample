@@ -6,10 +6,10 @@ namespace MyGame.Enemy
 {
     public class EnemyMovementConstraint
     {
-        private readonly ITilemapManager _tilemapManager;
+        private readonly ITilemapService _tilemapManager;
         private readonly int _level;
 
-        public EnemyMovementConstraint(ITilemapManager tilemapManager, int level = 0)
+        public EnemyMovementConstraint(ITilemapService tilemapManager, int level = 0)
         {
             _tilemapManager = tilemapManager;
             _level = level;

@@ -580,6 +580,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: TilemapSystemController
       objectReference: {fileID: 0}
+    - target: {fileID: 8291508563488576528, guid: be207bc048d4b7746a3b0046ee44ebe5, type: 3}
+      propertyPath: autoScrollEnabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8291508563488576528, guid: be207bc048d4b7746a3b0046ee44ebe5, type: 3}
+      propertyPath: universalTilePrefab
+      value: 
+      objectReference: {fileID: 3186642491570654464, guid: f2b5b5c4d8a444a49a1f9b8c7e3f2d1a, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

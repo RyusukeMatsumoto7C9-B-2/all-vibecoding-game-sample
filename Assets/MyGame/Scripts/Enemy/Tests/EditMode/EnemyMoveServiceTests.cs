@@ -11,13 +11,13 @@ namespace MyGame.Enemy.Tests
     public class EnemyMoveServiceTests
     {
         private EnemyMoveService _enemyMoveService;
-        private MockTilemapManager _mockTilemapManager;
+        private MockTilemapService _mockTilemapManager;
 
         [SetUp]
         public void SetUp()
         {
             _enemyMoveService = new EnemyMoveService();
-            _mockTilemapManager = new MockTilemapManager(true, BlockType.Empty);
+            _mockTilemapManager = new MockTilemapService(true, BlockType.Empty);
             _enemyMoveService.SetTilemapManager(_mockTilemapManager, 0);
         }
 

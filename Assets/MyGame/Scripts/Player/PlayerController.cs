@@ -15,11 +15,11 @@ namespace MyGame.Player
         private PlayerMover _mover;
         private Vector3 _targetPosition;
         private bool _isMoving;
-        private  ITilemapManager _tilemapManager;
+        private  ITilemapService _tilemapManager;
         private IDisposable _inputSubscription;
 
         [Inject]
-        public void Construct(ITilemapManager tilemapManager)
+        public void Construct(ITilemapService tilemapManager)
         {
             _tilemapManager = tilemapManager;
         }

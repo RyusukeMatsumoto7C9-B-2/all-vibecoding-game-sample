@@ -3,10 +3,11 @@ using MyGame.TilemapSystem.Core;
 using MyGame.TilemapSystem.Generation;
 using Cysharp.Threading.Tasks;
 using R3;
+using VContainer;
 
 namespace MyGame.TilemapSystem
 {
-    public class TilemapSystemController : MonoBehaviour, ITilemapManager
+    public class TilemapSystemController : MonoBehaviour
     {
         [Header("Universal Tile Prefab")]
         [SerializeField] private GameObject universalTilePrefab;
@@ -19,12 +20,14 @@ namespace MyGame.TilemapSystem
         [SerializeField] private bool autoScrollEnabled = true;
         [SerializeField] private float autoScrollInterval = 3.0f;
 
+        [Inject]
+        private ITilemapManager _tilemapManager;
+        
         private TilemapGenerator _generator;
-        private TilemapManager _manager;
         private SeedManager _seedManager;
         private TilemapScrollController _scrollController;
         
-        public TilemapManager Manager => _manager;
+        public ITilemapManager TilemapManager => _tilemapManager;
         public TilemapScrollController ScrollController => _scrollController;
         public int CurrentLevel => _scrollController?.CurrentLevel ?? initialLevel;
         
@@ -50,12 +53,12 @@ namespace MyGame.TilemapSystem
 
             _seedManager = new SeedManager(initialSeed);
             _generator = new TilemapGenerator(_seedManager);
-
-            _manager = new TilemapManager(transform, universalTilePrefab);
-            _manager.OnMapGenerated.Subscribe(OnMapGenerated).AddTo(this);
+            
+            // TilemapServiceはVContainerから注入されるため、ここでは初期化しない
+            // OnMapGeneratedイベントのサブスクライブは、TilemapServiceがインターフェースになったため削除
             
             // スクロールコントローラーを初期化
-            _scrollController = new TilemapScrollController(_generator, _manager, transform);
+            _scrollController = new TilemapScrollController(_generator, _tilemapManager, transform);
             _scrollController.OnScrollStarted?.Subscribe(OnScrollStarted).AddTo(this);
             _scrollController.OnScrollCompleted?.Subscribe(OnScrollCompleted).AddTo(this);
             _scrollController.OnNewLevelGenerated?.Subscribe(OnNewLevelGenerated).AddTo(this);
@@ -71,9 +74,10 @@ namespace MyGame.TilemapSystem
 
             var mapData = _generator.GenerateMap(initialLevel, initialSeed);
             
-            if (_manager != null)
+            if (_tilemapManager != null)
             {
-                _manager.PlaceTiles(mapData);
+                // 初期マップ生成時は重複保護不要なので、PlaceTilesWithOverlapProtectionを使用
+                _tilemapManager.PlaceTilesWithOverlapProtection(mapData, 0);
             }
 
             Debug.Log($"初期マップ生成完了: Level={mapData.Level}, Seed={mapData.Seed}, Size={mapData.Width}x{mapData.Height}");
@@ -89,16 +93,16 @@ namespace MyGame.TilemapSystem
         {
             var newLevel = CurrentLevel + 1;
             var mapData = _generator.GenerateMap(newLevel, initialSeed);
-            _manager.PlaceTiles(mapData);
+            _tilemapManager.PlaceTilesWithOverlapProtection(mapData, 0);
             Debug.Log($"新しいマップ生成: Level {newLevel}");
         }
 
         [ContextMenu("メモリ最適化実行")]
         public void OptimizeMemory()
         {
-            if (_manager != null)
+            if (_tilemapManager != null)
             {
-                _manager.OptimizeMemory(CurrentLevel);
+                _tilemapManager.OptimizeMemory(CurrentLevel);
                 Debug.Log($"メモリ最適化実行: Current Level {CurrentLevel}");
             }
         }
@@ -175,53 +179,6 @@ namespace MyGame.TilemapSystem
             autoScrollInterval = interval;
         }
         
-        public bool IsMapLoaded(int level)
-        {
-            return _manager?.IsMapLoaded(level) ?? false;
-        }
-        
-        public MapData GetLoadedMap(int level)
-        {
-            return _manager?.GetLoadedMap(level) ?? default;
-        }
-        
-        public BlockType GetBlockTypeAt(Vector2Int position, int level)
-        {
-            return _manager?.GetBlockTypeAt(position, level) ?? BlockType.Empty;
-        }
-        
-        public bool CanPlayerPassThrough(Vector2Int position, int level)
-        {
-            return _manager?.CanPlayerPassThrough(position, level) ?? true;
-        }
-        
-        public void OnPlayerHitTile(Vector2Int position, int level)
-        {
-            _manager?.OnPlayerHitTile(position, level);
-        }
-        
-        
-        /// <summary>
-        /// グリッド座標をワールド座標に変換します
-        /// </summary>
-        /// <param name="x">グリッドX座標</param>
-        /// <param name="y">グリッドY座標</param>
-        /// <returns>ワールド座標</returns>
-        public Vector3 GetPosition(int x, int y)
-        {
-            return _manager?.GetPosition(x, y) ?? new Vector3(x, y, 0);
-        }
-        
-        
-        /// <summary>
-        /// 指定位置が通過可能かを判定します（Player/Enemy共通）
-        /// </summary>
-        /// <param name="position">グリッド座標</param>
-        /// <param name="level">レベル</param>
-        /// <returns>通過可能な場合はtrue</returns>
-        public bool CanPassThrough(Vector2Int position, int level)
-        {
-            return _manager?.CanPassThrough(position, level) ?? true;
-        }
+        // ITilemapManagerの実装は削除（VContainerによる注入を使用）
     }
 }

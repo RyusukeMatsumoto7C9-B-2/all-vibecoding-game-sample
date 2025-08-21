@@ -36,7 +36,7 @@ namespace MyGame.Enemy
             }
         }
 
-        public void SetTilemapManager(TilemapManager tilemapManager, int level = 0)
+        public void SetTilemapManager(ITilemapManager tilemapManager, int level = 0)
         {
             _moveService.SetTilemapManager(tilemapManager, level);
         }

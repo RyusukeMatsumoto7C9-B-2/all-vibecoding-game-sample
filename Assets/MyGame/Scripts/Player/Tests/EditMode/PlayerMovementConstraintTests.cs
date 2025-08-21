@@ -29,7 +29,7 @@ namespace MyGame.Player.Tests
         public void CanPassThrough_NewUnifiedMethod_ShouldFollowNewSpecification(BlockType blockType, bool expectedResult)
         {
             // Arrange
-            var mockManager = new MockTilemapManager(true);
+            var mockManager = new MockTilemapService(true);
             mockManager.SetBlockType(new Vector2Int(0, 0), blockType);
 
             // Act

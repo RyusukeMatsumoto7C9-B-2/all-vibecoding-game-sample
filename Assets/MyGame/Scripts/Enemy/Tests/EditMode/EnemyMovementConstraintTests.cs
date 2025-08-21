@@ -11,12 +11,12 @@ namespace MyGame.Enemy.Tests
     public class EnemyMovementConstraintTests
     {
         private EnemyMovementConstraint _constraint;
-        private MockTilemapManager _mockTilemapManager;
+        private MockTilemapService _mockTilemapManager;
 
         [SetUp]
         public void SetUp()
         {
-            _mockTilemapManager = new MockTilemapManager(true, BlockType.Empty);
+            _mockTilemapManager = new MockTilemapService(true, BlockType.Empty);
             _constraint = new EnemyMovementConstraint(_mockTilemapManager, 0);
         }
 

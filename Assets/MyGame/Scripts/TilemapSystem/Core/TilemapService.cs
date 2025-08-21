@@ -5,7 +5,7 @@ using R3;
 
 namespace MyGame.TilemapSystem.Core
 {
-    public class TilemapManager : ITilemapManager
+    public class TilemapService : ITilemapManager
     {
         private readonly Transform _parentTransform;
         private readonly GameObject _universalTilePrefab;
@@ -22,7 +22,7 @@ namespace MyGame.TilemapSystem.Core
         private readonly Subject<(Vector2Int, BlockType, int)> _onTileHit = new Subject<(Vector2Int, BlockType, int)>();
         
         
-        public TilemapManager(Transform parentTransform, GameObject universalTilePrefab, ITileBehavior tileBehavior = null)
+        public TilemapService(Transform parentTransform, GameObject universalTilePrefab, ITileBehavior tileBehavior = null)
         {
             _parentTransform = parentTransform ?? throw new ArgumentNullException(nameof(parentTransform));
             _universalTilePrefab = universalTilePrefab ?? throw new ArgumentNullException(nameof(universalTilePrefab));

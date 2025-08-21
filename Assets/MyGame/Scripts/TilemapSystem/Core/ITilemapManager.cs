@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace MyGame.TilemapSystem.Core
@@ -25,5 +26,25 @@ namespace MyGame.TilemapSystem.Core
         /// <param name="level">レベル</param>
         /// <returns>通過可能な場合はtrue</returns>
         bool CanPassThrough(Vector2Int position, int level);
+        
+        /// <summary>
+        /// メモリ最適化を実行します
+        /// </summary>
+        /// <param name="currentLevel">現在のレベル</param>
+        void OptimizeMemory(int currentLevel);
+        
+        /// <summary>
+        /// 重複保護機能付きでタイルを配置します
+        /// </summary>
+        /// <param name="mapData">マップデータ</param>
+        /// <param name="overlapHeight">重複エリアの高さ</param>
+        void PlaceTilesWithOverlapProtection(MapData mapData, int overlapHeight = 5);
+        
+        /// <summary>
+        /// 指定レベルのタイルオブジェクトリストを取得します
+        /// </summary>
+        /// <param name="level">レベル</param>
+        /// <returns>タイルオブジェクトのリスト</returns>
+        List<GameObject> GetTilesForLevel(int level);
     }
 }

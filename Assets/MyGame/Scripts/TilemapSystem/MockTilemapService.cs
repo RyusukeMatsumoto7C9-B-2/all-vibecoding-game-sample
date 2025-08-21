@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace MyGame.TilemapSystem
 {
-    public class MockTilemapManager : ITilemapManager
+    public class MockTilemapService : ITilemapManager
     {
         private readonly bool _allowMovement;
         private readonly BlockType _blockType;
@@ -15,7 +15,7 @@ namespace MyGame.TilemapSystem
         public Vector2Int LastHitPosition { get; private set; }
         public int LastHitLevel { get; private set; }
 
-        public MockTilemapManager(bool allowMovement, BlockType blockType = BlockType.Empty)
+        public MockTilemapService(bool allowMovement, BlockType blockType = BlockType.Empty)
         {
             _allowMovement = allowMovement;
             _blockType = blockType;
@@ -96,6 +96,39 @@ namespace MyGame.TilemapSystem
                 return blockType == BlockType.Empty || blockType == BlockType.Ground || blockType == BlockType.Treasure;
             }
             return _allowMovement;
+        }
+        
+        
+        /// <summary>
+        /// メモリ最適化を実行します（テスト用Mock実装）
+        /// </summary>
+        /// <param name="currentLevel">現在のレベル</param>
+        public void OptimizeMemory(int currentLevel)
+        {
+            // Mock実装なので何もしない
+        }
+        
+        
+        /// <summary>
+        /// 重複保護機能付きでタイルを配置します（テスト用Mock実装）
+        /// </summary>
+        /// <param name="mapData">マップデータ</param>
+        /// <param name="overlapHeight">重複エリアの高さ</param>
+        public void PlaceTilesWithOverlapProtection(MapData mapData, int overlapHeight = 5)
+        {
+            // Mock実装なので何もしない
+        }
+        
+        
+        /// <summary>
+        /// 指定レベルのタイルオブジェクトリストを取得します（テスト用Mock実装）
+        /// </summary>
+        /// <param name="level">レベル</param>
+        /// <returns>タイルオブジェクトのリスト</returns>
+        public List<GameObject> GetTilesForLevel(int level)
+        {
+            // Mock実装なので空のリストを返す
+            return new List<GameObject>();
         }
     }
 }

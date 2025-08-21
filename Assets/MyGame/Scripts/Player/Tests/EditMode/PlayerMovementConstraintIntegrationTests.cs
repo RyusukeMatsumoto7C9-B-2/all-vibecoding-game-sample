@@ -7,11 +7,11 @@ using MyGame.Common;
 namespace MyGame.Player.Tests
 {
     [TestFixture]
-    [Description("プレイヤー移動制約の統合テスト：実際のブロックタイプとTilemapManagerを使用した動作検証")]
+    [Description("プレイヤー移動制約の統合テスト：実際のブロックタイプとTilemapServiceを使用した動作検証")]
     public class PlayerMovementConstraintIntegrationTests
     {
         private PlayerMover _playerMover;
-        private TilemapManager _tilemapManager;
+        private TilemapService _tilemapManager;
         private MockTileBehavior _mockTileBehavior;
 
         // テスト用のTileBehavior実装
@@ -55,7 +55,7 @@ namespace MyGame.Player.Tests
             
             _mockTileBehavior = new MockTileBehavior();
             
-            _tilemapManager = new TilemapManager(parentTransform, universalTilePrefab, _mockTileBehavior);
+            _tilemapManager = new TilemapService(parentTransform, universalTilePrefab, _mockTileBehavior);
             _playerMover = new PlayerMover(_tilemapManager, 0);
 
             // テスト用のマップデータを作成（5x5の小さなマップ）
@@ -174,7 +174,7 @@ namespace MyGame.Player.Tests
             _playerMover.SetPosition(new Vector2Int(0, 2)); // Empty位置（上の方）に配置してTreasureへのパスを確保
 
             // Treasureブロックを別の位置に設定してテスト
-            var treasureManager = new MockTilemapManager(true, BlockType.Treasure);
+            var treasureManager = new MockTilemapService(true, BlockType.Treasure);
             var serviceWithTreasure = new PlayerMover(treasureManager, 0);
             serviceWithTreasure.SetPosition(new Vector2Int(0, 0));
 
@@ -274,11 +274,11 @@ namespace MyGame.Player.Tests
         }
 
         [Test]
-        [Description("移動不可設定TilemapManagerでの安全性を検証")]
-        public void Move_WithImpassableTilemapManager_ShouldFailSafely()
+        [Description("移動不可設定TilemapServiceでの安全性を検証")]
+        public void Move_WithImpassableTilemapService_ShouldFailSafely()
         {
             // Arrange
-            var mockImpassableManager = new MockTilemapManager(false); // 移動不可設定
+            var mockImpassableManager = new MockTilemapService(false); // 移動不可設定
             var moveServiceWithImpassableManager = new PlayerMover(mockImpassableManager, 0);
             moveServiceWithImpassableManager.SetPosition(new Vector2Int(0, 0));
 
@@ -286,17 +286,17 @@ namespace MyGame.Player.Tests
             var result = moveServiceWithImpassableManager.Move(Direction.Right);
 
             // Assert
-            Assert.IsFalse(result, "移動不可設定のTilemapManagerでは移動失敗すべき");
+            Assert.IsFalse(result, "移動不可設定のTilemapServiceでは移動失敗すべき");
             Assert.AreEqual(new Vector2Int(0, 0), moveServiceWithImpassableManager.CurrentPosition, 
                 "移動失敗時は位置が変更されないべき");
         }
 
         [Test]
-        [Description("移動不可設定TilemapManagerでのCanMoveメソッドの安全性を検証")]
-        public void CanMove_WithImpassableTilemapManager_ShouldReturnFalse()
+        [Description("移動不可設定TilemapServiceでのCanMoveメソッドの安全性を検証")]
+        public void CanMove_WithImpassableTilemapService_ShouldReturnFalse()
         { 
             // Arrange
-            var mockImpassableManager = new MockTilemapManager(false); // 移動不可設定
+            var mockImpassableManager = new MockTilemapService(false); // 移動不可設定
             var moveServiceWithImpassableManager = new PlayerMover(mockImpassableManager, 0);
             moveServiceWithImpassableManager.SetPosition(new Vector2Int(0, 0));
 

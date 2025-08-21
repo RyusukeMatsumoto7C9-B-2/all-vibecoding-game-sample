@@ -1,10 +1,68 @@
 # 現在のタスク
 
-**現在、作業中のタスクはありません。**
-
----
+（現在進行中のタスクはありません）
 
 # アーカイブ済みタスク
+
+## TilemapManager・TilemapSystemController責務分離リファクタリング（2025-01-21完了）
+
+### 概要
+TilemapSystemController（MonoBehaviour）とTilemapService（非MonoBehaviour）の責務が混在している問題を解決し、TilemapServiceを中心とした適切な依存性注入構造に統合する。
+
+### 実装内容
+
+#### Phase 1: ITilemapManagerインターフェース拡張（完了）
+- OptimizeMemory、PlaceTilesWithOverlapProtection、GetTilesForLevelメソッドを追加
+- System.Collections.Genericのusing追加
+
+#### Phase 2: TilemapScrollControllerのインターフェース対応（完了）
+- TilemapManager具象クラス依存をITilemapManagerインターフェース依存に変更
+- コンストラクタとフィールドを修正
+
+#### Phase 3: TilemapSystemControllerの責務分離（完了）
+- ITilemapManager実装を削除し、純粋なMonoBehaviourに変更
+- VContainer [Inject]によるITilemapManager依存性注入を追加
+- プロキシメソッドを削除
+- プロパティをITilemapManager型に変更
+
+#### Phase 4: VContainer設定修正（完了）
+- GameLifetimeScope.csでTilemapServiceをITilemapManagerとしてSingleton登録
+- TilemapSystemControllerをコンポーネントとして登録
+
+#### Phase 5: 命名規則違反の是正（完了）
+- TilemapManagerクラスをTilemapServiceに改名（*Manager禁止ルール準拠）
+- MockTilemapManagerをMockTilemapServiceに改名
+- TilemapManagerCoordinateTestsをTilemapServiceCoordinateTestsに改名
+- 全参照箇所の更新（テストコード含む）
+
+### 解決した問題
+1. **責務混在**: TilemapSystemController が MonoBehaviour でありながら ITilemapManager を実装
+2. **プロキシ構造**: TilemapSystemController の全ITilemapManagerメソッドが _manager に委譲
+3. **VContainer構成不適切**: GameLifetimeScope で TilemapSystemController を ITilemapManager として登録
+4. **依存関係の複雑化**: TilemapScrollController が具象クラス TilemapManager に依存
+
+### 達成した構造
+1. **TilemapService**: 非MonoBehaviourとして全タイルマップビジネスロジックを担当
+2. **TilemapSystemController**: Unity固有機能（自動スクロール、ContextMenu）のみ担当
+3. **VContainer注入**: TilemapService を ITilemapManager として注入
+4. **適切な依存分離**: インターフェース経由での依存関係
+
+### 変更ファイル一覧
+- `Assets/MyGame/Scripts/TilemapSystem/Core/ITilemapManager.cs` - インターフェース拡張
+- `Assets/MyGame/Scripts/TilemapSystem/Core/TilemapService.cs` - TilemapManagerから改名
+- `Assets/MyGame/Scripts/TilemapSystem/Core/TilemapScrollController.cs` - インターフェース依存
+- `Assets/MyGame/Scripts/TilemapSystem/TilemapSystemController.cs` - 責務分離
+- `Assets/MyGame/Scripts/TilemapSystem/MockTilemapService.cs` - Mockクラス改名
+- `Assets/MyGame/Scripts/DI/GameLifetimeScope.cs` - DI設定更新
+- `Assets/MyGame/Scripts/Enemy/EnemyController.cs` - インターフェース型使用
+- 全テストファイル - MockTilemapService参照に更新
+
+### 達成した効果
+- **責務の明確化**: Unity固有機能とビジネスロジックの完全分離
+- **テスタビリティ向上**: TilemapService の単体テストが容易
+- **VContainer活用**: 適切な依存性注入による疎結合設計
+- **保守性向上**: インターフェース経由による変更影響の局所化
+- **命名規則準拠**: *Manager禁止ルールに従いTilemapServiceに改名
 
 ## Player-TilemapSystem連携改善タスク（2025-01-11完了）
 

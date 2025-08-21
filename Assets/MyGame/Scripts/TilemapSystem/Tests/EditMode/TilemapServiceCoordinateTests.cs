@@ -5,10 +5,10 @@ using MyGame.TilemapSystem.Generation;
 
 namespace MyGame.TilemapSystem.Tests
 {
-    [Description("TilemapManager座標変換機能のテスト")]
-    public class TilemapManagerCoordinateTests
+    [Description("TilemapService座標変換機能のテスト")]
+    public class TilemapServiceCoordinateTests
     {
-        private TilemapManager _tilemapManager;
+        private TilemapService _tilemapManager;
         private GameObject _parentObject;
         private GameObject _tilePrefab;
         private SeedManager _seedManager;
@@ -21,7 +21,7 @@ namespace MyGame.TilemapSystem.Tests
             _tilePrefab = new GameObject("TilePrefab");
             _tilePrefab.AddComponent<TileController>();
             
-            _tilemapManager = new TilemapManager(_parentObject.transform, _tilePrefab);
+            _tilemapManager = new TilemapService(_parentObject.transform, _tilePrefab);
             
             _seedManager = new SeedManager();
             _generator = new TilemapGenerator(_seedManager);

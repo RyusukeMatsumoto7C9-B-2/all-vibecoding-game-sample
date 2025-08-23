@@ -4,18 +4,22 @@ using System.Collections.Generic;
 
 namespace MyGame.TilemapSystem
 {
-    public class MockTilemapManager : ITilemapManager
+    public class MockTilemapService : ITilemapService
     {
         private readonly bool _allowMovement;
         private readonly BlockType _blockType;
         private readonly Dictionary<Vector2Int, BlockType> _blockTypes = new Dictionary<Vector2Int, BlockType>();
+        
+        // テスト用マップ境界情報
+        private int _mapWidth = -1;
+        private int _mapHeight = -1;
         
         // テスト用スパイ機能
         public bool OnPlayerHitTileCalled { get; private set; }
         public Vector2Int LastHitPosition { get; private set; }
         public int LastHitLevel { get; private set; }
 
-        public MockTilemapManager(bool allowMovement, BlockType blockType = BlockType.Empty)
+        public MockTilemapService(bool allowMovement, BlockType blockType = BlockType.Empty)
         {
             _allowMovement = allowMovement;
             _blockType = blockType;
@@ -67,6 +71,13 @@ namespace MyGame.TilemapSystem
         {
             _blockTypes[position] = blockType;
         }
+        
+        // テスト用マップサイズ設定メソッド
+        public void SetMapSize(int width, int height)
+        {
+            _mapWidth = width;
+            _mapHeight = height;
+        }
 
 
         /// <summary>
@@ -89,6 +100,15 @@ namespace MyGame.TilemapSystem
         /// <returns>通過可能な場合はtrue</returns>
         public bool CanPassThrough(Vector2Int position, int level)
         {
+            // マップサイズが設定されている場合は境界チェックを実行
+            if (_mapWidth > 0 && _mapHeight > 0)
+            {
+                if (position.x < 0 || position.x >= _mapWidth || position.y < 0 || position.y >= _mapHeight)
+                {
+                    return false; // 境界外は移動不可
+                }
+            }
+            
             if (_blockTypes.ContainsKey(position))
             {
                 var blockType = _blockTypes[position];
@@ -97,5 +117,45 @@ namespace MyGame.TilemapSystem
             }
             return _allowMovement;
         }
+        
+        /// <summary>
+        /// タイルを配置します
+        /// </summary>
+        /// <param name="mapData">配置するマップデータ</param>
+        public void PlaceTiles(MapData mapData)
+        {
+            // Mock実装では何もしない
+        }
+        
+        /// <summary>
+        /// 重複保護機能付きでタイルを配置します
+        /// </summary>
+        /// <param name="mapData">配置するマップデータ</param>
+        /// <param name="overlapHeight">重複エリアの高さ</param>
+        public void PlaceTilesWithOverlapProtection(MapData mapData, int overlapHeight = 5)
+        {
+            // Mock実装では何もしない
+        }
+        
+        /// <summary>
+        /// メモリ最適化を実行します
+        /// </summary>
+        /// <param name="currentLevel">現在のレベル</param>
+        public void OptimizeMemory(int currentLevel)
+        {
+            // Mock実装では何もしない
+        }
+        
+        /// <summary>
+        /// 指定レベルのタイル一覧を取得します
+        /// </summary>
+        /// <param name="level">レベル</param>
+        /// <returns>タイルのGameObjectリスト</returns>
+        public List<GameObject> GetTilesForLevel(int level)
+        {
+            // Mock実装では空のリストを返す
+            return new List<GameObject>();
+        }
+        
     }
 }

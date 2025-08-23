@@ -18,7 +18,7 @@ namespace MyGame.TilemapSystem.Core
         
         // privateフィールド
         private readonly TilemapGenerator _generator;
-        private readonly TilemapManager _manager;
+        private readonly ITilemapService _manager;
         private readonly Transform _tilemapParent;
         private readonly Subject<int> _onScrollStarted = new Subject<int>();
         private readonly Subject<int> _onScrollCompleted = new Subject<int>();
@@ -34,7 +34,7 @@ namespace MyGame.TilemapSystem.Core
 
 
         // publicメソッド
-        public TilemapScrollController(TilemapGenerator generator, TilemapManager manager, Transform tilemapParent)
+        public TilemapScrollController(TilemapGenerator generator, ITilemapService manager, Transform tilemapParent)
         {
             _generator = generator ?? throw new ArgumentNullException(nameof(generator));
             _manager = manager ?? throw new ArgumentNullException(nameof(manager));

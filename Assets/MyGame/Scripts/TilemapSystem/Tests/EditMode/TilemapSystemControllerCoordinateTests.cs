@@ -2,13 +2,14 @@ using NUnit.Framework;
 using UnityEngine;
 using MyGame.TilemapSystem.Core;
 using MyGame.TilemapSystem.Generation;
+using MyGame.TilemapSystem;
 
 namespace MyGame.TilemapSystem.Tests
 {
-    [Description("TilemapManager座標変換機能のテスト")]
-    public class TilemapManagerCoordinateTests
+    [Description("TilemapSystemController座標変換機能のテスト")]
+    public class TilemapSystemControllerCoordinateTests
     {
-        private TilemapManager _tilemapManager;
+        private TilemapSystemController _tilemapSystemController;
         private GameObject _parentObject;
         private GameObject _tilePrefab;
         private SeedManager _seedManager;
@@ -21,7 +22,14 @@ namespace MyGame.TilemapSystem.Tests
             _tilePrefab = new GameObject("TilePrefab");
             _tilePrefab.AddComponent<TileController>();
             
-            _tilemapManager = new TilemapManager(_parentObject.transform, _tilePrefab);
+            // TilemapSystemControllerのGameObjectを作成
+            var controllerObject = new GameObject("TilemapSystemController");
+            _tilemapSystemController = controllerObject.AddComponent<TilemapSystemController>();
+            
+            // universalTilePrefabを設定（Reflectionでprivateフィールドにアクセス）
+            var field = typeof(TilemapSystemController).GetField("universalTilePrefab", 
+                System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            field?.SetValue(_tilemapSystemController, _tilePrefab);
             
             _seedManager = new SeedManager();
             _generator = new TilemapGenerator(_seedManager);
@@ -44,7 +52,7 @@ namespace MyGame.TilemapSystem.Tests
         [Description("GetPositionメソッドがグリッド座標を正しくワールド座標に変換することを検証")]
         public void GetPosition_ConvertsGridCoordinatesToWorldPosition()
         {
-            var position = _tilemapManager.GetPosition(5, 10);
+            var position = _tilemapSystemController.GetPosition(5, 10);
             
             Assert.AreEqual(5f, position.x);
             Assert.AreEqual(10f, position.y);
@@ -55,7 +63,7 @@ namespace MyGame.TilemapSystem.Tests
         [Description("GetPositionメソッドが負の座標でも正しく動作することを検証")]
         public void GetPosition_HandlesNegativeCoordinates()
         {
-            var position = _tilemapManager.GetPosition(-3, -7);
+            var position = _tilemapSystemController.GetPosition(-3, -7);
             
             Assert.AreEqual(-3f, position.x);
             Assert.AreEqual(-7f, position.y);
@@ -66,7 +74,7 @@ namespace MyGame.TilemapSystem.Tests
         [Description("GetPositionメソッドがゼロ座標で正しく動作することを検証")]
         public void GetPosition_HandlesZeroCoordinates()
         {
-            var position = _tilemapManager.GetPosition(0, 0);
+            var position = _tilemapSystemController.GetPosition(0, 0);
             
             Assert.AreEqual(0f, position.x);
             Assert.AreEqual(0f, position.y);
@@ -78,7 +86,7 @@ namespace MyGame.TilemapSystem.Tests
         public void CanPassThrough_ReturnsFalseForRockTile()
         {
             var mapData = _generator.GenerateMap(1, 12345);
-            _tilemapManager.PlaceTiles(mapData);
+            _tilemapSystemController.PlaceTiles(mapData);
             
             // Rockタイルの位置を探す
             Vector2Int rockPosition = Vector2Int.zero;
@@ -97,17 +105,17 @@ namespace MyGame.TilemapSystem.Tests
             
             if (foundRock)
             {
-                var canPass = _tilemapManager.CanPassThrough(rockPosition, 1);
+                var canPass = _tilemapSystemController.CanPassThrough(rockPosition, 1);
                 Assert.IsFalse(canPass);
             }
         }
 
         [Test]
         [Description("CanPassThroughメソッドがGroundタイルで通過可を返すことを検証")]
-        public void CanPassThrough_ReturnsFalseForGroundTile()
+        public void Test_CanPassThrough_WithGroundTile_ReturnsTrue()
         {
             var mapData = _generator.GenerateMap(1, 12345);
-            _tilemapManager.PlaceTiles(mapData);
+            _tilemapSystemController.PlaceTiles(mapData);
             
             // Groundタイルの位置を探す
             Vector2Int groundPosition = Vector2Int.zero;
@@ -126,7 +134,7 @@ namespace MyGame.TilemapSystem.Tests
             
             if (foundGround)
             {
-                var canPass = _tilemapManager.CanPassThrough(groundPosition, 1);
+                var canPass = _tilemapSystemController.CanPassThrough(groundPosition, 1);
                 Assert.IsTrue(canPass);
             }
         }
@@ -136,7 +144,7 @@ namespace MyGame.TilemapSystem.Tests
         public void CanPassThrough_ReturnsTrueForEmptyTile()
         {
             var mapData = _generator.GenerateMap(1, 12345);
-            _tilemapManager.PlaceTiles(mapData);
+            _tilemapSystemController.PlaceTiles(mapData);
             
             // Emptyタイルの位置を探す
             Vector2Int emptyPosition = Vector2Int.zero;
@@ -155,17 +163,17 @@ namespace MyGame.TilemapSystem.Tests
             
             if (foundEmpty)
             {
-                var canPass = _tilemapManager.CanPassThrough(emptyPosition, 1);
+                var canPass = _tilemapSystemController.CanPassThrough(emptyPosition, 1);
                 Assert.IsTrue(canPass);
             }
         }
 
         [Test]
         [Description("CanPassThroughメソッドがSkyタイルで通過不可を返すことを検証")]
-        public void CanPassThrough_ReturnsTrueForSkyTile()
+        public void Test_CanPassThrough_WithSkyTile_ReturnsFalse()
         {
             var mapData = _generator.GenerateMap(1, 12345);
-            _tilemapManager.PlaceTiles(mapData);
+            _tilemapSystemController.PlaceTiles(mapData);
             
             // Skyタイルの位置を探す
             Vector2Int skyPosition = Vector2Int.zero;
@@ -184,7 +192,7 @@ namespace MyGame.TilemapSystem.Tests
             
             if (foundSky)
             {
-                var canPass = _tilemapManager.CanPassThrough(skyPosition, 1);
+                var canPass = _tilemapSystemController.CanPassThrough(skyPosition, 1);
                 Assert.IsFalse(canPass);
             }
         }
@@ -194,12 +202,12 @@ namespace MyGame.TilemapSystem.Tests
         public void CanPassThrough_ReturnsFalseForOutOfBounds()
         {
             var mapData = _generator.GenerateMap(1, 12345);
-            _tilemapManager.PlaceTiles(mapData);
+            _tilemapSystemController.PlaceTiles(mapData);
             
-            var canPassLeft = _tilemapManager.CanPassThrough(new Vector2Int(-1, 5), 1);
-            var canPassRight = _tilemapManager.CanPassThrough(new Vector2Int(mapData.Width, 5), 1);
-            var canPassBottom = _tilemapManager.CanPassThrough(new Vector2Int(5, -1), 1);
-            var canPassTop = _tilemapManager.CanPassThrough(new Vector2Int(5, mapData.Height), 1);
+            var canPassLeft = _tilemapSystemController.CanPassThrough(new Vector2Int(-1, 5), 1);
+            var canPassRight = _tilemapSystemController.CanPassThrough(new Vector2Int(mapData.Width, 5), 1);
+            var canPassBottom = _tilemapSystemController.CanPassThrough(new Vector2Int(5, -1), 1);
+            var canPassTop = _tilemapSystemController.CanPassThrough(new Vector2Int(5, mapData.Height), 1);
             
             Assert.IsFalse(canPassLeft);
             Assert.IsFalse(canPassRight);
@@ -211,7 +219,7 @@ namespace MyGame.TilemapSystem.Tests
         [Description("CanPassThroughメソッドがマップ未ロード時に通過可能を返すことを検証")]
         public void CanPassThrough_ReturnsTrueWhenMapNotLoaded()
         {
-            var canPass = _tilemapManager.CanPassThrough(new Vector2Int(5, 5), 999);
+            var canPass = _tilemapSystemController.CanPassThrough(new Vector2Int(5, 5), 999);
             
             Assert.IsTrue(canPass);
         }

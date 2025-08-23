@@ -1,81 +1,78 @@
 # 現在のタスク
 
-**現在、作業中のタスクはありません。**
+## ITilemapManagerの統合とITilemapServiceリファクタリング（完了）
+
+### 概要
+ITilemapManagerを実装しているTilemapManagerとTilemapSystemControllerの重複実装をITilemapServiceに統一し、コードの重複を解消しました。
+
+### 主要な変更点
+
+#### 統合前の問題点
+1. **ITilemapManagerの重複実装**: TilemapManagerクラスとTilemapSystemControllerクラスが両方ともITilemapManagerを実装
+2. **コードの重複**: TilemapSystemControllerがTilemapManagerの機能を委譲パターンで使用していた
+3. **保守性の問題**: ITilemapManagerインターフェースの更新時に複数箇所の修正が必要
+
+#### 統合後の改善点
+1. **ITilemapService**: 統一されたインターフェースに名称変更
+2. **TilemapSystemController**: 単一のITilemapService実装クラスとして統合
+3. **保守性の向上**: 実装箇所が一元化され保守性が向上
+
+### 実施内容
+
+#### Phase 1: ITilemapManager → ITilemapService に名称変更
+- [x] **ITilemapManager.cs をITilemapService.cs に名称変更**
+  - インターフェース名とファイル名を変更
+  - ファイル内容の全参照を更新
+- [x] **全関連ファイルの参照更新**
+  - TilemapSystemController.cs
+  - EnemyMoveService.cs, EnemyMovementConstraint.cs  
+  - PlayerMover.cs, PlayerController.cs
+  - MockTilemapManager.cs
+  - TilemapManager.cs
+
+#### Phase 2: TilemapManagerの実装をTilemapSystemControllerに統合
+- [x] **TilemapSystemController.cs への統合実装**
+  - TilemapManagerの機能をTilemapSystemControllerに統合
+  - 委譲パターンの削除
+  - 必要なフィールドとメソッドを追加
+- [x] **TilemapManager.cs 削除**
+  - Core/TilemapManager.csファイル削除
+  - 実装箇所の一元化
+
+#### Phase 3: テストコードの修正
+- [x] **MockTilemapManager → MockTilemapService に名称変更**
+  - ファイル名とクラス名の変更
+  - ITilemapServiceインターフェースの新規メソッドに対応
+- [x] **TilemapManagerCoordinateTests統合**
+  - TilemapSystemControllerテスト用にファイル名変更
+  - 全てのテスト参照を更新
+
+#### Phase 4: コードレビュー並列実行
+- [x] **4つのコードレビューエージェント並列実行**
+  - csharp-class-modeling-reviewer: クラス設計レビュー
+  - csharp-naming-reviewer: 命名規則レビュー  
+  - csharp-comment-reviewer: コメントレビュー
+  - file-structure-checker: ファイル構造インパクト確認
+
+#### Phase 5: レビューフィードバック対応
+- [x] **不要な統合コメントの削除**
+- [x] **テストメソッド名の命名規則統一**
+- [x] **ITilemapServiceから不要なメソッド削除**
+
+## 進行状況
+- [x] Phase 1: ITilemapManager → ITilemapService 名称変更 (完了)
+- [x] Phase 2: TilemapManager実装のTilemapSystemController統合 (完了)
+- [x] Phase 3: テストコード修正 (完了)
+- [x] Phase 4: コードレビュー並列実行 (完了)
+- [x] Phase 5: フィードバック対応 (完了)
+
+### 最終成果物
+- **重複実装の解消**: 一箇所での実装に統一 
+- **命名規則の改善**: サービス層として適切な命名
+- **インターフェースの整理**: ITilemapServiceとして明確な役割定義
+- **テストコードの整合**: Mock実装とテストの命名規則統一
 
 ---
 
-# アーカイブ済みタスク
-
-## Player-TilemapSystem連携改善タスク（2025-01-11完了）
-
-### 概要
-PlayerがTilemapSystemの新機能（座標変換・移動判定）を利用するよう変更し、VContainerでの依存性注入を実装する。
-
-### 実装要件
-
-#### ✅ 現在のPlayer実装の調査と分析（完了）
-- [x] PlayerControllerの現在の実装を確認
-- [x] PlayerMoveServiceの現在の実装を確認  
-- [x] 現在のTilemapManagerとの依存関係を確認
-- [x] VContainerの使用状況を確認（v1.16.9導入済み）
-
-#### ✅ VContainer依存性注入の設計・実装（完了）
-- [x] ITilemapManagerインターフェースの依存性注入設計
-- [x] GameLifetimeScopeでのBinding設定 (GameLifetimeScope.cs)
-- [x] PlayerController/PlayerMoveServiceでのITilemapManager注入
-- [x] 既存のSetTilemapManager呼び出しをDI化
-
-#### ✅ Player側での新機能利用への変更（完了）
-- [x] 座標変換: GetPosition(int x, int y)メソッドの利用
-- [x] 移動判定: CanPassThrough(Vector2Int position, int level)メソッドの利用
-- [x] 既存のCanPlayerPassThroughからCanPassThroughへの移行
-- [x] ハードコーディングされた座標計算の置き換え
-
-#### ✅ テスト・検証（完了）
-- [x] 既存のPlayerテストの更新（コンストラクタインジェクション対応）
-- [x] 新機能利用のテストケース追加（CanPassThroughメソッドテスト）
-- [x] MockTilemapManagerの新機能対応
-
-### 技術詳細
-
-#### VContainer依存性注入方針（達成済み）
-1. **インターフェース注入**: ITilemapManagerをコンストラクタ注入（[Inject] Constructメソッド）
-2. **ライフサイクル管理**: Singletonでの登録完了
-3. **初期化順序**: TilemapSystemController -> PlayerController（GameLifetimeScope経由）
-
-#### 移行対象メソッド（達成済み）
-- `GetPosition(int x, int y): Vector3` - PlayerController座標変換で利用開始
-- `CanPassThrough(Vector2Int position, int level)` - PlayerMoveService移動制約で利用開始
-
-### 実装完了ファイル
-- `Assets/MyGame/Scripts/DI/GameLifetimeScope.cs` - VContainer設定（新規作成）
-- `Assets/MyGame/Scripts/Player/PlayerController.cs` - DI対応・新機能利用
-- `Assets/MyGame/Scripts/Player/PlayerMoveService.cs` - コンストラクタDI・新機能利用
-- `Assets/MyGame/Scripts/Player/Tests/EditMode/PlayerMoveServiceTests.cs` - テスト更新
-- `Assets/MyGame/Scripts/TilemapSystem/TilemapSystemController.cs` - 不要メソッド削除
-
-### 成果
-- **依存性注入**: 手動設定からVContainer DIへ完全移行
-- **新機能利用**: GetPositionとCanPassThroughメソッドをPlayerで利用開始
-- **ブロック通過仕様統一**: Sky(不可)、Empty(可)、Ground(可)、Rock(不可)、Treasure(可)
-- **テスト整理**: TilemapSystemとPlayerテスト間の重複を削除し、責任を整理
-- **テスト対応**: 21個の既存テスト+2個の新機能テストケース追加
-
-## エネミーシステム開発（完了）
-
-### ✅ フェーズ1: 基本移動システム（2025-01-22完了）
-- EnemyController、EnemyMoveService、EnemyMovementConstraint実装
-- Player/Enemy間でDirection.cs共通化
-- 岩ブロック通過不可、マップ境界制限実装
-- 単体テスト・統合テスト完了
-
-### ✅ フェーズ2: レベルベース出現管理（2025-01-09完了）
-- EnemySpawner、EnemySpawnConfig実装
-- レベル別出現数計算機能（レベル1:5体、5レベル毎+1、上限10体）
-- 画面境界外出現位置計算
-- PlayModeテスト完了
-
-## 参考資料
-- `Documentation/Specifications/enemy_spec.md`
-- `Documentation/Rules/CSharpCodingRule.md`
-- `Documentation/Rules/TestRule.md`
+# タスク完了報告
+ITilemapManagerの統合とITilemapServiceリファクタリングタスクを完了しました。

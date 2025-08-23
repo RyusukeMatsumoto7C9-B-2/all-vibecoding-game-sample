@@ -8,12 +8,12 @@ namespace MyGame.Player
     {
         public Vector2Int CurrentPosition { get; private set; }
         
-        private readonly ITilemapService _tilemapManager;
+        private readonly ITilemapService _tilemapService;
         private int _currentLevel = 0;
 
-        public PlayerMover(ITilemapService tilemapManager, int currentLevel = 0)
+        public PlayerMover(ITilemapService tilemapManager, int currentLevel = 1)
         {
-            _tilemapManager = tilemapManager ?? throw new System.ArgumentNullException(nameof(tilemapManager));
+            _tilemapService = tilemapManager ?? throw new System.ArgumentNullException(nameof(tilemapManager));
             _currentLevel = currentLevel;
         }
 
@@ -30,7 +30,7 @@ namespace MyGame.Player
         public bool CanMove(Direction direction)
         {
             var targetPosition = GetTargetPosition(direction);
-            var canPass = _tilemapManager.CanPassThrough(targetPosition, _currentLevel);
+            var canPass = _tilemapService.CanPassThrough(targetPosition, _currentLevel);
             
             Debug.Log($"[PlayerMoveService] 移動制約チェック: {direction}方向 → 座標({targetPosition.x}, {targetPosition.y}) " +
                      $"Level: {_currentLevel} → 結果: {(canPass ? "移動可能" : "移動不可")}");
@@ -48,7 +48,7 @@ namespace MyGame.Player
             var targetPosition = GetTargetPosition(direction);
             
             // 移動先のブロックタイプを取得
-            var blockType = _tilemapManager.GetBlockTypeAt(targetPosition, _currentLevel);
+            var blockType = _tilemapService.GetBlockTypeAt(targetPosition, _currentLevel);
             
             CurrentPosition = targetPosition;
             
@@ -56,7 +56,7 @@ namespace MyGame.Player
             if (blockType == BlockType.Ground)
             {
                 Debug.Log($"[PlayerMoveService] Groundブロック破壊: 座標({targetPosition.x}, {targetPosition.y})");
-                _tilemapManager.OnPlayerHitTile(targetPosition, _currentLevel);
+                _tilemapService.OnPlayerHitTile(targetPosition, _currentLevel);
             }
             
             return true;

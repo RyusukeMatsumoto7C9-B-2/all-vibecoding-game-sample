@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 using R3;
@@ -23,6 +24,7 @@ namespace MyGame.TilemapSystem.Core
         private readonly Subject<int> _onScrollStarted = new Subject<int>();
         private readonly Subject<int> _onScrollCompleted = new Subject<int>();
         private readonly Subject<int> _onNewLevelGenerated = new Subject<int>();
+        private readonly Dictionary<int, MapData> _mapDictionary = new Dictionary<int, MapData>();
         private int _currentLevel = 1;
         private bool _isScrolling = false;
         private float _scrollSpeed = 5.0f;
@@ -106,6 +108,57 @@ namespace MyGame.TilemapSystem.Core
             }
         }
         
+        public bool IsMapLoaded(int level)
+        {
+            return _mapDictionary.ContainsKey(level);
+        }
+        
+        public MapData GetLoadedMap(int level)
+        {
+            _mapDictionary.TryGetValue(level, out var value);
+            return value;
+        }
+        
+        public void SetMap(int level, MapData mapData)
+        {
+            if (_mapDictionary.ContainsKey(level))
+            {
+                Debug.LogWarning($"Map for level {level} is already set. Overwriting.");
+            }
+            
+            _mapDictionary[level] = mapData;
+        }
+
+        public void RemoveMap(int level)
+        {
+            if (_mapDictionary.ContainsKey(level))
+            {
+                _mapDictionary.Remove(level);
+            }
+            else
+            {
+                Debug.LogWarning($"No map found for level {level} to remove.");
+            }
+        }
+
+        public BlockType GetBlockTypeAt(Vector2Int position, int level)
+        {
+            if (!_mapDictionary.ContainsKey(level))
+            {
+                return BlockType.Empty;
+            }
+
+            var mapData = _mapDictionary[level];
+            if (position.x < 0 || position.x >= mapData.Width || position.y < 0 || position.y >= mapData.Height)
+            {
+                return BlockType.Empty;
+            }
+
+            var blockType = mapData.Tiles[position.x, position.y];
+            return blockType;
+        }
+
+
         private async UniTask GenerateNextLevelAsync()
         {
             int nextLevel = _currentLevel + 1;
@@ -120,6 +173,7 @@ namespace MyGame.TilemapSystem.Core
             
             // 次のレベルのマップを生成
             var nextMapData = _generator.GenerateMap(nextLevel, _generator.GetSeedForLevel(nextLevel));
+            _mapDictionary.Add(nextLevel, nextMapData);
             
             // 重複エリアの適切な処理
             // スクロール前の配置: 新しいレベルを下側に配置し、スクロール後に正しい位置に来るようにする
@@ -179,17 +233,6 @@ namespace MyGame.TilemapSystem.Core
             
             // 最終位置に確実に設定
             _tilemapParent.position = targetPosition;
-        }
-        
-        public void SetCurrentLevel(int level)
-        {
-            if (level < 1)
-            {
-                Debug.LogWarning("Level must be 1 or greater");
-                return;
-            }
-            
-            _currentLevel = level;
         }
         
         /// <summary>

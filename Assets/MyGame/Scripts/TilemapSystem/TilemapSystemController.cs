@@ -25,7 +25,7 @@ namespace MyGame.TilemapSystem
         private SeedManager _seedManager;
         private TilemapScrollController _scrollController;
         
-        private readonly Dictionary<int, MapData> _loadedMaps = new Dictionary<int, MapData>();
+        //private readonly Dictionary<int, MapData> _loadedMaps = new Dictionary<int, MapData>();
         private readonly Dictionary<int, List<GameObject>> _instantiatedTiles = new Dictionary<int, List<GameObject>>();
         private ITileBehavior _tileBehavior;
         
@@ -74,28 +74,13 @@ namespace MyGame.TilemapSystem
             }
 
             var mapData = _generator.GenerateMap(initialLevel, initialSeed);
+            _scrollController.SetMap(initialLevel, mapData);
             
             PlaceTiles(mapData);
 
             Debug.Log($"初期マップ生成完了: Level={mapData.Level}, Seed={mapData.Seed}, Size={mapData.Width}x{mapData.Height}");
         }
         
-        [ContextMenu("新しいマップを生成")]
-        public void GenerateNewMap()
-        {
-            var newLevel = CurrentLevel + 1;
-            var mapData = _generator.GenerateMap(newLevel, initialSeed);
-            PlaceTiles(mapData);
-            Debug.Log($"新しいマップ生成: Level {newLevel}");
-        }
-
-        [ContextMenu("メモリ最適化実行")]
-        public void OptimizeMemory()
-        {
-            OptimizeMemory(CurrentLevel);
-            Debug.Log($"メモリ最適化実行: Current Level {CurrentLevel}");
-        }
-
         private async UniTask StartAutoScroll()
         {
             await UniTask.Delay((int)(autoScrollInterval * 1000)); // 最初の待機
@@ -154,55 +139,31 @@ namespace MyGame.TilemapSystem
         
         public bool IsMapLoaded(int level)
         {
-            return _loadedMaps.ContainsKey(level);
+            return _scrollController.IsMapLoaded(level);
         }
         
         public MapData GetLoadedMap(int level)
         {
-            return _loadedMaps.ContainsKey(level) ? _loadedMaps[level] : default;
+            return _scrollController.GetLoadedMap(level);
         }
         
         public BlockType GetBlockTypeAt(Vector2Int position, int level)
         {
-            if (!_loadedMaps.ContainsKey(level))
-            {
-                return BlockType.Empty;
-            }
-
-            var mapData = _loadedMaps[level];
-            if (position.x < 0 || position.x >= mapData.Width || position.y < 0 || position.y >= mapData.Height)
-            {
-                return BlockType.Empty;
-            }
-
-            var blockType = mapData.Tiles[position.x, position.y];
-            return blockType;
+            return _scrollController.GetBlockTypeAt(position, level);
         }
         
+        // TODO: プレイヤー限定じゃなくする ( Enemyも通過可能か判定したい ).
         public virtual bool CanPlayerPassThrough(Vector2Int position, int level)
         {
-            if (!_loadedMaps.ContainsKey(level))
-            {
-                return true;
-            }
-
-            var mapData = _loadedMaps[level];
-            if (position.x < 0 || position.x >= mapData.Width || position.y < 0 || position.y >= mapData.Height)
-            {
-                return false;
-            }
-
-            var tileType = mapData.Tiles[position.x, position.y];
-            var canPass = _tileBehavior.CanPlayerPassThrough(tileType);
-            return canPass;
+            return CanPassThrough(position, level);
         }
         
         public void OnPlayerHitTile(Vector2Int position, int level)
         {
-            if (!_loadedMaps.ContainsKey(level))
+            if (!_scrollController.IsMapLoaded(level))
                 return;
 
-            var mapData = _loadedMaps[level];
+            var mapData = _scrollController.GetLoadedMap(level);
             if (position.x < 0 || position.x >= mapData.Width || position.y < 0 || position.y >= mapData.Height)
                 return;
 
@@ -216,7 +177,7 @@ namespace MyGame.TilemapSystem
                 newTiles[position.x, position.y] = newTileType;
                 
                 var newMapData = new MapData(mapData.Width, mapData.Height, newTiles, mapData.Seed, mapData.Level);
-                _loadedMaps[level] = newMapData;
+                _scrollController.SetMap(level, newMapData);
 
                 // タイルの表示を更新
                 UpdateTileDisplay(position, newTileType, level);
@@ -242,17 +203,7 @@ namespace MyGame.TilemapSystem
         /// <returns>通過可能な場合はtrue</returns>
         public bool CanPassThrough(Vector2Int position, int level)
         {
-            if (!_loadedMaps.ContainsKey(level))
-            {
-                return true;
-            }
-
-            var mapData = _loadedMaps[level];
-            if (position.x < 0 || position.x >= mapData.Width || position.y < 0 || position.y >= mapData.Height)
-            {
-                return false;
-            }
-
+            var mapData = _scrollController.GetLoadedMap(level);
             var tileType = mapData.Tiles[position.x, position.y];
             
             // 新仕様: Sky=不可, Empty=可, Ground=可, Rock=不可, Treasure=可
@@ -301,7 +252,7 @@ namespace MyGame.TilemapSystem
             }
 
             _instantiatedTiles[mapData.Level] = tileInstances;
-            _loadedMaps[mapData.Level] = mapData;
+            _scrollController.SetMap(mapData.Level, mapData);
         }
 
         public void PlaceTilesWithOverlapProtection(MapData mapData, int overlapHeight = 5)
@@ -353,7 +304,8 @@ namespace MyGame.TilemapSystem
             }
 
             _instantiatedTiles[mapData.Level] = tileInstances;
-            _loadedMaps[mapData.Level] = mapData;
+            _scrollController.SetMap(mapData.Level, mapData);
+            PlaceTilesWithOverlapProtection(mapData, overlapHeight: 5);
         }
 
         private bool IsExistingWallBlockAtPosition(Vector3 position)
@@ -404,26 +356,12 @@ namespace MyGame.TilemapSystem
             }
 
             _instantiatedTiles.Remove(level);
-            _loadedMaps.Remove(level);
+            _scrollController.RemoveMap(level);
         }
 
         public void OptimizeMemory(int currentLevel)
         {
-            var levelsToRemove = new List<int>();
-            
-            foreach (var level in _loadedMaps.Keys)
-            {
-                // 現在レベル±2以外のマップを削除対象とする
-                if (Math.Abs(level - currentLevel) > 2)
-                {
-                    levelsToRemove.Add(level);
-                }
-            }
-
-            foreach (var level in levelsToRemove)
-            {
-                ClearTiles(level);
-            }
+            // いったん何もしない.
         }
 
         public List<GameObject> GetTilesForLevel(int level)
